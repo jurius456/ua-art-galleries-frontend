@@ -1,7 +1,14 @@
+// src/App.tsx
+
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/shared/Header';
 import Footer from './components/shared/Footer';
-import HomePage from './pages/Home';
+
+// Імпорт нової сторінки для повного списку галерей
+import GalleriesPage from './pages/Galleries'; 
+
+// Імпорт старих сторінок
+import HomePage from './pages/Home'; 
 import GalleryPage from './pages/Gallery';
 import AuthPage from './pages/Auth';
 
@@ -15,17 +22,22 @@ function App() {
           {/* Головна сторінка */}
           <Route path="/" element={<HomePage />} />
           
-          {/* Сторінка галереї (поки що загальна) */}
-          <Route path="/gallery" element={<GalleryPage />} />
+          {/* НОВИЙ МАРШРУТ: Сторінка зі списком усіх галерей та пагінацією */}
+          <Route path="/galleries" element={<GalleriesPage />} />
+          
+          {/* Сторінка конкретної галереї */}
+          <Route path="/gallery/:slug" element={<GalleryPage />} />
           
           {/* Сторінка входу */}
           <Route path="/login" element={<AuthPage />} />
+          
+          <Route path="*" element={<h1>404 Page Not Found</h1>} />
         </Routes>
       </main>
 
       <Footer />
     </div>
-  )
+  );
 }
 
 export default App;
