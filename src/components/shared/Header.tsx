@@ -1,46 +1,37 @@
-import { Search, User, Menu } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Header = () => {
-  return (
-    <header className="border-b border-gray-200 py-4 px-6 flex items-center justify-between bg-white sticky top-0 z-50">
-      {/* 1. Logo */}
-      <Link to="/" className="flex items-center gap-2">
-        <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-        <span className="text-xl font-bold hidden sm:block">UA Galleries</span>
-      </Link>
+    // Я припускаю, що ваш Header має таку базову структуру
+    return (
+        <header className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
+            <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+                
+                {/* Логотип */}
+                <Link to="/" className="text-xl font-bold text-neutral-800 hover:text-neutral-600 transition">
+                    UA Galleries
+                </Link>
 
-      {/* 2. Desktop Nav */}
-      <nav className="hidden md:flex gap-8 text-sm font-medium text-gray-600">
-        <Link to="#" className="hover:text-black transition">Artworks</Link>
-        <Link to="/galleries" className="hover:text-black transition">Galleries</Link> {/* <-- ВИПРАВЛЕНО */}
-        <Link to="#" className="hover:text-black transition">Events</Link>
-      </nav>
+                {/* Desktop Навігація */}
+                <nav className="hidden md:flex gap-8 text-sm font-medium text-gray-600">
+                    <Link to="/artworks" className="hover:text-black transition">Artworks</Link> 
+                    <Link to="/galleries" className="hover:text-black transition">Galleries</Link>
+                    
+                    {/* НОВІ ПОСИЛАННЯ */}
+                    <Link to="/events" className="hover:text-black transition">Events</Link> 
+                    <Link to="/about" className="hover:text-black transition">About Us</Link> 
+                </nav>
 
-      {/* 3. Search and User Icons */}
-      <div className="flex items-center gap-4">
-        {/* Search bar (desktop imitation) */}
-        <div className="hidden sm:flex items-center bg-gray-100 px-3 py-2 rounded-md w-64">
-            <Search size={18} className="text-gray-400 mr-2" />
-            <input 
-                type="text" 
-                placeholder="Search..." 
-                className="bg-transparent border-none outline-none text-sm w-full"
-            />
-        </div>
-
-        {/* User Icon (links to Login) */}
-        <Link to="/login" className="p-2 hover:bg-gray-100 rounded-full"> {/* <-- Додано /login маршрут */}
-            <User size={24} />
-        </Link>
-        
-        {/* Menu for mobile */}
-        <button className="md:hidden p-2 hover:bg-gray-100 rounded-full">
-            <Menu size={24} />
-        </button>
-      </div>
-    </header>
-  );
+                {/* Auth Кнопка */}
+                <div className="hidden md:flex items-center gap-4">
+                    <Link to="/login" className="px-4 py-2 text-sm font-medium border border-transparent rounded-lg text-white bg-neutral-800 hover:bg-neutral-600 transition">
+                        Log In
+                    </Link>
+                </div>
+                
+                {/* Тут може бути іконка для мобільного меню */}
+            </div>
+        </header>
+    );
 };
 
 export default Header;

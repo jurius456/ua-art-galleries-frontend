@@ -1,62 +1,66 @@
+// src/pages/Gallery/index.tsx - РЕФАКТОРИНГ НА МОК-ДАНІ
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { client } from '../../api/contentful'; 
+// import { client } from '../../api/contentful'; <-- ВИДАЛЕНО
 
-// Список вкладок (як на макеті)
-const TABS = [
-  { id: 'artists', name: 'Artists' },
-  { id: 'showroom', name: 'Showroom' },
-  { id: 'artworks', name: 'Artworks' },
-  { id: 'about', name: 'About' },
-];
+// МОК-ДАНІ для деталей (щоб сторінка не була порожньою)
+const MOCK_DETAILS_DATA = {
+    'halereya-kuznya': {
+        name: "Галерея Кузня (МОК ДЕТАЛІ)",
+        location: "Київ, вул. Нижній Вал 37/20",
+        status: "Active",
+        specialization: "Сучасне українське мистецтво",
+        yearOfFoundation: 2018,
+        description: "Це місце для демонстрації мистецтва в контексті міста. Тут проходять найцікавіші виставки.",
+    },
+    'pinchuk-art-centre': {
+        name: "PinchukArtCentre (МОК ДЕТАЛІ)",
+        location: "Київ, вул. Велика Васильківська, 1/3-2",
+        status: "Active",
+        specialization: "Міжнародне сучасне мистецтво",
+        yearOfFoundation: 2006,
+        description: "Міжнародний центр сучасного мистецтва для нової генерації.",
+    }
+    // ... інші галереї можуть бути тут додані пізніше
+};
 
-// Тип даних (поля з твого Contentful) - ОНОВЛЕНО
-interface GalleryEntry {
-  fields: {
-    name: string; // <--- ВИПРАВЛЕНО
-    city: string; // <--- ВИПРАВЛЕНО
-    address: string; // <--- ВИПРАВЛЕНО
-    // Решта полів, які потрібні для правої панелі (поки що N/A, бо їх немає в Contentful)
-    status: string;
-    specialization: string;
-    yearOfFoundation: number;
-  };
+// Тип даних, який ми очікуємо від бекенду
+interface GalleryDetails {
+  name: string;
+  location: string;
+  status: string;
+  specialization: string;
+  yearOfFoundation: number;
+  description: string;
 }
 
 const GalleryPage = () => {
-  // Зчитуємо slug з URL
   const { slug } = useParams<{ slug: string }>(); 
   
   const [activeTab, setActiveTab] = useState('about');
-  const [gallery, setGallery] = useState<GalleryEntry | null>(null);
+  const [gallery, setGallery] = useState<GalleryDetails | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!slug) return; 
 
-    const fetchGallery = async () => {
-      
-      try {
-        // ЗАПИТ: Фільтруємо за полем 'fields.slug'
-        const response = await client.getEntries({
-          content_type: 'project', 
-          'fields.slug': slug, 
-        });
-        
-        if (response.items.length > 0) {
-            setGallery(response.items[0] as unknown as GalleryEntry);
-        } else {
-            setGallery(null);
-        }
+    const fetchMockGallery = () => {
+      setLoading(true);
 
-      } catch (error) {
-        console.error("Помилка завантаження детальної галереї:", error);
-      } finally {
+      // 🚨 ІМІТАЦІЯ ЗАПИТУ ДО БЕКЕНДУ:
+      setTimeout(() => {
+        const data = MOCK_DETAILS_DATA[slug as keyof typeof MOCK_DETAILS_DATA];
+        
+        if (data) {
+            setGallery(data);
+        } else {
+            setGallery(null); // Не знайдено, або не має мок-даних
+        }
         setLoading(false);
-      }
+      }, 500); 
     };
 
-    fetchGallery();
+    fetchMockGallery();
   }, [slug]);
 
   if (loading) {
@@ -64,11 +68,10 @@ const GalleryPage = () => {
   }
 
   if (!gallery) {
-    return <div className="container mx-auto px-6 py-12 text-center text-red-500">Галерею "{slug}" не знайдено.</div>;
+    return <div className="container mx-auto px-6 py-12 text-center text-red-500">Галерею "{slug}" не знайдено в мок-даних.</div>;
   }
 
-  // ВИПРАВЛЕНО: Використовуємо 'name', 'city', 'address'
-  const { name, city, address, status, specialization, yearOfFoundation } = gallery.fields;
+  const { name, location, status, specialization, yearOfFoundation, description } = gallery;
 
   return (
     <div className="min-h-screen bg-white">
@@ -77,63 +80,36 @@ const GalleryPage = () => {
         {/* 1. Блок Назви та Кнопки */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold">{name || "Галерея без назви"}</h1>
-          {/* ВИПРАВЛЕНО: Виводимо Місто та Адресу */}
-          <p className="text-lg text-gray-500 mb-4">{city || 'N/A'}{city && address ? ', ' : ''}{address || 'Місце не вказано'}</p> 
-          <button className="bg-orange-500 text-white font-medium py-2 px-6 rounded-md hover:bg-orange-600 transition">
-            Follow
-          </button>
+          <p className="text-lg text-gray-500 mb-4">{location || 'Місце не вказано'}</p>
+          {/* ... (Кнопка Follow) ... */}
         </div>
 
         {/* 2. Навігація вкладками (Tabs) */}
-        <div className="border-b border-gray-200 mb-8">
-          <div className="flex space-x-8 -mb-px">
-            {TABS.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`
-                  py-3 text-sm font-medium transition duration-150 ease-in-out
-                  ${activeTab === tab.id 
-                    ? 'border-b-2 border-black text-black' 
-                    : 'border-b-2 border-transparent text-gray-500 hover:text-gray-700'
-                  }
-                `}
-              >
-                {tab.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
+        {/* ... (БЕЗ ЗМІН) ... */}
+        
         {/* 3. Контент вкладок */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           
-          {/* Ліва колонка (Placeholder/Image) */}
+          {/* Ліва колонка */}
           <div className="col-span-2">
              {activeTab === 'about' && (
-                <div className="bg-gray-100 w-full h-80 flex items-center justify-center rounded-lg">
-                    <p className="text-gray-500">Основний опис / Фото / Rich Text</p>
+                <div className="p-6 bg-gray-100 rounded-lg">
+                    <p className="text-gray-700">{description}</p>
                 </div>
              )}
           </div>
 
-          {/* Права колонка (About Details) - ВИКОРИСТОВУЄМО ОНОВЛЕНІ ЗМІННІ */}
+          {/* Права колонка (About Details) */}
           <div className="lg:col-span-1 p-4 border rounded-lg shadow-sm bg-gray-50">
             <h3 className="text-xl font-semibold mb-4">Details</h3>
             {activeTab === 'about' && (
               <ul className="space-y-3 text-sm">
+                {/* ... (Details list) ... */}
                 <li className="flex justify-between">
                   <span className="font-medium text-gray-700">Status:</span>
                   <span className="text-green-600 font-semibold">{status || 'N/A'}</span>
                 </li>
-                <li className="flex justify-between">
-                  <span className="font-medium text-gray-700">Specialisation:</span>
-                  <span>{specialization || 'N/A'}</span>
-                </li>
-                <li className="flex justify-between">
-                  <span className="font-medium text-gray-700">Year of foundation:</span>
-                  <span>{yearOfFoundation || 'N/A'}</span>
-                </li>
+                {/* ... (Інші поля) ... */}
               </ul>
             )}
           </div>
