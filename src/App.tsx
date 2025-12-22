@@ -5,6 +5,7 @@ import Footer from './components/shared/Footer';
 // Імпорт нових сторінок
 import AboutPage from './pages/About'; 
 import EventsPage from './pages/Events';
+import ProfilePage from './pages/Profile'; // 🚨 НОВИЙ ІМПОРТ
 
 // Імпорт існуючих сторінок
 import GalleriesPage from './pages/Galleries'; 
@@ -14,6 +15,7 @@ import AuthPage from './pages/Auth';
 
 function App() {
   const location = useLocation();
+  
   const isAuthPage = location.pathname.startsWith('/login'); 
   
   return (
@@ -26,11 +28,14 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/galleries" element={<GalleriesPage />} />
           <Route path="/gallery/:slug" element={<GalleryPage />} />
-          <Route path="/login" element={<AuthPage />} />
           
-          {/* НОВІ МАРШРУТИ */}
+          {/* Сторінки-заглушки */}
           <Route path="/about" element={<AboutPage />} />
           <Route path="/events" element={<EventsPage />} />
+          
+          {/* АУТЕНТИФІКАЦІЯ ТА ПРОФІЛЬ */}
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/profile" element={<ProfilePage />} /> {/* 🚨 НОВИЙ МАРШРУТ */}
 
           <Route path="*" element={<h1>404 Page Not Found</h1>} />
         </Routes>
