@@ -1,7 +1,10 @@
 import React, { useState, type FormEvent, type ChangeEvent } from 'react';
 import { Mail, Lock, User, AlertTriangle, Loader2 } from 'lucide-react'; 
-import { useNavigate } from 'react-router-dom'; // 🚨 ВИПРАВЛЕННЯ: Додано useNavigate
+import { useNavigate } from 'react-router-dom';
 
+// адресу сервера
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; 
+console.log('API_BASE_URL:', API_BASE_URL);
 interface FormErrors {
     name?: string;
     email?: string;
@@ -10,10 +13,8 @@ interface FormErrors {
 }
 
 const AuthPage = () => {
-    // 🚨 ВИПРАВЛЕННЯ: Хук для перенаправлення
     const navigate = useNavigate(); 
     
-    // 1. СТАН ФОРМИ ТА РЕЖИМУ
     const [isLogin, setIsLogin] = useState(true); 
     const [formData, setFormData] = useState({ 
         name: '', 
@@ -22,11 +23,8 @@ const AuthPage = () => {
         passwordConfirm: '' 
     });
     const [errors, setErrors] = useState<FormErrors>({}); 
-    
-    // 2. СТАНИ ДЛЯ API
     const [loading, setLoading] = useState(false);
     const [apiError, setApiError] = useState<string | null>(null); 
-    
 
     const toggleView = () => {
         setIsLogin(!isLogin);
@@ -43,7 +41,6 @@ const AuthPage = () => {
         setErrors((prevErrors) => ({ ...prevErrors, [e.target.name]: undefined }));
     };
 
-    // 3. КЛІЄНТСЬКА ВАЛІДАЦІЯ
     const validateForm = () => {
         const newErrors: FormErrors = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -64,7 +61,6 @@ const AuthPage = () => {
             if (!formData.name) {
                 newErrors.name = "Будь ласка, введіть ім'я користувача.";
             }
-
             if (formData.password !== formData.passwordConfirm) {
                 newErrors.passwordConfirm = "Паролі не співпадають.";
             }
@@ -74,46 +70,49 @@ const AuthPage = () => {
         return Object.keys(newErrors).length === 0; 
     };
 
-    // 4. ОБРОБНИК ВІДПРАВКИ (API MOCK)
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault(); 
         setApiError(null); 
 
-        if (!validateForm()) {
-            return;
-        }
-        
+        if (!validateForm()) return;
         setLoading(true);
         
-        // ІМІТАЦІЯ ЗАПИТУ ДО БЕКЕНДУ
+        // шлях до логіну та реєстрації
+        const endpoint = isLogin ? '/auth/login/' : '/auth/register/';
+        
+        // ключі очікує Django 
+        const payload = isLogin 
+            ? { email: formData.email, password: formData.password }
+            : { username: formData.name, email: formData.email, password: formData.password };
+
         try {
-            await new Promise(resolve => setTimeout(resolve, 800));
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
 
-            // УМОВИ ТЕСТУВАННЯ (для демонстрації помилок та успіху)
-            const isSuccess = formData.email.includes('success');
-            const isDuplicate = formData.email.includes('duplicate');
+            const data = await response.json();
 
-            if (isSuccess) {
-                 console.log('API Success! Token received.');
-                 
-                 // 🚨 ПЕРЕНАПРАВЛЕННЯ: Замість alert()
-                 navigate('/profile'); 
-                 
-                 // Вставити логіку збереження токена
-            } else {
-                // Імітуємо відповідь сервера про помилку
-                let errorMessage;
-                if (!isLogin && isDuplicate) {
-                    errorMessage = "Користувач з таким email вже існує.";
-                } else {
-                    errorMessage = "Невірний email або пароль. Спробуйте ще раз.";
+            if (response.ok) {
+                // назву поля з токеном (token, access або key)
+                const token = data.token || data.access || data.key;
+                
+                if (token) {
+                    localStorage.setItem('authToken', token); // Зберігаємо токен для входу
+                    console.log('Успішно авторизовано!');
+                    navigate('/profile'); 
                 }
-                setApiError(errorMessage);
+            } else {
+                // Виводимо помилку від Django (наприклад, "Невірний пароль")
+                setApiError(data.detail || data.message || "Помилка авторизації. Перевірте дані.");
             }
 
         } catch (error) {
             console.error('Network Error:', error);
-            setApiError('Помилка з\'єднання. Перевірте інтернет.');
+            setApiError('Сервер недоступний. Перевірте з\'єднання або BASE_URL.');
         } finally {
             setLoading(false);
         }
@@ -122,7 +121,6 @@ const AuthPage = () => {
     return (
         <div className="flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-50">
             <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-xl rounded-xl border border-gray-200">
-                
                 <h2 className="text-3xl font-extrabold text-gray-900 text-center">
                     {isLogin ? 'Вхід до системи' : 'Створення облікового запису'}
                 </h2>
@@ -138,8 +136,6 @@ const AuthPage = () => {
                 </p>
 
                 <form className="space-y-6" onSubmit={handleSubmit} noValidate>
-                    
-                    {/* 5. ВІДОБРАЖЕННЯ API-ПОМИЛОК */}
                     {apiError && (
                         <div className="p-3 text-sm text-red-700 bg-red-100 rounded-lg flex items-center gap-2">
                             <AlertTriangle size={16} />
