@@ -32,7 +32,7 @@ const HomeHero = () => {
             {/* Arrow Left */}
             <button 
                 onClick={handlePrev} // <-- Обробник кліку
-                className="p-3 bg-white/50 rounded-full hover:bg-white hover:text-gray-900 transition z-10"
+                className="p-3 bg-white/50 rounded-full hover:bg-white hover:text-gray-900 transition z-11"
             >
                 <ArrowLeft />
             </button>
@@ -47,7 +47,7 @@ const HomeHero = () => {
             {/* Arrow Right */}
             <button 
                 onClick={handleNext} // <-- Обробник кліку
-                className="p-3 bg-white/50 rounded-full hover:bg-white hover:text-gray-900 transition z-10"
+                className="p-3 bg-white/50 rounded-full hover:bg-white hover:text-gray-900 transition z-11"
             >
                 <ArrowRight />
             </button>
