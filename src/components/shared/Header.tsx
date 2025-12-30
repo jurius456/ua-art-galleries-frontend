@@ -13,12 +13,10 @@ const Header = () => {
 
                 {/* Desktop Навігація */}
                 <nav className="hidden md:flex gap-8 text-sm font-medium text-gray-600">
-                    <Link to="/artworks" className="hover:text-black transition">Artworks</Link> 
-                    <Link to="/galleries" className="hover:text-black transition">Galleries</Link>
-                    
-                    {/* НОВІ ПОСИЛАННЯ */}
-                    <Link to="/events" className="hover:text-black transition">Events</Link> 
+                    {/* <Link to="/artworks" className="hover:text-black transition">Artworks</Link>  */}
                     <Link to="/about" className="hover:text-black transition">About Us</Link> 
+                    <Link to="/galleries" className="hover:text-black transition">Galleries</Link>
+                    <Link to="/events" className="hover:text-black transition">Events</Link> 
                 </nav>
 
                 {/* Auth Кнопка */}
