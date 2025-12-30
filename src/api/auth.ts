@@ -1,5 +1,4 @@
-// src/api/auth.ts
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // http://127.0.0.1:8000/api
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export type UserDTO = {
   id: number;
@@ -21,7 +20,10 @@ export function clearToken() {
   localStorage.removeItem("authToken");
 }
 
-export async function login(payload: { username: string; password: string }) {
+export async function login(payload: {
+  username: string;
+  password: string;
+}) {
   const res = await fetch(`${API_BASE_URL}/auth/login/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -29,10 +31,9 @@ export async function login(payload: { username: string; password: string }) {
   });
 
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data?.detail || "Помилка авторизації");
-  const token = data.access || data.token;
-  if (!token) throw new Error("Сервер не повернув токен");
-  return token as string;
+  if (!res.ok) throw new Error(data?.detail || "Login error");
+
+  return data.access as string;
 }
 
 export async function register(payload: {
@@ -40,6 +41,8 @@ export async function register(payload: {
   email?: string;
   password: string;
   password2?: string;
+  first_name?: string;
+  last_name?: string;
 }) {
   const res = await fetch(`${API_BASE_URL}/auth/register/`, {
     method: "POST",
@@ -48,10 +51,9 @@ export async function register(payload: {
   });
 
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data?.detail || "Помилка реєстрації");
-  const token = data.access || data.token;
-  if (!token) throw new Error("Сервер не повернув токен");
-  return token as string;
+  if (!res.ok) throw new Error(data?.detail || "Register error");
+
+  return data.access as string;
 }
 
 export async function fetchMe(token: string): Promise<UserDTO> {
@@ -59,12 +61,12 @@ export async function fetchMe(token: string): Promise<UserDTO> {
     headers: { Authorization: `Bearer ${token}` },
   });
 
-  // 401/403 — токен битий/протух
   if (res.status === 401 || res.status === 403) {
     throw new Error("UNAUTHORIZED");
   }
 
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data?.detail || "Не вдалося отримати користувача");
+  if (!res.ok) throw new Error("Failed to fetch user");
+
   return data as UserDTO;
 }

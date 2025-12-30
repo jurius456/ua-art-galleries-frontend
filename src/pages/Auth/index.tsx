@@ -1,19 +1,22 @@
 import React, { useState, type FormEvent, type ChangeEvent } from "react";
 import { Mail, Lock, User, AlertTriangle, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
-// http://127.0.0.1:8000/api
 
 interface FormErrors {
   username?: string;
   email?: string;
+  first_name?: string;
+  last_name?: string;
   password?: string;
   passwordConfirm?: string;
 }
 
 const AuthPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -23,6 +26,8 @@ const AuthPage = () => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
+    first_name: "",
+    last_name: "",
     password: "",
     passwordConfirm: "",
   });
@@ -34,6 +39,8 @@ const AuthPage = () => {
     setFormData({
       username: "",
       email: "",
+      first_name: "",
+      last_name: "",
       password: "",
       passwordConfirm: "",
     });
@@ -98,6 +105,8 @@ const AuthPage = () => {
           email: formData.email,
           password: formData.password,
           password2: formData.passwordConfirm,
+          first_name: formData.first_name,
+          last_name: formData.last_name,
         };
 
     try {
@@ -114,12 +123,9 @@ const AuthPage = () => {
         return;
       }
 
-      if (!data?.access) {
-        setApiError("Сервер не повернув токен.");
-        return;
-      }
+      // 🔥 ЄДИНЕ МІСЦЕ ЛОГІНУ
+      await login(data.access);
 
-      localStorage.setItem("authToken", data.access);
       navigate("/profile");
     } catch (err) {
       console.error(err);
@@ -157,7 +163,6 @@ const AuthPage = () => {
             </div>
           )}
 
-          {/* username */}
           <Input
             icon={<User size={20} />}
             name="username"
@@ -167,7 +172,6 @@ const AuthPage = () => {
             error={errors.username}
           />
 
-          {/* email */}
           {!isLogin && (
             <Input
               icon={<Mail size={20} />}
@@ -180,7 +184,26 @@ const AuthPage = () => {
             />
           )}
 
-          {/* password */}
+          {!isLogin && (
+            <Input
+              icon={<User size={20} />}
+              name="first_name"
+              placeholder="Імʼя"
+              value={formData.first_name}
+              onChange={handleChange}
+            />
+          )}
+
+          {!isLogin && (
+            <Input
+              icon={<User size={20} />}
+              name="last_name"
+              placeholder="Прізвище"
+              value={formData.last_name}
+              onChange={handleChange}
+            />
+          )}
+
           <Input
             icon={<Lock size={20} />}
             name="password"
@@ -191,7 +214,6 @@ const AuthPage = () => {
             error={errors.password}
           />
 
-          {/* confirm */}
           {!isLogin && (
             <Input
               icon={<Lock size={20} />}
@@ -209,7 +231,13 @@ const AuthPage = () => {
             disabled={loading}
             className="w-full py-3 rounded-lg text-white bg-neutral-800 hover:bg-neutral-600 disabled:bg-gray-400"
           >
-            {loading ? <Loader2 className="animate-spin mx-auto" /> : isLogin ? "Увійти" : "Створити акаунт"}
+            {loading ? (
+              <Loader2 className="animate-spin mx-auto" />
+            ) : isLogin ? (
+              "Увійти"
+            ) : (
+              "Створити акаунт"
+            )}
           </button>
         </form>
       </div>

@@ -1,59 +1,20 @@
-import { useEffect, useState } from "react";
 import { User, Mail, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
-
-type UserData = {
-  id: number;
-  username: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-};
+import { useEffect } from "react";
+import { useAuth } from "../../hooks/useAuth";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, isLoading, logout } = useAuth();
 
+  // ✅ redirect тільки через effect
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-
-    if (!token) {
-      navigate("/login");
-      return;
+    if (!isLoading && !user) {
+      navigate("/login", { replace: true });
     }
+  }, [isLoading, user, navigate]);
 
-    fetch(`${API_BASE_URL}/auth/user/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          throw new Error("unauthorized");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setUser(data);
-      })
-      .catch(() => {
-        localStorage.removeItem("authToken");
-        navigate("/login");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [navigate]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    navigate("/login");
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[60vh] text-gray-500">
         Завантаження профілю…
@@ -61,7 +22,10 @@ const ProfilePage = () => {
     );
   }
 
-  if (!user) return null;
+  if (!user) {
+    // нічого не рендеримо, поки effect редіректить
+    return null;
+  }
 
   return (
     <div className="container mx-auto px-6 py-12 max-w-2xl">
@@ -71,7 +35,10 @@ const ProfilePage = () => {
             <User /> Профіль
           </h1>
           <button
-            onClick={handleLogout}
+            onClick={() => {
+              logout();
+              navigate("/login");
+            }}
             className="flex items-center gap-2 text-sm px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
           >
             <LogOut size={16} /> Вийти
@@ -81,16 +48,8 @@ const ProfilePage = () => {
         <div className="space-y-4">
           <Field label="Username" value={user.username} icon={<User />} />
           <Field label="Email" value={user.email || "—"} icon={<Mail />} />
-          <Field
-            label="Імʼя"
-            value={user.first_name || "—"}
-            icon={<User />}
-          />
-          <Field
-            label="Прізвище"
-            value={user.last_name || "—"}
-            icon={<User />}
-          />
+          <Field label="Імʼя" value={user.first_name || "—"} icon={<User />} />
+          <Field label="Прізвище" value={user.last_name || "—"} icon={<User />} />
         </div>
       </div>
     </div>
@@ -99,8 +58,7 @@ const ProfilePage = () => {
 
 export default ProfilePage;
 
-/* -------- helper -------- */
-
+/* helper */
 const Field = ({
   label,
   value,
