@@ -20,7 +20,6 @@ const DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// MOCK DATA
 const MOCK_GALLERIES = [
   { id: 1, name: 'Галерея Кузня', lat: 50.4633, lng: 30.5186, city: 'Київ' },
   { id: 2, name: 'PinchukArtCentre', lat: 50.4435, lng: 30.5235, city: 'Київ' },
@@ -33,42 +32,33 @@ const HomeMapView = () => {
   const zoomLevel = 6;
 
   return (
-    <section>
+    <section className="relative z-0">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold">Галереї на мапі</h2>
-        <Link
-          to="/galleries"
-          className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-md"
-        >
+        <Link to="/galleries" className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-md">
           <Filter size={20} />
           Перейти до списку
         </Link>
       </div>
 
-      <div className="h-[500px] w-full rounded-lg overflow-hidden border shadow-lg">
+      <div className="relative z-0 h-[500px] w-full rounded-lg overflow-hidden border shadow-lg">
         <MapContainer
           center={position}
           zoom={zoomLevel}
           scrollWheelZoom={false}
           zoomControl={false}
-          attributionControl={false} // ✅ прибрали напис справа знизу
-          className="h-full w-full"
+          attributionControl={false}
+          className="h-full w-full z-0"
         >
-          {/* Мінімалістична карта */}
-          <TileLayer
-            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          />
+          <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
 
-          {/* Маркери */}
           {MOCK_GALLERIES.map((gallery) => (
             <Marker key={gallery.id} position={[gallery.lat, gallery.lng]}>
               <Popup>
                 <div className="font-bold">{gallery.name}</div>
                 <div className="text-sm text-gray-600">{gallery.city}</div>
                 <a
-                  href={`/gallery/${gallery.name
-                    .toLowerCase()
-                    .replace(/\s/g, '-')}`}
+                  href={`/gallery/${gallery.name.toLowerCase().replace(/\s/g, '-')}`}
                   className="text-blue-500 text-xs mt-1 block"
                 >
                   Деталі →
