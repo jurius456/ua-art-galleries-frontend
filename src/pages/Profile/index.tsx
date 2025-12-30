@@ -1,83 +1,120 @@
-import React from 'react';
-import { User, LogOut, Mail, MapPin } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom'; // 1. Додано імпорт
+import { useEffect, useState } from "react";
+import { User, Mail, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
+
+type UserData = {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+};
 
 const ProfilePage = () => {
-  const navigate = useNavigate(); // 2. Хук викликається ТУТ (всередині компонента)
+  const navigate = useNavigate();
+  const [user, setUser] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // 🚨 МОК-ДАНІ про користувача
-  const user = {
-    name: "Роман Масляна",
-    email: "roman@ua-galleries.com",
-    role: "Адміністратор галереї",
-    location: "Київ",
-  };
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    fetch(`${API_BASE_URL}/auth/user/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error("unauthorized");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setUser(data);
+      })
+      .catch(() => {
+        localStorage.removeItem("authToken");
+        navigate("/login");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken'); // Видаляємо токен
-    navigate('/login'); // Тепер ця функція знає, що таке navigate
+    localStorage.removeItem("authToken");
+    navigate("/login");
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[60vh] text-gray-500">
+        Завантаження профілю…
+      </div>
+    );
+  }
+
+  if (!user) return null;
+
   return (
-    <div className="container mx-auto px-6 py-12 min-h-[calc(100vh-150px)]">
-      
-      <header className="flex items-center justify-between mb-8 pb-4 border-b">
-        <h1 className="text-3xl font-bold flex items-center gap-3 text-gray-900">
-          <User size={30} />
-          Кабінет Користувача
-        </h1>
-        <button 
-          onClick={handleLogout}
-          className="flex items-center gap-2 px-4 py-2 text-sm text-white bg-red-600 rounded-lg hover:bg-red-700 transition"
-        >
-          <LogOut size={18} />
-          Вийти
-        </button>
-      </header>
-
-      <section className="bg-white p-8 border border-gray-200 rounded-xl shadow-lg max-w-2xl mx-auto space-y-6">
-        <h2 className="text-2xl font-semibold mb-4 text-neutral-800">Персональні дані</h2>
-
-        <div className="flex items-center gap-4 border-b pb-3">
-          <Mail size={20} className="text-gray-500" />
-          <div>
-            <p className="text-sm text-gray-500">Email</p>
-            <p className="font-medium text-lg">{user.email}</p>
-          </div>
+    <div className="container mx-auto px-6 py-12 max-w-2xl">
+      <div className="bg-white border rounded-xl shadow-lg p-8 space-y-6">
+        <div className="flex justify-between items-center border-b pb-4">
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <User /> Профіль
+          </h1>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 text-sm px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+          >
+            <LogOut size={16} /> Вийти
+          </button>
         </div>
 
-        <div className="flex items-center gap-4 border-b pb-3">
-          <User size={20} className="text-gray-500" />
-          <div>
-            <p className="text-sm text-gray-500">Повне ім'я</p>
-            <p className="font-medium text-lg">{user.name}</p>
-          </div>
+        <div className="space-y-4">
+          <Field label="Username" value={user.username} icon={<User />} />
+          <Field label="Email" value={user.email || "—"} icon={<Mail />} />
+          <Field
+            label="Імʼя"
+            value={user.first_name || "—"}
+            icon={<User />}
+          />
+          <Field
+            label="Прізвище"
+            value={user.last_name || "—"}
+            icon={<User />}
+          />
         </div>
-        
-        <div className="flex items-center gap-4">
-          <MapPin size={20} className="text-gray-500" />
-          <div>
-            <p className="text-sm text-gray-500">Місто</p>
-            <p className="font-medium text-lg">{user.location}</p>
-          </div>
-        </div>
-
-        <div className="pt-4">
-          <h3 className="text-lg font-bold text-neutral-800">Ваша Роль:</h3>
-          <span className="inline-block px-3 py-1 mt-2 text-sm font-semibold text-green-800 bg-green-100 rounded-full">
-            {user.role}
-          </span>
-        </div>
-        
-        <div className="pt-6 border-t mt-6">
-             <Link to="/settings" className="text-blue-600 hover:text-blue-800 transition font-medium">
-                Редагувати профіль та налаштування →
-             </Link>
-        </div>
-      </section>
-
+      </div>
     </div>
   );
 };
 
 export default ProfilePage;
+
+/* -------- helper -------- */
+
+const Field = ({
+  label,
+  value,
+  icon,
+}: {
+  label: string;
+  value: string;
+  icon: React.ReactNode;
+}) => (
+  <div className="flex items-center gap-4 border-b pb-3">
+    <div className="text-gray-400">{icon}</div>
+    <div>
+      <p className="text-sm text-gray-500">{label}</p>
+      <p className="font-medium">{value}</p>
+    </div>
+  </div>
+);
