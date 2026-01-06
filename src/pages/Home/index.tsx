@@ -1,17 +1,19 @@
 // src/pages/Home/index.tsx
 import React from 'react';
 import HomeHero from '../../components/home/HomeHero.tsx';
-import HomeNews from '../../components/home/HomeNews.tsx';
+import HomeFeaturedGalleries from '../../components/home/HomeFeaturedGalleries.tsx';
 import HomeMapView from '../../components/home/HomeMapView.tsx';
 import HomeAbout from '../../components/home/HomeAbout.tsx';
 
 const HomePage = () => {
   return (
-    <div className="container mx-auto px-6 py-8 space-y-16">
+    <div className="pb-24 space-y-32 animate-in fade-in duration-700">
       <HomeHero />
-      <HomeNews />
-      <HomeMapView />
-      <HomeAbout />
+      <div className="container mx-auto px-6 space-y-32">
+        <HomeFeaturedGalleries /> {/* Замість HomeNews */}
+        <HomeMapView />
+        <HomeAbout />
+      </div>
     </div>
   );
 };

@@ -36,11 +36,17 @@ function App() {
 
           {/* ===== Protected routes ===== */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/profile" element={<ProfilePage />} />
-
-            {/* Settings layout route */}
-            <Route path="/settings" element={<SettingsPage />}>
-              <Route path="password" element={<ChangePasswordPage />} />
+            {/* Об'єднуємо все під спільним лейаутом SettingsLayout */}
+            <Route element={<SettingsPage />}>
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route
+                path="/settings"
+                element={<div>Тут будуть загальні налаштування</div>}
+              />
+              <Route
+                path="/settings/password"
+                element={<ChangePasswordPage />}
+              />
             </Route>
           </Route>
 
