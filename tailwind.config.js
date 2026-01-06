@@ -5,7 +5,17 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+      scan: {
+        '0%': { transform: 'translateY(-100vh)' },
+        '100%': { transform: 'translateY(100vh)' },
+      }
+    },
+    animation: {
+      scan: 'scan 10s linear infinite',
+    }
+    },
   },
   plugins: [],
 }

@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useRef, useState } from "react";
-import { User, Settings, LogOut, ChevronDown, Search } from "lucide-react";
+// Додав Bookmark до імпорту
+import { User, Settings, LogOut, ChevronDown, Search, Bookmark } from "lucide-react";
 
 const Header = () => {
   const { user, isLoading, logout } = useAuth();
@@ -22,7 +23,6 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.08)]">
       <div className="container mx-auto px-6 h-[76px] flex items-center justify-between">
-        
         {/* 1. ЛІВА ЧАСТИНА: Лого */}
         <div className="flex-1 flex justify-start">
           <Link
@@ -42,8 +42,6 @@ const Header = () => {
 
         {/* 3. ПРАВА ЧАСТИНА: Пошук + Авторизація */}
         <div className="flex-1 flex items-center gap-6 justify-end">
-          
-          {/* Пошук з глибокою розсіяною тінню */}
           <div className="relative group hidden md:block max-w-[240px] w-full">
             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-black transition-colors">
               <Search size={16} strokeWidth={2.5} />
@@ -53,7 +51,6 @@ const Header = () => {
               placeholder="Пошук..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              // Тінь стала темнішою (0.1) та значно розсіянішою (40px blur)
               className="w-full bg-white border border-gray-50 rounded-2xl pl-10 pr-4 py-2 text-xs font-semibold outline-none placeholder:text-gray-400 text-neutral-800 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.1)] focus:shadow-[0_15px_40px_-5px_rgba(0,0,0,0.12)] transition-shadow"
             />
           </div>
@@ -61,7 +58,6 @@ const Header = () => {
           <div className="relative" ref={menuRef}>
             {isLoading ? null : user ? (
               <>
-                {/* Кнопка профілю як об'ємна плашка */}
                 <button
                   onClick={() => setOpen((v) => !v)}
                   className={`flex items-center gap-2 px-2 py-1.5 rounded-xl transition-all border border-gray-50 shadow-[0_8px_25px_-5px_rgba(0,0,0,0.08)] ${
@@ -80,7 +76,6 @@ const Header = () => {
                   />
                 </button>
 
-                {/* Dropdown з максимальною глибиною */}
                 {open && (
                   <div className="absolute right-0 top-full mt-4 w-64 bg-white/95 backdrop-blur-2xl border border-gray-50 rounded-[24px] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] py-3 animate-in fade-in zoom-in-95 duration-300 origin-top-right">
                     <div className="px-5 py-3 mb-2">
@@ -94,8 +89,25 @@ const Header = () => {
                     </div>
 
                     <div className="px-2 space-y-1">
-                      <MenuLink to="/profile" icon={<User size={18} strokeWidth={1.5} />} label="Мій профіль" onClick={() => setOpen(false)} />
-                      <MenuLink to="/settings" icon={<Settings size={18} strokeWidth={1.5} />} label="Налаштування" onClick={() => setOpen(false)} />
+                      <MenuLink
+                        to="/profile"
+                        icon={<User size={18} strokeWidth={1.5} />}
+                        label="Мій профіль"
+                        onClick={() => setOpen(false)}
+                      />
+                      {/* НОВА КНОПКА */}
+                      <MenuLink
+                        to="/settings/archive"
+                        icon={<Bookmark size={18} strokeWidth={1.5} />}
+                        label="Збережені галереї"
+                        onClick={() => setOpen(false)}
+                      />
+                      <MenuLink
+                        to="/settings"
+                        icon={<Settings size={18} strokeWidth={1.5} />}
+                        label="Налаштування"
+                        onClick={() => setOpen(false)}
+                      />
                     </div>
 
                     <div className="mx-5 my-3 border-t border-gray-50" />
@@ -115,7 +127,7 @@ const Header = () => {
             ) : (
               <Link
                 to="/login"
-                className="px-5 py-2 text-xs font-black uppercase tracking-widest rounded-xl text-white bg-black hover:bg-neutral-800 transition-all shadow-[0_15px_35px_-10px_rgba(0,0,0,0.3)]"
+                className="px-6 py-2 text-[11px] font-bold uppercase tracking-[0.2em] rounded-xl text-zinc-800 bg-transparent border border-zinc-300 hover:border-zinc-800 hover:bg-zinc-800 hover:text-white transition-all duration-300"
               >
                 Log In
               </Link>

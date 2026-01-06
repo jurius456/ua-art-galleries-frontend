@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { User, Lock, Settings as SettingsIcon } from "lucide-react";
+import { User, Lock, Settings as SettingsIcon, Bookmark } from "lucide-react";
 
 const SettingsSidebar = () => {
   const location = useLocation();
@@ -8,6 +8,8 @@ const SettingsSidebar = () => {
     { path: "/profile", label: "Профіль", icon: <User size={20} /> },
     { path: "/settings", label: "Налаштування", icon: <SettingsIcon size={20} /> },
     { path: "/settings/password", label: "Безпека", icon: <Lock size={20} /> },
+    // Нова вкладка для вподобаного
+    { path: "/settings/archive", label: "Мій Архів", icon: <Bookmark size={20} /> },
   ];
 
   return (
