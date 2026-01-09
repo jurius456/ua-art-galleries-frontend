@@ -181,6 +181,7 @@ const AuthPage = () => {
               value={formData.email}
               onChange={handleChange}
               error={errors.email}
+              
             />
           )}
 
