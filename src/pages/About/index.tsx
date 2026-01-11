@@ -40,9 +40,14 @@ const AboutPage = () => {
         </div>
         
         <div className="grid md:grid-cols-3 gap-8">
-          <TeamMember initial="R" name="Роман Масляна" role="Frontend Lead / PM" bio="Архітектура React та управління проєктом." />
-          <TeamMember initial="A" name="Андрійович" role="Backend Lead" bio="Розробка API на Django та логіка баз даних." />
-          <TeamMember initial="S" name="Студент QA" role="QA Engineer" bio="Тестування та стабільність системи." />
+          <TeamMember initial="R" name="Роман" role="Frontend Lead / PM" bio="Архітектура React та управління проєктом." />
+          <TeamMember initial="A" name="Назар" role="Backend Lead" bio="Розробка API на Django та логіка баз даних." />
+          <TeamMember initial="S" name="Ростислав" role="QA Engineer" bio="Тестування та стабільність системи." />
+          <TeamMember initial="S" name="Данило" role="QA Engineer" bio="Тестування та стабільність системи." />
+          <TeamMember initial="S" name="Олександр" role="QA Engineer" bio="Тестування та стабільність системи." />
+          <TeamMember initial="S" name="Стас" role="QA Engineer" bio="Тестування та стабільність системи." />
+          <TeamMember initial="S" name="Дмитро" role="QA Engineer" bio="Тестування та стабільність системи." />
+          <TeamMember initial="S" name="Михайло" role="QA Engineer" bio="Тестування та стабільність системи." />
         </div>
       </section>
 
