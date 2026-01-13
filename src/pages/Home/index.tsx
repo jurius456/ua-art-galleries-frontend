@@ -1,5 +1,4 @@
 // src/pages/Home/index.tsx
-import React from 'react';
 import HomeHero from '../../components/home/HomeHero.tsx';
 import HomeFeaturedGalleries from '../../components/home/HomeFeaturedGalleries.tsx';
 import HomeMapView from '../../components/home/HomeMapView.tsx';

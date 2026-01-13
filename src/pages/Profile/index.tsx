@@ -1,4 +1,3 @@
-import React from 'react';
 import { LogOut, ShieldCheck, User, Mail, AtSign } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";

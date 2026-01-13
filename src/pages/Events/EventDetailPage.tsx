@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
-  Calendar, MapPin, Clock, ArrowLeft, 
-  Ticket, Info, Share2, Landmark, 
+  MapPin, Clock, ArrowLeft, 
+  Ticket, Info, Share2, 
   Users, Bell, ExternalLink 
 } from 'lucide-react';
 

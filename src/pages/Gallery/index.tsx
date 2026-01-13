@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
-  MapPin, Info, Calendar, ArrowLeft, 
-  Phone, Mail, Award, Landmark, Clock,
-  Coffee, Ticket, ShieldCheck, Accessibility
+  MapPin, ArrowLeft, Clock,
+  Coffee, ShieldCheck, Accessibility
 } from 'lucide-react';
 
 const MOCK_DETAILS_DATA = {

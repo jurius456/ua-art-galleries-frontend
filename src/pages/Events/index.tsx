@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { 
-  Search, MapPin, Filter, Calendar, LayoutGrid, 
-  ChevronDown, ArrowRight, Sparkles 
+  Search, Filter, Calendar, LayoutGrid, 
+   ArrowRight, Sparkles 
 } from "lucide-react";
 
 export type EventCategory = "Виставка" | "Воркшоп" | "Відкриття" | "Лекція";

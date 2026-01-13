@@ -1,5 +1,5 @@
 import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const SLIDES = [
   { id: 1, title: 'Відкрийте нове мистецтво', subtitle: 'Досліджуйте українські галереї', color: 'from-zinc-900 to-zinc-800' },

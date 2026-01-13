@@ -1,4 +1,3 @@
-import React from 'react';
 import { Target, Users, Map, Mail, Handshake } from 'lucide-react';
 
 const HomeAbout = () => {

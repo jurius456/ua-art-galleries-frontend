@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { MapPin, ArrowRight, Heart, LayoutGrid, Maximize2 } from 'lucide-react';
+import { useState } from 'react';
+import { MapPin, ArrowRight, Heart, Maximize2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet'; 

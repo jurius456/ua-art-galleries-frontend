@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Globe, Moon, Bell, ChevronRight, Monitor } from "lucide-react";
+import { Globe, Bell, ChevronRight, Monitor } from "lucide-react";
 
 const GeneralSettingsPage = () => {
   return (
