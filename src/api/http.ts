@@ -56,11 +56,11 @@ export type Me = {
 };
 
 export function getMe() {
-  return http<Me>('/auth/user/', { auth: true });
+  return http<Me>('/auth/user', { auth: true });
 }
 
 export function login(username: string, password: string) {
-  return http<{ access: string }>('/auth/login/', {
+  return http<{ access: string }>('/auth/login', {
     method: 'POST',
     body: { username, password },
   });
@@ -72,7 +72,7 @@ export function register(payload: {
   password: string;
   password2?: string;
 }) {
-  return http<{ access: string }>('/auth/register/', {
+  return http<{ access: string }>('/auth/register', {
     method: 'POST',
     body: payload,
   });

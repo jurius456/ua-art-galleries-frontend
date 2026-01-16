@@ -1,109 +1,70 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-interface Gallery {
-  id: number;
-  name_ua: string;
-  name_en: string;
-  image?: string;
-}
+type Favorite = {
+  id: string;
+  name: string;
+  slug: string;
+};
 
 interface FavoritesContextType {
-  favorites: number[]; 
-  galleryItems: Gallery[];
-  toggleFavorite: (gallery: any) => Promise<void>;
-  isFavorite: (galleryId: number, galleryName?: string) => boolean;
-  loading: boolean;
+  favorites: Favorite[];
+  toggleFavorite: (gallery: Favorite) => void;
+  isFavorite: (id: string) => boolean;
 }
 
-const API_URL = "http://localhost:8000/api/galleries/";
-const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
+const FavoritesContext = createContext<FavoritesContextType | undefined>(
+  undefined
+);
 
-export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [favorites, setFavorites] = useState<number[]>([]);
-  const [galleryItems, setGalleryItems] = useState<Gallery[]>([]);
-  const [loading, setLoading] = useState(true);
+const STORAGE_KEY = "ua-art-galleries-favorites";
 
-  // 1. Завантаження даних при старті
+// 🔑 СИНХРОННЕ ЗЧИТУВАННЯ (КЛЮЧ)
+function loadInitialFavorites(): Favorite[] {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
+export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [favorites, setFavorites] = useState<Favorite[]>(loadInitialFavorites);
+
+  // 🔁 ЗБЕРІГАННЯ (без race condition)
   useEffect(() => {
-    const fetchFavorites = async () => {
-      try {
-        const response = await fetch(API_URL);
-        if (response.ok) {
-          const data: Gallery[] = await response.json();
-          setGalleryItems(data);
-          // Зберігаємо ID з бази
-          setFavorites(data.map((item) => item.id));
-        }
-      } catch (error) {
-        console.error("Помилка завантаження:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchFavorites();
-  }, []);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+  }, [favorites]);
 
-  // 2. Гнучка перевірка "Обраного"
-  const isFavorite = (galleryId: number, galleryName?: string) => {
-    // Перевіряємо або за ID (якщо воно з бази), 
-    // або за назвою (якщо це локальний мок)
-    return galleryItems.some(item => 
-      item.id === galleryId || (galleryName && item.name_ua === galleryName)
-    );
+  const isFavorite = (id: string) => {
+    return favorites.some((f) => f.id === id);
   };
 
-  const toggleFavorite = async (gallery: any) => {
-    const galleryName = gallery.name || gallery.name_ua;
-    
-    // Шукаємо, чи є вже така галерея в базі (за назвою)
-    const existingInDb = galleryItems.find(item => item.name_ua === galleryName);
-
-    if (existingInDb) {
-      // ВИДАЛЕННЯ: використовуємо ID саме з бази даних
-      try {
-        const response = await fetch(`${API_URL}${existingInDb.id}/`, { method: "DELETE" });
-        if (response.ok) {
-          setFavorites(prev => prev.filter(id => id !== existingInDb.id));
-          setGalleryItems(prev => prev.filter(item => item.id !== existingInDb.id));
-        }
-      } catch (error) {
-        console.error("Помилка видалення:", error);
+  const toggleFavorite = (gallery: Favorite) => {
+    setFavorites((prev) => {
+      const exists = prev.some((f) => f.id === gallery.id);
+      if (exists) {
+        return prev.filter((f) => f.id !== gallery.id);
       }
-    } else {
-      // ДОДАВАННЯ
-      const payload = {
-        name_ua: galleryName,
-        name_en: gallery.slug || gallery.name_en,
-      };
-
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-
-        if (response.ok) {
-          const newGallery = await response.json();
-          // Оновлюємо стейт новими даними з бази
-          setFavorites(prev => [...prev, newGallery.id]);
-          setGalleryItems(prev => [...prev, newGallery]);
-        }
-      } catch (error) {
-        console.error("Помилка мережі:", error);
-      }
-    }
+      return [...prev, gallery];
+    });
   };
 
   return (
-    <FavoritesContext.Provider value={{ favorites, galleryItems, toggleFavorite, isFavorite, loading }}>
+    <FavoritesContext.Provider
+      value={{ favorites, toggleFavorite, isFavorite }}
+    >
       {children}
     </FavoritesContext.Provider>
   );
 };
 
 export const useFavorites = () => {
-  const context = useContext(FavoritesContext);
-  if (!context) throw new Error("useFavorites must be used within a FavoritesProvider");
-  return context;
+  const ctx = useContext(FavoritesContext);
+  if (!ctx) {
+    throw new Error("useFavorites must be used within FavoritesProvider");
+  }
+  return ctx;
 };
