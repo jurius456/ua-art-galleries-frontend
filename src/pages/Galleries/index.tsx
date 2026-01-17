@@ -11,7 +11,7 @@ const GalleriesPage = () => {
   const { data: galleries = [], isLoading } = useGalleriesQuery();
   const { isFavorite, toggleFavorite } = useFavorites();
 
-  const [search, setSearch] = useState("");
+  const [search, ] = useState("");
   const [city, setCity] = useState("Усі міста");
   const [page, setPage] = useState(1);
 
