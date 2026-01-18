@@ -1,4 +1,5 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // у тебе = http://127.0.0.1:8000/api
+console.log("API_BASE_URL =", import.meta.env.VITE_API_BASE_URL);
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
