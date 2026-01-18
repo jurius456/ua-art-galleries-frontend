@@ -12,7 +12,24 @@ export type Gallery = {
   year: number | null;
 };
 
-// GET /api/galleries
+export type GalleryDetail = Gallery & {
+  description: any;
+  founders?: string;
+  curators?: string;
+  artists?: string[];
+  contacts?: {
+    email?: string;
+    phone?: string;
+    website?: string;
+  };
+};
+
+// GET /api/galleries/
 export function fetchGalleries() {
-  return http<Gallery[]>("/galleries");
+  return http<Gallery[]>("/api/galleries/");
+}
+
+// GET /api/galleries/:slug/
+export function fetchGalleryBySlug(slug: string) {
+  return http<GalleryDetail>(`/api/galleries/${slug}/`);
 }

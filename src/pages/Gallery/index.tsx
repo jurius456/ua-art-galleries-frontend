@@ -3,33 +3,12 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-
-type GalleryDetail = {
-  id: string;
-  name: string;
-  slug: string;
-  city: string;
-  address: string;
-  image: string | null;
-  socials: any[];
-  short_desc: string;
-  year: number | null;
-
-  description: any;
-  founders: string;
-  curators: string;
-  artists: string[];
-  contacts: {
-    email: string;
-    phone: string;
-    website: string;
-  };
-};
+import { fetchGalleryBySlug } from "../../api/galleries";
+import type { GalleryDetail } from "../../api/galleries";
 
 const GalleryPage = () => {
   const { slug } = useParams<{ slug: string }>();
+
   const [gallery, setGallery] = useState<GalleryDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -44,20 +23,10 @@ const GalleryPage = () => {
     setLoading(true);
     setError(false);
 
-    fetch(`${API_BASE_URL}/api/galleries/${slug}/`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Not found");
-        return res.json();
-      })
-      .then((data) => {
-        setGallery(data);
-      })
-      .catch(() => {
-        setError(true);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    fetchGalleryBySlug(slug)
+      .then(setGallery)
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
   }, [slug]);
 
   if (loading) {
@@ -85,19 +54,17 @@ const GalleryPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-transparent pb-32 animate-in fade-in duration-700">
+    <div className="min-h-screen pb-32">
       <div className="container mx-auto px-6 max-w-6xl pt-12">
-        {/* BACK */}
         <Link
           to="/galleries"
-          className="group flex items-center gap-3 text-zinc-400 hover:text-zinc-800 transition-all text-[10px] font-black uppercase tracking-widest mb-16"
+          className="group flex items-center gap-3 text-zinc-400 hover:text-zinc-800 text-[10px] font-black uppercase tracking-widest mb-16"
         >
           <ArrowLeft size={14} />
           Архів галерей
         </Link>
 
-        {/* TITLE */}
-        <h1 className="text-5xl md:text-7xl font-black text-zinc-800 tracking-tighter uppercase mb-4">
+        <h1 className="text-5xl md:text-7xl font-black text-zinc-800 uppercase mb-4">
           {gallery.name}
         </h1>
 
@@ -106,10 +73,9 @@ const GalleryPage = () => {
         </p>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
-          {/* LEFT */}
           <div className="lg:col-span-7 space-y-10">
             {gallery.short_desc && (
-              <p className="text-xl text-zinc-600 leading-relaxed">
+              <p className="text-xl text-zinc-600">
                 {gallery.short_desc}
               </p>
             )}
@@ -121,39 +87,31 @@ const GalleryPage = () => {
             )}
           </div>
 
-          {/* RIGHT */}
           <aside className="lg:col-span-5">
-            <div className="bg-white border border-zinc-100 rounded-[40px] p-10 space-y-8 shadow-sm">
+            <div className="bg-white rounded-[40px] p-10 space-y-8 shadow-sm">
               <div>
-                <p className="text-[9px] font-black uppercase text-zinc-400 tracking-widest">
+                <p className="text-[9px] font-black uppercase text-zinc-400">
                   Засновано
                 </p>
-                <p className="text-3xl font-black text-zinc-800">
+                <p className="text-3xl font-black">
                   {gallery.year ?? "—"}
                 </p>
               </div>
 
-              <div className="flex items-center gap-3 text-zinc-800 font-bold text-sm">
+              <div className="flex items-center gap-3 font-bold">
                 <MapPin size={16} />
                 {gallery.address}
               </div>
 
-              <div className="space-y-3 pt-6 border-t border-zinc-100">
-                <p className="text-[9px] font-black uppercase text-zinc-400 tracking-widest">
-                  Контакти
-                </p>
-                {gallery.contacts.email && (
-                  <p className="text-sm">{gallery.contacts.email}</p>
-                )}
-                {gallery.contacts.phone && (
-                  <p className="text-sm">{gallery.contacts.phone}</p>
-                )}
-                {gallery.contacts.website && (
+              <div className="space-y-2 pt-6 border-t">
+                {gallery.contacts?.email && <p>{gallery.contacts.email}</p>}
+                {gallery.contacts?.phone && <p>{gallery.contacts.phone}</p>}
+                {gallery.contacts?.website && (
                   <a
                     href={gallery.contacts.website}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-sm text-blue-600"
+                    className="text-blue-600"
                   >
                     Website
                   </a>

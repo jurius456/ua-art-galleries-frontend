@@ -1,10 +1,9 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // у тебе = http://127.0.0.1:8000/api
-console.log("API_BASE_URL =", import.meta.env.VITE_API_BASE_URL);
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 function getToken() {
-  return localStorage.getItem('authToken');
+  return localStorage.getItem("authToken");
 }
 
 export async function http<T>(
@@ -12,12 +11,13 @@ export async function http<T>(
   options: {
     method?: HttpMethod;
     body?: unknown;
-    auth?: boolean; // якщо true — додасть Bearer
+    auth?: boolean;
   } = {}
 ): Promise<T> {
-  const method = options.method ?? 'GET';
+  const method = options.method ?? "GET";
+
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   };
 
   if (options.auth) {
@@ -31,9 +31,9 @@ export async function http<T>(
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
 
-  // якщо бекенд повертає HTML (помилка/дебаг), це теж зловимо
   const text = await res.text();
   let data: any = null;
+
   try {
     data = text ? JSON.parse(text) : null;
   } catch {
@@ -41,40 +41,8 @@ export async function http<T>(
   }
 
   if (!res.ok) {
-    const msg = data?.detail || `HTTP ${res.status}`;
-    throw new Error(msg);
+    throw new Error(data?.detail || `HTTP ${res.status}`);
   }
 
   return data as T;
-}
-
-export type Me = {
-  id: number;
-  username: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-};
-
-export function getMe() {
-  return http<Me>('/auth/user', { auth: true });
-}
-
-export function login(username: string, password: string) {
-  return http<{ access: string }>('/auth/login', {
-    method: 'POST',
-    body: { username, password },
-  });
-}
-
-export function register(payload: {
-  username: string;
-  email?: string;
-  password: string;
-  password2?: string;
-}) {
-  return http<{ access: string }>('/auth/register', {
-    method: 'POST',
-    body: payload,
-  });
 }
