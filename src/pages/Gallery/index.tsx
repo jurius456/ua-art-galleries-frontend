@@ -3,6 +3,9 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+
 type GalleryDetail = {
   id: string;
   name: string;
@@ -41,7 +44,7 @@ const GalleryPage = () => {
     setLoading(true);
     setError(false);
 
-    fetch(`http://localhost:8000/api/galleries/${slug}/`)
+    fetch(`${API_BASE_URL}/api/galleries/${slug}/`)
       .then((res) => {
         if (!res.ok) throw new Error("Not found");
         return res.json();
