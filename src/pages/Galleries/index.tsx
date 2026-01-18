@@ -11,33 +11,35 @@ const GalleriesPage = () => {
   const { data: galleries = [], isLoading } = useGalleriesQuery();
   const { isFavorite, toggleFavorite } = useFavorites();
 
-  const [search, ] = useState("");
-  const [city, setCity] = useState("Усі міста");
+  const [search, setSearch] = useState("");
+  const [city, setCity] = useState("all");
   const [page, setPage] = useState(1);
 
-  /* ---------- FILTERS ---------- */
-
+  /* ---------- CITIES ---------- */
   const cities = useMemo(() => {
-    const unique = Array.from(new Set(galleries.map((g) => g.city)));
-    return ["Усі міста", ...unique];
+    const unique = Array.from(
+      new Set(galleries.map((g) => g.city).filter(Boolean))
+    );
+    return unique;
   }, [galleries]);
 
+  /* ---------- FILTERING ---------- */
   const filtered = useMemo(() => {
-    const q = search.toLowerCase();
+    const q = search.trim().toLowerCase();
 
     return galleries.filter((g) => {
       const matchSearch =
+        !q ||
         g.name.toLowerCase().includes(q) ||
         g.city.toLowerCase().includes(q);
 
-      const matchCity = city === "Усі міста" || g.city === city;
+      const matchCity = city === "all" || g.city === city;
 
       return matchSearch && matchCity;
     });
   }, [galleries, search, city]);
 
   /* ---------- PAGINATION ---------- */
-
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
 
   const visible = filtered.slice(
@@ -54,12 +56,12 @@ const GalleriesPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-transparent pb-32 ">
+    <div className="min-h-screen pb-32">
       {/* ---------- HEADER ---------- */}
-      <div className="pt-28 pb-16 ">
-        <div className="max-w-6xl mx-auto px-6 space-y-10">
-          <h1 className="text-5xl font-black uppercase tracking-tight ">
-            Каталог <span className="text-zinc-400 ">галерей</span>
+      <div className="pt-32 pb-20">
+        <div className="max-w-6xl mx-auto px-6 space-y-12">
+          <h1 className="text-5xl font-black uppercase tracking-tight">
+            Каталог <span className="text-zinc-400">галерей</span>
           </h1>
 
           {/* SEARCH + CITY */}
@@ -68,31 +70,29 @@ const GalleriesPage = () => {
             <div className="relative flex-1">
               <Search
                 size={18}
-                className="
-                  absolute
-                  left-6
-                  top-1/2
-                  -translate-y-1/2
-                  text-zinc-400
-                  pointer-events-none
-                "
+                className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
               />
 
               <input
-                  className="
-                    w-full
-                    h-[56px]
-                    rounded-2xl
-                    border
-                    border-zinc-200
-                    pl-[56px]
-                    pr-6
-                    text-[15px]
-                    flex items-center
-                    outline-none
-                    focus:border-zinc-900
-                  "
-                />
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+                placeholder="Пошук за назвою або містом"
+                className="
+                  w-full
+                  h-[56px]
+                  rounded-2xl
+                  border
+                  border-zinc-200
+                  pl-[52px]
+                  pr-6
+                  text-[15px]
+                  outline-none
+                  focus:border-zinc-900
+                "
+              />
             </div>
 
             {/* CITY */}
@@ -114,8 +114,11 @@ const GalleriesPage = () => {
                 focus:border-zinc-900
               "
             >
+              <option value="all">Усі міста</option>
               {cities.map((c) => (
-                <option key={c}>{c}</option>
+                <option key={c} value={c}>
+                  {c}
+                </option>
               ))}
             </select>
           </div>
@@ -127,7 +130,7 @@ const GalleriesPage = () => {
         Знайдено: {filtered.length}
       </div>
 
-      {/* GRID (НЕ ЧІПАВ) */}
+      {/* GRID */}
       <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         {visible.map((gallery) => (
           <GalleryCard
@@ -145,7 +148,7 @@ const GalleriesPage = () => {
         ))}
       </div>
 
-      {/* PAGINATION (НЕ ЧІПАВ) */}
+      {/* PAGINATION */}
       {totalPages > 1 && (
         <div className="mt-20 flex justify-center items-center gap-4">
           <button
@@ -183,7 +186,7 @@ const GalleriesPage = () => {
   );
 };
 
-/* ---------- CARD (НЕ ЧІПАВ) ---------- */
+/* ---------- CARD ---------- */
 
 const GalleryCard = ({
   gallery,
