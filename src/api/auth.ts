@@ -8,6 +8,8 @@ export type UserDTO = {
   last_name: string;
 };
 
+// --- Утиліти для роботи з токеном ---
+
 export function getToken() {
   return localStorage.getItem("authToken");
 }
@@ -20,19 +22,26 @@ export function clearToken() {
   localStorage.removeItem("authToken");
 }
 
+// --- Функції запитів до API ---
+
 export async function login(payload: {
   username: string;
   password: string;
 }) {
-  const res = await fetch(`${API_BASE_URL}/auth/login/`, {
+  // Додано /api/ перед /auth/ для відповідності Django urls.py
+  const res = await fetch(`${API_BASE_URL}/api/auth/login/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data?.detail || "Login error");
+  
+  if (!res.ok) {
+    throw new Error(data?.detail || "Помилка входу");
+  }
 
+  // Повертаємо access токен, який приходить від Django
   return data.access as string;
 }
 
@@ -44,21 +53,31 @@ export async function register(payload: {
   first_name?: string;
   last_name?: string;
 }) {
-  const res = await fetch(`${API_BASE_URL}/auth/register/`, {
+  // Додано /api/ перед /auth/ для виправлення помилки 404
+  const res = await fetch(`${API_BASE_URL}/api/auth/register/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data?.detail || "Register error");
+  
+  if (!res.ok) {
+    // Якщо бекенд повернув помилку (наприклад, користувач вже існує)
+    throw new Error(data?.detail || "Помилка реєстрації");
+  }
 
   return data.access as string;
 }
 
 export async function fetchMe(token: string): Promise<UserDTO> {
-  const res = await fetch(`${API_BASE_URL}/auth/user/`, {
-    headers: { Authorization: `Bearer ${token}` },
+  // Додано /api/ перед /auth/
+  const res = await fetch(`${API_BASE_URL}/api/auth/user/`, {
+    method: "GET",
+    headers: { 
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}` 
+    },
   });
 
   if (res.status === 401 || res.status === 403) {
@@ -66,7 +85,10 @@ export async function fetchMe(token: string): Promise<UserDTO> {
   }
 
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error("Failed to fetch user");
+  
+  if (!res.ok) {
+    throw new Error("Не вдалося завантажити дані профілю");
+  }
 
   return data as UserDTO;
 }
