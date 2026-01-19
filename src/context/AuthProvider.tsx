@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    fetch(`${API_BASE_URL}/auth/user/`, {
+    fetch(`${API_BASE_URL}/api/auth/user/`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = async (token: string) => {
     localStorage.setItem("authToken", token);
 
-    const res = await fetch(`${API_BASE_URL}/auth/user/`, {
+    const res = await fetch(`${API_BASE_URL}/api/auth/user/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
