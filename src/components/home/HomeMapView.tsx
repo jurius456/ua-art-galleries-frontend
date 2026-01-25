@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 import { MapPin, ArrowRight, ZoomOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
@@ -8,20 +8,12 @@ import {
   Popup,
   useMap,
 } from 'react-leaflet';
+// @ts-ignore
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-
-/* ===================== DATA (заглушки) ===================== */
-
-const GALLERIES = [
-  { id: 1, slug: 'halereya-kuznya', name: 'Галерея Кузня', city: 'Київ', coords: [50.4633, 30.513], type: 'Contemporary' },
-  { id: 2, slug: 'pinchuk-art-centre', name: 'PinchukArtCentre', city: 'Київ', coords: [50.4411, 30.5208], type: 'Contemporary' },
-  { id: 3, slug: 'the-naked-room', name: 'The Naked Room', city: 'Київ', coords: [50.4531, 30.5115], type: 'Photo' },
-  { id: 4, slug: 'art-svit', name: 'Арт-центр Світ', city: 'Львів', coords: [49.8397, 24.0297], type: 'Classic' },
-  { id: 5, slug: 'museum-ssm', name: 'Музей ССМ', city: 'Одеса', coords: [46.4825, 30.7233], type: 'Classic' },
-  { id: 6, slug: 'ya-gallery', name: 'Я Галерея', city: 'Львів', coords: [49.8324, 24.0351], type: 'Mix' },
-];
+import { useGalleriesQuery } from '../../hooks/useGalleriesQuery';
+import type { Gallery } from '../../api/galleries';
 
 /* ===================== MAP CONSTANTS ===================== */
 
@@ -95,6 +87,16 @@ const createClusterIcon = (cluster: any) => {
 
 const HomeMapView = () => {
   const mapRef = useRef<L.Map | null>(null);
+  const { data: galleries = [] } = useGalleriesQuery();
+
+  const points = useMemo(() => {
+    return (galleries as Gallery[])
+      .filter((g) => g.latitude && g.longitude)
+      .map((g) => ({
+        ...g,
+        coords: [g.latitude!, g.longitude!] as [number, number],
+      }));
+  }, [galleries]);
 
   const zoomOut = () => {
     mapRef.current?.setView(INITIAL_CENTER, INITIAL_ZOOM, { animate: true });
@@ -142,23 +144,25 @@ const HomeMapView = () => {
               chunkedLoading
               iconCreateFunction={createClusterIcon}
             >
-              {GALLERIES.map((g) => (
+              {points.map((g) => (
                 <Marker
                   key={g.id}
-                  position={g.coords as [number, number]}
+                  position={g.coords}
                   icon={galleryIcon}
                   eventHandlers={{
                     click: (e) => {
-                      zoomToGallery(g.coords as [number, number]);
+                      zoomToGallery(g.coords);
                       e.target.openPopup();
                     },
                   }}
                 >
                   <Popup closeButton={false}>
                     <div className="p-4 space-y-3 min-w-[220px]">
-                      <span className="text-[8px] font-black uppercase text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
-                        {g.type}
-                      </span>
+                      {/* 
+                         У мок-даних був 'type'. В реальних даних його немає.
+                         Можна вивести першу літеру назви або прибрати цей бейдж.
+                         Поки приберемо або замінимо на city, якщо хочеться.
+                      */}
 
                       <div>
                         <h4 className="font-black text-zinc-800">{g.name}</h4>

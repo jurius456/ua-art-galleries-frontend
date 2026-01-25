@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { AuthContext, type User } from "./AuthContext";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { fetchMe } from "../api/auth";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -17,13 +16,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    fetch(`${API_BASE_URL}/api/auth/user/`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
+    fetchMe()
       .then(setUser)
       .catch(() => {
         localStorage.removeItem("authToken");
@@ -37,17 +30,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = async (token: string) => {
     localStorage.setItem("authToken", token);
 
-    const res = await fetch(`${API_BASE_URL}/api/auth/user/`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (!res.ok) {
+    try {
+      const data = await fetchMe();
+      setUser(data);
+    } catch {
       localStorage.removeItem("authToken");
       throw new Error("Invalid token");
     }
-
-    const data = await res.json();
-    setUser(data);
   };
 
   const logout = () => {

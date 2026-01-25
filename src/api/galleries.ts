@@ -10,6 +10,8 @@ export type Gallery = {
   socials: { platform: string; url: string }[];
   short_desc: string;
   year: number | null;
+  latitude?: number;
+  longitude?: number;
 };
 
 export type GalleryDetail = Gallery & {
