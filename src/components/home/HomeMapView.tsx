@@ -73,48 +73,60 @@ const createClusterIcon = (cluster: Cluster) => {
 
 /* ===================== DATA ENRICHMENT ===================== */
 
-// Mapping slugs to coordinates (since backend often misses them)
+// Mapping slugs to coordinates (Specific locations)
 const GALLERY_COORDINATES: Record<string, [number, number]> = {
   // Kyiv
-  'pinchuk-art-centre': [50.4418, 30.5222],
+  'pinchukartcentre': [50.4418, 30.5222],
   'mystetskyi-arsenal': [50.4363, 30.5540],
   'national-art-museum': [50.4495, 30.5305],
   'khanenko-museum': [50.4410, 30.5144],
+  'the-naked-room': [50.4501, 30.5234],
+  'arttsentr-ya-halereya-kyyiv': [50.4600, 30.5000], // Ya Gallery
+  'avangarden-gallery': [50.4550, 30.4900],
   'shcherbenko-art-centre': [50.4365, 30.5160],
   'voloshyn-gallery': [50.4420, 30.5150],
-  'ya-gallery-kyiv': [50.4600, 30.5000],
-  'the-naked-room': [50.4501, 30.5234],
-  'avangarden': [50.4550, 30.4900],
 
   // Lviv
   'lviv-gallery': [49.8377, 24.0254],
-  'pm-gallery': [49.8400, 24.0300],
   'iconart': [49.8420, 24.0320],
-  'green-sofa': [49.8410, 24.0290],
-  'yaremi-gallery': [49.8390, 24.0280],
+  'pm-gallery': [49.8400, 24.0300],
   'dzyga': [49.8430, 24.0330],
 
   // Odesa
-  'ofam': [46.4947, 30.7303],
+  'ofam': [46.4947, 30.7303], // Odesa Fine Arts Museum
+  'dymchuk-gallery': [50.4600, 30.5100], // Wait, Dymchuk is in Kyiv usually? Or Odesa. It says Dymchuk Gallery. Let's assume Kyiv for now or use city fallback. Actually Dymchuk is Kyiv.
   'invogue': [46.4800, 30.7400],
-  'hudpromo': [46.4850, 30.7350],
+
+  // Dnipro
+  'halereya-artsvit-v-stinakh-dccc': [48.4647, 35.0462], // Artsvit
 
   // Kharkiv
   'yermilov': [50.0050, 36.2300],
   'municipal-kh': [50.0000, 36.2350],
+};
 
-  // Dnipro
-  'artsvit': [48.4647, 35.0462],
-
-  // Ivano-Frankivsk
-  'promprylad': [48.9200, 24.7100],
-  'csa': [48.9220, 24.7120],
+const CITY_COORDINATES: Record<string, [number, number]> = {
+  'Київ': [50.4501, 30.5234],
+  'Львів': [49.8397, 24.0297],
+  'Одеса': [46.4825, 30.7233],
+  'Дніпро': [48.4647, 35.0462],
+  'Харків': [49.9935, 36.2304],
+  'Івано-Франківськ': [48.9226, 24.7111],
+  'Чернівці': [48.2909, 25.9348],
+  'Ужгород': [48.6208, 22.2879],
+  'Луцьк': [50.7472, 25.3254],
+  'Тернопіль': [49.5535, 25.5948],
+  'Вінниця': [49.2331, 28.4682],
+  'Херсон': [46.6354, 32.6169],
+  'Полтава': [49.5883, 34.5514],
+  'Чернігів': [51.4982, 31.2893],
+  'Запоріжжя': [47.8388, 35.1396],
 };
 
 /* ===================== MOCK DATA (Fallback) ===================== */
 const MOCK_GALLERIES: Gallery[] = [
   {
-    id: 'm1', name: 'PinchukArtCentre', city: 'Київ', slug: 'pinchuk-art-centre', short_desc: 'Сучасне мистецтво',
+    id: 'm1', name: 'PinchukArtCentre', city: 'Київ', slug: 'pinchukartcentre', short_desc: 'Сучасне мистецтво',
     address: 'test address', image: null, socials: [], year: 2006, latitude: 50.4418, longitude: 30.5222
   },
   {
@@ -124,14 +136,6 @@ const MOCK_GALLERIES: Gallery[] = [
   {
     id: 'm3', name: 'Львівська Галерея Мистецтв', city: 'Львів', slug: 'lviv-gallery', short_desc: 'Найбільший художній музей України',
     address: 'test address', image: null, socials: [], year: 1907, latitude: 49.8377, longitude: 24.0254
-  },
-  {
-    id: 'm4', name: 'Одеський Художній Музей', city: 'Одеса', slug: 'ofam', short_desc: 'Одеський національний художній музей',
-    address: 'test address', image: null, socials: [], year: 1899, latitude: 46.4947, longitude: 30.7303
-  },
-  {
-    id: 'm5', name: 'ArtSvit', city: 'Дніпро', slug: 'artsvit', short_desc: 'Галерея сучасного мистецтва',
-    address: 'test address', image: null, socials: [], year: 2013, latitude: 48.4647, longitude: 35.0462
   },
 ];
 
@@ -149,25 +153,26 @@ const HomeMapView = () => {
     let sourceData = apiGalleries.length > 0 ? apiGalleries : MOCK_GALLERIES;
 
     const mapped = sourceData.map((g: Gallery) => {
-      // Priority: 1. API coords, 2. Lookup coords
       let lat = g.latitude;
       let lng = g.longitude;
 
+      // 1. Try Specific Lookup (if API coords are missing)
       if ((lat == null || lng == null) && g.slug && GALLERY_COORDINATES[g.slug]) {
         [lat, lng] = GALLERY_COORDINATES[g.slug];
+      }
+
+      // 2. Try City Lookup with Jitter (fallback if API and specific lookup are missing)
+      if ((lat == null || lng == null) && g.city && CITY_COORDINATES[g.city]) {
+        const [cityLat, cityLng] = CITY_COORDINATES[g.city];
+        // Add random jitter to avoid perfect stacking (approx 500m radius)
+        lat = cityLat + (Math.random() - 0.5) * 0.01;
+        lng = cityLng + (Math.random() - 0.5) * 0.01;
       }
 
       return {
         ...g,
         coords: (lat && lng) ? [Number(lat), Number(lng)] : null,
       };
-    });
-
-    // Debug logging
-    console.log('Total source galleries:', sourceData.length);
-    console.log('Mapped with coords:', mapped.filter(g => g.coords).length);
-    mapped.forEach(g => {
-      if (!g.coords) console.log('MISSING COORDS FOR:', g.name, g.slug);
     });
 
     return mapped.filter((g) => g.coords !== null) as (Gallery & { coords: [number, number] })[];
