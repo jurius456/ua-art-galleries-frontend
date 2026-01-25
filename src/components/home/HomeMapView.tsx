@@ -166,48 +166,43 @@ const HomeMapView = () => {
 
             <MapRefController mapRef={mapRef} />
 
-            <MarkerClusterGroup
-              chunkedLoading
-              iconCreateFunction={createClusterIcon}
-            >
-              {points.map((g) => (
-                <Marker
-                  key={g.id}
-                  position={g.coords}
-                  icon={galleryIcon}
-                  eventHandlers={{
-                    click: (e) => {
-                      zoomToGallery(g.coords);
-                      e.target.openPopup();
-                    },
-                  }}
-                >
-                  <Popup closeButton={false} className="custom-popup">
-                    <div className="p-4 space-y-3 min-w-[220px]">
-                      <div>
-                        <h4 className="font-black text-zinc-800 text-lg leading-tight">{g.name}</h4>
-                        <p className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-400 uppercase mt-1">
-                          <MapPin size={10} /> {g.city}
-                        </p>
-                      </div>
-
-                      {g.short_desc && (
-                        <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
-                          {g.short_desc}
-                        </p>
-                      )}
-
-                      <Link
-                        to={`/galleries/${g.slug}`}
-                        className="flex items-center justify-center gap-2 py-2.5 bg-zinc-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-600 transition-colors"
-                      >
-                        Відкрити <ArrowRight size={12} />
-                      </Link>
+            {points.map((g) => (
+              <Marker
+                key={g.id}
+                position={g.coords}
+                icon={galleryIcon}
+                eventHandlers={{
+                  click: (e) => {
+                    zoomToGallery(g.coords);
+                    e.target.openPopup();
+                  },
+                }}
+              >
+                <Popup closeButton={false} className="custom-popup">
+                  <div className="p-4 space-y-3 min-w-[220px]">
+                    <div>
+                      <h4 className="font-black text-zinc-800 text-lg leading-tight">{g.name}</h4>
+                      <p className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-400 uppercase mt-1">
+                        <MapPin size={10} /> {g.city}
+                      </p>
                     </div>
-                  </Popup>
-                </Marker>
-              ))}
-            </MarkerClusterGroup>
+
+                    {g.short_desc && (
+                      <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
+                        {g.short_desc}
+                      </p>
+                    )}
+
+                    <Link
+                      to={`/galleries/${g.slug}`}
+                      className="flex items-center justify-center gap-2 py-2.5 bg-zinc-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-600 transition-colors"
+                    >
+                      Відкрити <ArrowRight size={12} />
+                    </Link>
+                  </div>
+                </Popup>
+              </Marker>
+            ))}
           </MapContainer>
         </div>
       </div>
