@@ -163,6 +163,13 @@ const HomeMapView = () => {
       };
     });
 
+    // Debug logging
+    console.log('Total source galleries:', sourceData.length);
+    console.log('Mapped with coords:', mapped.filter(g => g.coords).length);
+    mapped.forEach(g => {
+      if (!g.coords) console.log('MISSING COORDS FOR:', g.name, g.slug);
+    });
+
     return mapped.filter((g) => g.coords !== null) as (Gallery & { coords: [number, number] })[];
   }, [apiGalleries]);
 
