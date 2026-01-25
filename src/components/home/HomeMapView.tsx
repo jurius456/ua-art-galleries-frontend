@@ -8,7 +8,6 @@ import {
   Popup,
   useMap,
 } from 'react-leaflet';
-// @ts-expect-error react-leaflet-cluster missing types
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
