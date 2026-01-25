@@ -93,8 +93,9 @@ const HomeMapView = () => {
   const mapRef = useRef<L.Map | null>(null);
   const { data: apiGalleries = [] } = useGalleriesQuery();
 
-  // Use API data if available, otherwise fallback to MOCK
-  const galleries = apiGalleries.length > 0 ? apiGalleries : MOCK_GALLERIES;
+  // Use API data only if it has coordinates, otherwise fallback to MOCK
+  const hasValidCoords = apiGalleries.some((g: Gallery) => g.latitude && g.longitude);
+  const galleries = hasValidCoords ? apiGalleries : MOCK_GALLERIES;
 
   const points = useMemo(() => {
     return (galleries as Gallery[])
