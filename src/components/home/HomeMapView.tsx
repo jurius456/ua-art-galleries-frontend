@@ -65,18 +65,62 @@ const createClusterIcon = (cluster: Cluster) => {
   });
 };
 
+/* ===================== MOCK DATA (Fallback) ===================== */
+// Used when API returns no data, so the user can see the map working.
+const MOCK_GALLERIES: Partial<Gallery>[] = [
+  {
+    id: '1',
+    name: 'PinchukArtCentre',
+    city: 'Київ',
+    latitude: 50.4418,
+    longitude: 30.5222,
+    slug: 'pinchuk-art-centre',
+    short_desc: 'Міжнародний центр сучасного мистецтва XXI століття.',
+  },
+  {
+    id: '2',
+    name: 'Мистецький Арсенал',
+    city: 'Київ',
+    latitude: 50.4363,
+    longitude: 30.5540,
+    slug: 'mystetskyi-arsenal',
+    short_desc: 'Флагманська культурна інституція України.',
+  },
+  {
+    id: '3',
+    name: 'Львівська Галерея Мистецтв',
+    city: 'Львів',
+    latitude: 49.8377,
+    longitude: 24.0254,
+    slug: 'lviv-gallery',
+    short_desc: 'Один з найбагатших музеїв України.',
+  },
+  {
+    id: '4',
+    name: 'Одеський Художній Музей',
+    city: 'Одеса',
+    latitude: 46.4947,
+    longitude: 30.7303,
+    slug: 'ofam',
+    short_desc: 'Художній музей у центрі Одеси.',
+  },
+];
+
 /* ===================== COMPONENT ===================== */
 
 const HomeMapView = () => {
   const mapRef = useRef<L.Map | null>(null);
-  const { data: galleries = [] } = useGalleriesQuery();
+  const { data: apiGalleries = [] } = useGalleriesQuery();
+
+  // Use API data if available, otherwise fallback to MOCK
+  const galleries = apiGalleries.length > 0 ? apiGalleries : MOCK_GALLERIES;
 
   const points = useMemo(() => {
     return (galleries as Gallery[])
       .filter((g) => g.latitude && g.longitude)
       .map((g) => ({
         ...g,
-        coords: [g.latitude!, g.longitude!] as [number, number],
+        coords: [Number(g.latitude), Number(g.longitude)] as [number, number],
       }));
   }, [galleries]);
 
