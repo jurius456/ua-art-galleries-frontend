@@ -112,11 +112,27 @@ const GALLERY_COORDINATES: Record<string, [number, number]> = {
 };
 
 /* ===================== MOCK DATA (Fallback) ===================== */
-const MOCK_GALLERIES: Partial<Gallery>[] = [
-  { id: 'm1', name: 'PinchukArtCentre', city: 'Київ', slug: 'pinchuk-art-centre', short_desc: 'Сучасне мистецтво' },
-  { id: 'm2', name: 'Львівська Галерея Мистецтв', city: 'Львів', slug: 'lviv-gallery', short_desc: 'Найбільший музей' },
-  { id: 'm3', name: 'Одеський Художній Музей', city: 'Одеса', slug: 'ofam', short_desc: 'Художній музей' },
-  { id: 'm4', name: 'ArtSvit', city: 'Дніпро', slug: 'artsvit', short_desc: 'Галерея сучасного мистецтва' },
+const MOCK_GALLERIES: Gallery[] = [
+  {
+    id: 'm1', name: 'PinchukArtCentre', city: 'Київ', slug: 'pinchuk-art-centre', short_desc: 'Сучасне мистецтво',
+    address: 'test address', image: null, socials: [], year: 2006, latitude: 50.4418, longitude: 30.5222
+  },
+  {
+    id: 'm2', name: 'Мистецький Арсенал', city: 'Київ', slug: 'mystetskyi-arsenal', short_desc: 'Культурний комплекс - Мистецький Арсенал',
+    address: 'test address', image: null, socials: [], year: 2011, latitude: 50.4363, longitude: 30.5540
+  },
+  {
+    id: 'm3', name: 'Львівська Галерея Мистецтв', city: 'Львів', slug: 'lviv-gallery', short_desc: 'Найбільший художній музей України',
+    address: 'test address', image: null, socials: [], year: 1907, latitude: 49.8377, longitude: 24.0254
+  },
+  {
+    id: 'm4', name: 'Одеський Художній Музей', city: 'Одеса', slug: 'ofam', short_desc: 'Одеський національний художній музей',
+    address: 'test address', image: null, socials: [], year: 1899, latitude: 46.4947, longitude: 30.7303
+  },
+  {
+    id: 'm5', name: 'ArtSvit', city: 'Дніпро', slug: 'artsvit', short_desc: 'Галерея сучасного мистецтва',
+    address: 'test address', image: null, socials: [], year: 2013, latitude: 48.4647, longitude: 35.0462
+  },
 ];
 
 /* ===================== COMPONENT ===================== */
@@ -130,7 +146,7 @@ const HomeMapView = () => {
   // 3. If list empty, use MOCK
 
   const points = useMemo(() => {
-    let sourceData = apiGalleries.length > 0 ? apiGalleries : (MOCK_GALLERIES as Gallery[]);
+    let sourceData = apiGalleries.length > 0 ? apiGalleries : MOCK_GALLERIES;
 
     const mapped = sourceData.map((g: Gallery) => {
       // Priority: 1. API coords, 2. Lookup coords
