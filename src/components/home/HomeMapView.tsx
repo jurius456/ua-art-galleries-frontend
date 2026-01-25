@@ -8,7 +8,6 @@ import {
   Popup,
   useMap,
 } from 'react-leaflet';
-import MarkerClusterGroup from 'react-leaflet-cluster';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useGalleriesQuery } from '../../hooks/useGalleriesQuery';
@@ -46,24 +45,6 @@ const galleryIcon = new L.DivIcon({
   iconSize: [14, 14],
   iconAnchor: [7, 7],
 });
-
-interface Cluster {
-  getChildCount: () => number;
-}
-
-const createClusterIcon = (cluster: Cluster) => {
-  const count = cluster.getChildCount();
-
-  return new L.DivIcon({
-    className: 'bg-transparent',
-    html: `
-      <div class="w-11 h-11 bg-blue-600 text-white font-black text-sm rounded-full flex items-center justify-center shadow-[0_8px_20px_rgba(37,99,235,0.45)] border-4 border-white">
-        ${count}
-      </div>
-    `,
-    iconSize: [44, 44],
-  });
-};
 
 /* ===================== MOCK DATA (Fallback) ===================== */
 // Used when API returns no data, so the user can see the map working.
