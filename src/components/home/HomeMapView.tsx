@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo } from 'react';
+import { useRef, useEffect, useMemo, type MutableRefObject } from 'react';
 import { MapPin, ArrowRight, ZoomOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
@@ -25,7 +25,7 @@ const FOCUS_ZOOM = 15;
 const MapRefController = ({
   mapRef,
 }: {
-  mapRef: React.MutableRefObject<L.Map | null>;
+  mapRef: MutableRefObject<L.Map | null>;
 }) => {
   const map = useMap();
 
@@ -171,11 +171,11 @@ const HomeMapView = () => {
 
       return {
         ...g,
-        coords: (lat && lng) ? [Number(lat), Number(lng)] : null,
+        coords: (lat && lng) ? [Number(lat), Number(lng)] as [number, number] : null,
       };
     });
 
-    return mapped.filter((g) => g.coords !== null) as (Gallery & { coords: [number, number] })[];
+    return mapped.filter((g): g is Gallery & { coords: [number, number] } => g.coords !== null);
   }, [apiGalleries]);
 
   const zoomOut = () => {

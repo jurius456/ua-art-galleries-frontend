@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { 
-  Search, Filter, Calendar, LayoutGrid, 
-   ArrowRight, Sparkles 
+import {
+  Search, Filter, Calendar, LayoutGrid,
+  ArrowRight, Sparkles
 } from "lucide-react";
 
 export type EventCategory = "Виставка" | "Воркшоп" | "Відкриття" | "Лекція";
@@ -18,7 +18,7 @@ export interface ArtEvent {
   price: string;
 }
 
-const MOCK_EVENTS: ArtEvent[] = [
+export const MOCK_EVENTS: ArtEvent[] = [
   { id: 1, title: 'Металевий дух: ретроспектива', galleryName: 'Галерея Кузня', city: 'Київ', date: '20-25 Грудня 2025', category: "Виставка", price: "Free", image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&q=80&w=800" },
   { id: 2, title: 'Digital Art Workshop', galleryName: 'PinchukArtCentre', city: 'Київ', date: '28 Грудня 2025', category: "Воркшоп", price: "Paid", image: "https://images.unsplash.com/photo-1547826039-adc3a421f8a6?auto=format&fit=crop&q=80&w=800" },
   { id: 3, title: 'Ніч у музеї ССМ', galleryName: 'Музей ССМ', city: 'Одеса', date: '30 Грудня 2025', category: "Відкриття", price: "Free", image: "https://images.unsplash.com/photo-1499781350541-7783f6c6a0c8?auto=format&fit=crop&q=80&w=800" },
@@ -33,8 +33,8 @@ const EventsPage = () => {
 
   const filtered = useMemo(() => {
     return MOCK_EVENTS.filter(e => {
-      const matchesSearch = e.title.toLowerCase().includes(search.toLowerCase()) || 
-                            e.galleryName.toLowerCase().includes(search.toLowerCase());
+      const matchesSearch = e.title.toLowerCase().includes(search.toLowerCase()) ||
+        e.galleryName.toLowerCase().includes(search.toLowerCase());
       const matchesCity = selectedCity === "Усі міста" || e.city === selectedCity;
       const matchesCategory = selectedCategory === "Усі типи" || e.category === selectedCategory;
       return matchesSearch && matchesCity && matchesCategory;
@@ -53,19 +53,18 @@ const EventsPage = () => {
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="relative flex-1">
               <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-400" />
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="Знайти виставку..."
                 className="w-full bg-white border border-zinc-200 rounded-2xl py-4 pl-14 pr-6 outline-none focus:border-zinc-800 transition-all text-base shadow-sm font-medium"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            <button 
+            <button
               onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className={`flex items-center gap-3 px-8 py-4 rounded-2xl text-xs font-bold uppercase border transition-all ${
-                isFilterOpen ? "bg-zinc-800 text-white border-zinc-800 shadow-xl" : "bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50"
-              }`}
+              className={`flex items-center gap-3 px-8 py-4 rounded-2xl text-xs font-bold uppercase border transition-all ${isFilterOpen ? "bg-zinc-800 text-white border-zinc-800 shadow-xl" : "bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50"
+                }`}
             >
               <Filter size={16} /> Фільтри
             </button>
@@ -109,8 +108,8 @@ const FilterSelect = ({ label, value, onChange, options }: any) => (
 );
 
 const EventCard = ({ event }: { event: ArtEvent }) => (
-  <Link 
-    to={`/events/${event.id}`} 
+  <Link
+    to={`/events/${event.id}`}
     className="group bg-white/80 backdrop-blur-sm border border-zinc-100 rounded-[32px] overflow-hidden hover:bg-white hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] transition-all duration-500 flex flex-col h-full"
   >
     <div className="relative h-56 bg-zinc-200 overflow-hidden">

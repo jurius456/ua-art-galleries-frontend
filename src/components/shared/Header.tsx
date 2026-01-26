@@ -1,24 +1,34 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { useGlobalSearch } from "../../hooks/useGlobalSearch";
 import { useEffect, useRef, useState } from "react";
-// Додав Bookmark до імпорту
-import { User, Settings, LogOut, ChevronDown, Search, Bookmark } from "lucide-react";
+import { User, Settings, LogOut, ChevronDown, Search, Bookmark, MapPin, Calendar } from "lucide-react";
 
 const Header = () => {
   const { user, isLoading, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const searchRef = useRef<HTMLDivElement | null>(null);
+
+  const { galleries, events, hasResults } = useGlobalSearch(searchQuery);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setOpen(false);
       }
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Показуємо dropdown коли є запит та результати
+  const showSearchResults = searchQuery.length >= 2 && searchOpen;
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.08)]">
@@ -42,17 +52,92 @@ const Header = () => {
 
         {/* 3. ПРАВА ЧАСТИНА: Пошук + Авторизація */}
         <div className="flex-1 flex items-center gap-6 justify-end">
-          <div className="relative group hidden md:block max-w-[240px] w-full">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-black transition-colors">
+          <div className="relative group hidden md:block max-w-[240px] w-full" ref={searchRef}>
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-black transition-colors z-10">
               <Search size={16} strokeWidth={2.5} />
             </div>
             <input
               type="text"
               placeholder="Пошук..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setSearchOpen(true);
+              }}
+              onFocus={() => setSearchOpen(true)}
               className="w-full bg-white border border-gray-50 rounded-2xl pl-10 pr-4 py-2 text-xs font-semibold outline-none placeholder:text-gray-400 text-neutral-800 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.1)] focus:shadow-[0_15px_40px_-5px_rgba(0,0,0,0.12)] transition-shadow"
             />
+
+            {/* Search Results Dropdown */}
+            {showSearchResults && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-xl border border-gray-100 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                {!hasResults ? (
+                  <div className="px-4 py-6 text-center text-xs text-gray-400 font-medium">
+                    Нічого не знайдено
+                  </div>
+                ) : (
+                  <div className="py-2 max-h-[360px] overflow-y-auto">
+                    {/* Галереї */}
+                    {galleries.length > 0 && (
+                      <div>
+                        <div className="px-4 py-2 text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">
+                          Галереї
+                        </div>
+                        {galleries.map((g) => (
+                          <Link
+                            key={g.id}
+                            to={`/galleries/${g.slug}`}
+                            onClick={() => {
+                              setSearchOpen(false);
+                              setSearchQuery("");
+                            }}
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                          >
+                            <div className="w-8 h-8 bg-zinc-900 text-white rounded-lg flex items-center justify-center text-[10px] font-bold">
+                              {g.name[0]}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-bold text-zinc-800 truncate">{g.name}</p>
+                              <p className="flex items-center gap-1 text-[10px] text-gray-400">
+                                <MapPin size={10} /> {g.city}
+                              </p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Події */}
+                    {events.length > 0 && (
+                      <div>
+                        <div className="px-4 py-2 text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 border-t border-gray-50 mt-2 pt-3">
+                          Події
+                        </div>
+                        {events.map((e) => (
+                          <Link
+                            key={e.id}
+                            to={`/events/${e.id}`}
+                            onClick={() => {
+                              setSearchOpen(false);
+                              setSearchQuery("");
+                            }}
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                          >
+                            <div className="w-8 h-8 bg-orange-500 text-white rounded-lg flex items-center justify-center">
+                              <Calendar size={14} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-bold text-zinc-800 truncate">{e.title}</p>
+                              <p className="text-[10px] text-gray-400 truncate">{e.galleryName}</p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="relative" ref={menuRef}>
@@ -60,9 +145,8 @@ const Header = () => {
               <>
                 <button
                   onClick={() => setOpen((v) => !v)}
-                  className={`flex items-center gap-2 px-2 py-1.5 rounded-xl transition-all border border-gray-50 shadow-[0_8px_25px_-5px_rgba(0,0,0,0.08)] ${
-                    open ? "bg-gray-100 shadow-inner" : "bg-white hover:bg-gray-50"
-                  }`}
+                  className={`flex items-center gap-2 px-2 py-1.5 rounded-xl transition-all border border-gray-50 shadow-[0_8px_25px_-5px_rgba(0,0,0,0.08)] ${open ? "bg-gray-100 shadow-inner" : "bg-white hover:bg-gray-50"
+                    }`}
                 >
                   <div className="w-8 h-8 bg-neutral-900 text-white rounded-full flex items-center justify-center text-[10px] font-bold shadow-md ring-2 ring-white">
                     {(user.first_name || user.username)[0].toUpperCase()}

@@ -27,8 +27,10 @@ export type GalleryDetail = Gallery & {
 };
 
 // GET /api/galleries/
-export function fetchGalleries() {
-  return http<Gallery[]>("/api/galleries/");
+export async function fetchGalleries(): Promise<Gallery[]> {
+  const data = await http<Gallery[] | { results: Gallery[] }>("/api/galleries/");
+  // API може повертати масив або об'єкт з results
+  return Array.isArray(data) ? data : (data.results || []);
 }
 
 // GET /api/galleries/:slug/
