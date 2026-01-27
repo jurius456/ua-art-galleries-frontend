@@ -13,6 +13,8 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useGalleriesQuery } from '../../hooks/useGalleriesQuery';
 import type { Gallery } from '../../api/galleries';
+import { useTranslation } from 'react-i18next';
+import { getGalleryName, getGalleryCity, getGalleryShortDescription } from '../../utils/gallery';
 
 /* ===================== MAP CONSTANTS ===================== */
 
@@ -121,21 +123,23 @@ const CITY_COORDINATES: Record<string, [number, number]> = {
   'Полтава': [49.5883, 34.5514],
   'Чернігів': [51.4982, 31.2893],
   'Запоріжжя': [47.8388, 35.1396],
+  // English versions
+  'Kyiv': [50.4501, 30.5234],
+  'Lviv': [49.8397, 24.0297],
+  'Odesa': [46.4825, 30.7233],
+  'Dnipro': [48.4647, 35.0462],
+  'Kharkiv': [49.9935, 36.2304],
 };
 
 /* ===================== MOCK DATA (Fallback) ===================== */
 const MOCK_GALLERIES: Gallery[] = [
   {
-    id: 'm1', name: 'PinchukArtCentre', city: 'Київ', slug: 'pinchukartcentre', short_desc: 'Сучасне мистецтво',
-    address: 'test address', image: null, socials: [], year: 2006, latitude: 50.4418, longitude: 30.5222
-  },
-  {
-    id: 'm2', name: 'Мистецький Арсенал', city: 'Київ', slug: 'mystetskyi-arsenal', short_desc: 'Культурний комплекс - Мистецький Арсенал',
-    address: 'test address', image: null, socials: [], year: 2011, latitude: 50.4363, longitude: 30.5540
-  },
-  {
-    id: 'm3', name: 'Львівська Галерея Мистецтв', city: 'Львів', slug: 'lviv-gallery', short_desc: 'Найбільший художній музей України',
-    address: 'test address', image: null, socials: [], year: 1907, latitude: 49.8377, longitude: 24.0254
+    id: 1, name_ua: 'PinchukArtCentre', name_en: 'PinchukArtCentre', city_ua: 'Київ', city_en: 'Kyiv', slug: 'pinchukartcentre',
+    short_description_ua: 'Сучасне мистецтво', short_description_en: 'Contemporary art',
+    address_ua: 'тестова адреса', address_en: 'test address', image: null, cover_image: null,
+    email: null, phone: null, website: null, social_links: null, founding_year: '2006',
+    latitude: 50.4418, longitude: 30.5222, status: true, specialization_ua: null, specialization_en: null,
+    created_at: '', updated_at: ''
   },
 ];
 
@@ -144,6 +148,7 @@ const MOCK_GALLERIES: Gallery[] = [
 const HomeMapView = () => {
   const mapRef = useRef<L.Map | null>(null);
   const { data: apiGalleries = [] } = useGalleriesQuery();
+  const { i18n } = useTranslation();
 
   // 1. Try to use API galleries
   // 2. Determine coordinates (API or Lookup)
@@ -162,8 +167,9 @@ const HomeMapView = () => {
       }
 
       // 2. Try City Lookup with Jitter (fallback if API and specific lookup are missing)
-      if ((lat == null || lng == null) && g.city && CITY_COORDINATES[g.city]) {
-        const [cityLat, cityLng] = CITY_COORDINATES[g.city];
+      const cityName = getGalleryCity(g, i18n.language);
+      if ((lat == null || lng == null) && cityName && CITY_COORDINATES[cityName]) {
+        const [cityLat, cityLng] = CITY_COORDINATES[cityName];
         // Add random jitter to avoid perfect stacking (approx 500m radius)
         lat = cityLat + (Math.random() - 0.5) * 0.01;
         lng = cityLng + (Math.random() - 0.5) * 0.01;
@@ -176,7 +182,7 @@ const HomeMapView = () => {
     });
 
     return mapped.filter((g): g is Gallery & { coords: [number, number] } => g.coords !== null);
-  }, [apiGalleries]);
+  }, [apiGalleries, i18n.language]);
 
   const zoomOut = () => {
     mapRef.current?.setView(INITIAL_CENTER, INITIAL_ZOOM, { animate: true });
@@ -224,43 +230,49 @@ const HomeMapView = () => {
               chunkedLoading
               iconCreateFunction={createClusterIcon}
             >
-              {points.map((g) => (
-                <Marker
-                  key={g.id}
-                  position={g.coords}
-                  icon={galleryIcon}
-                  eventHandlers={{
-                    click: (e) => {
-                      zoomToGallery(g.coords);
-                      e.target.openPopup();
-                    },
-                  }}
-                >
-                  <Popup closeButton={false} className="custom-popup">
-                    <div className="p-4 space-y-3 min-w-[220px]">
-                      <div>
-                        <h4 className="font-black text-zinc-800 text-lg leading-tight">{g.name}</h4>
-                        <p className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-400 uppercase mt-1">
-                          <MapPin size={10} /> {g.city}
-                        </p>
+              {points.map((g) => {
+                const name = getGalleryName(g, i18n.language);
+                const city = getGalleryCity(g, i18n.language);
+                const shortDesc = getGalleryShortDescription(g, i18n.language);
+
+                return (
+                  <Marker
+                    key={g.id}
+                    position={g.coords}
+                    icon={galleryIcon}
+                    eventHandlers={{
+                      click: (e) => {
+                        zoomToGallery(g.coords);
+                        e.target.openPopup();
+                      },
+                    }}
+                  >
+                    <Popup closeButton={false} className="custom-popup">
+                      <div className="p-4 space-y-3 min-w-[220px]">
+                        <div>
+                          <h4 className="font-black text-zinc-800 text-lg leading-tight">{name}</h4>
+                          <p className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-400 uppercase mt-1">
+                            <MapPin size={10} /> {city}
+                          </p>
+                        </div>
+
+                        {shortDesc && (
+                          <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
+                            {shortDesc}
+                          </p>
+                        )}
+
+                        <Link
+                          to={`/galleries/${g.slug}`}
+                          className="flex items-center justify-center gap-2 py-2.5 bg-zinc-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-600 transition-colors"
+                        >
+                          Відкрити <ArrowRight size={12} />
+                        </Link>
                       </div>
-
-                      {g.short_desc && (
-                        <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
-                          {g.short_desc}
-                        </p>
-                      )}
-
-                      <Link
-                        to={`/galleries/${g.slug}`}
-                        className="flex items-center justify-center gap-2 py-2.5 bg-zinc-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-600 transition-colors"
-                      >
-                        Відкрити <ArrowRight size={12} />
-                      </Link>
-                    </div>
-                  </Popup>
-                </Marker>
-              ))}
+                    </Popup>
+                  </Marker>
+                );
+              })}
             </MarkerClusterGroup>
           </MapContainer>
         </div>

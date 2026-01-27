@@ -80,6 +80,19 @@
         "allCities": "Усі міста",
         "loading": "Завантаження галерей..."
     },
+    "gallery": {
+        "founded": "Засновано",
+        "founders": "Засновники",
+        "curators": "Куратори",
+        "artists": "Художники",
+        "specialization": "Спеціалізація",
+        "contacts": "Контакти",
+        "website": "Веб-сайт",
+        "backToGalleries": "Архів галерей",
+        "notFound": "404_DATA_NOT_FOUND",
+        "loading": "Loading_Gallery_Data...",
+        "return": "Повернутись"
+    },
     "events": {
         "title": "Експозиції",
         "subtitle": "Архів Подій",

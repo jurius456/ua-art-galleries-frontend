@@ -1,29 +1,41 @@
 import { http } from "./http";
 
 export type Gallery = {
-  id: string;
+  id: number;
   slug: string;
-  name: string;
-  city: string;
-  address: string;
+  status: boolean;
+  name_ua: string;
+  name_en: string;
   image: string | null;
-  socials: { platform: string; url: string }[];
-  short_desc: string;
-  year: number | null;
+  cover_image: string | null;
+  short_description_ua: string;
+  short_description_en: string;
+  specialization_ua: string | null;
+  specialization_en: string | null;
+  city_ua: string;
+  city_en: string;
+  address_ua: string;
+  address_en: string;
+  email: string | null;
+  phone: string | null;
+  website: string | null;
+  social_links: Record<string, string> | null;
+  founding_year: string | null;
   latitude?: number;
   longitude?: number;
+  created_at: string;
+  updated_at: string;
 };
 
 export type GalleryDetail = Gallery & {
-  description: any;
-  founders?: string;
-  curators?: string;
-  artists?: string[];
-  contacts?: {
-    email?: string;
-    phone?: string;
-    website?: string;
-  };
+  full_description_ua: string;
+  full_description_en: string;
+  founders_ua: string | null;
+  founders_en: string | null;
+  curators_ua: string | null;
+  curators_en: string | null;
+  artists_ua: string | null;
+  artists_en: string | null;
 };
 
 // GET /api/galleries/

@@ -80,6 +80,19 @@
         "allCities": "All cities",
         "loading": "Loading galleries..."
     },
+    "gallery": {
+        "founded": "Founded",
+        "founders": "Founders",
+        "curators": "Curators",
+        "artists": "Artists",
+        "specialization": "Specialization",
+        "contacts": "Contacts",
+        "website": "Website",
+        "backToGalleries": "Gallery Archive",
+        "notFound": "404_DATA_NOT_FOUND",
+        "loading": "Loading_Gallery_Data...",
+        "return": "Go back"
+    },
     "events": {
         "title": "Exhibitions",
         "subtitle": "Events Archive",

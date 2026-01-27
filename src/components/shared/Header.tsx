@@ -5,9 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { User, Settings, LogOut, ChevronDown, Search, Bookmark, MapPin, Calendar } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
+import { getGalleryName, getGalleryCity } from '../../utils/gallery';
 
 const Header = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, isLoading, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -86,27 +87,31 @@ const Header = () => {
                         <div className="px-4 py-2 text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">
                           {t('nav.galleries')}
                         </div>
-                        {galleries.map((g) => (
-                          <Link
-                            key={g.id}
-                            to={`/galleries/${g.slug}`}
-                            onClick={() => {
-                              setSearchOpen(false);
-                              setSearchQuery("");
-                            }}
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
-                          >
-                            <div className="w-8 h-8 bg-zinc-900 text-white rounded-lg flex items-center justify-center text-[10px] font-bold">
-                              {g.name[0]}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-bold text-zinc-800 truncate">{g.name}</p>
-                              <p className="flex items-center gap-1 text-[10px] text-gray-400">
-                                <MapPin size={10} /> {g.city}
-                              </p>
-                            </div>
-                          </Link>
-                        ))}
+                        {galleries.map((g) => {
+                          const name = getGalleryName(g, i18n.language);
+                          const city = getGalleryCity(g, i18n.language);
+                          return (
+                            <Link
+                              key={g.id}
+                              to={`/galleries/${g.slug}`}
+                              onClick={() => {
+                                setSearchOpen(false);
+                                setSearchQuery("");
+                              }}
+                              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                            >
+                              <div className="w-8 h-8 bg-zinc-900 text-white rounded-lg flex items-center justify-center text-[10px] font-bold">
+                                {name[0]}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-bold text-zinc-800 truncate">{name}</p>
+                                <p className="flex items-center gap-1 text-[10px] text-gray-400">
+                                  <MapPin size={10} /> {city}
+                                </p>
+                              </div>
+                            </Link>
+                          );
+                        })}
                       </div>
                     )}
 
@@ -225,9 +230,10 @@ const Header = () => {
           <LanguageSwitcher />
         </div>
       </div>
-    </header>
+    </header >
   );
 };
+
 
 interface MenuLinkProps {
   to: string;

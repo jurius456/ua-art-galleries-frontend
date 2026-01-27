@@ -5,11 +5,12 @@ import { useGalleriesQuery } from "../../hooks/useGalleriesQuery";
 import { useFavorites } from "../../context/FavoritesContext";
 import type { Gallery } from "../../api/galleries";
 import { useTranslation } from 'react-i18next';
+import { getGalleryName, getGalleryCity } from "../../utils/gallery";
 
 const PER_PAGE = 18;
 
 const GalleriesPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data: galleries = [], isLoading } = useGalleriesQuery();
   const { isFavorite, toggleFavorite } = useFavorites();
 
@@ -20,26 +21,29 @@ const GalleriesPage = () => {
   /* ---------- CITIES ---------- */
   const cities = useMemo(() => {
     const unique = Array.from(
-      new Set(galleries.map((g) => g.city).filter(Boolean))
+      new Set(galleries.map((g) => getGalleryCity(g, i18n.language)).filter(Boolean))
     );
     return unique;
-  }, [galleries]);
+  }, [galleries, i18n.language]);
 
   /* ---------- FILTERING ---------- */
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
 
     return galleries.filter((g) => {
+      const name = getGalleryName(g, i18n.language);
+      const cityName = getGalleryCity(g, i18n.language);
+
       const matchSearch =
         !q ||
-        g.name.toLowerCase().includes(q) ||
-        g.city.toLowerCase().includes(q);
+        name.toLowerCase().includes(q) ||
+        cityName.toLowerCase().includes(q);
 
-      const matchCity = city === "all" || g.city === city;
+      const matchCity = city === "all" || cityName === city;
 
       return matchSearch && matchCity;
     });
-  }, [galleries, search, city]);
+  }, [galleries, search, city, i18n.language]);
 
   /* ---------- PAGINATION ---------- */
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
@@ -142,7 +146,7 @@ const GalleriesPage = () => {
             onToggle={() =>
               toggleFavorite({
                 id: gallery.id,
-                name: gallery.name,
+                name: getGalleryName(gallery, i18n.language),
                 slug: gallery.slug,
               })
             }
@@ -166,8 +170,8 @@ const GalleriesPage = () => {
               key={i}
               onClick={() => setPage(i + 1)}
               className={`px-4 py-2 rounded-xl font-bold ${page === i + 1
-                  ? "bg-zinc-900 text-white"
-                  : "border border-zinc-200"
+                ? "bg-zinc-900 text-white"
+                : "border border-zinc-200"
                 }`}
             >
               {i + 1}
@@ -198,6 +202,10 @@ const GalleryCard = ({
   favorite: boolean;
   onToggle: () => void;
 }) => {
+  const { i18n } = useTranslation();
+  const name = getGalleryName(gallery, i18n.language);
+  const city = getGalleryCity(gallery, i18n.language);
+
   return (
     <Link
       to={`/galleries/${gallery.slug}`}
@@ -205,7 +213,7 @@ const GalleryCard = ({
     >
       <div className="flex items-start justify-between mb-6">
         <div className="w-12 h-12 rounded-xl bg-zinc-900 text-white flex items-center justify-center font-black">
-          {gallery.name[0]}
+          {name[0]}
         </div>
 
         <button
@@ -214,8 +222,8 @@ const GalleryCard = ({
             onToggle();
           }}
           className={`transition ${favorite
-              ? "text-red-500"
-              : "text-zinc-300 hover:text-zinc-900"
+            ? "text-red-500"
+            : "text-zinc-300 hover:text-zinc-900"
             }`}
         >
           <Heart size={18} fill={favorite ? "currentColor" : "none"} />
@@ -223,11 +231,11 @@ const GalleryCard = ({
       </div>
 
       <h3 className="font-black uppercase text-lg leading-tight">
-        {gallery.name}
+        {name}
       </h3>
 
       <p className="mt-2 text-xs uppercase tracking-widest text-zinc-400">
-        {gallery.city}
+        {city}
       </p>
     </Link>
   );
