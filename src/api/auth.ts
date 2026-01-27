@@ -60,3 +60,17 @@ export function fetchMe() {
     auth: true,
   });
 }
+
+export async function changePassword(payload: {
+  current_password: string;
+  new_password: string;
+  new_password_confirm: string;
+}) {
+  // POST /api/auth/change-password/
+  const data = await http<{ detail: string }>("/api/auth/change-password/", {
+    method: "POST",
+    auth: true,
+    body: payload,
+  });
+  return data;
+}
