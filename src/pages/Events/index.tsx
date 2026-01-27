@@ -4,6 +4,7 @@ import {
   Search, Filter, Calendar, LayoutGrid,
   ArrowRight, Sparkles
 } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 export type EventCategory = "Виставка" | "Воркшоп" | "Відкриття" | "Лекція";
 
@@ -26,9 +27,10 @@ export const MOCK_EVENTS: ArtEvent[] = [
 ];
 
 const EventsPage = () => {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
-  const [selectedCity, setSelectedCity] = useState("Усі міста");
-  const [selectedCategory, setSelectedCategory] = useState<string>("Усі типи");
+  const [selectedCity, setSelectedCity] = useState(t('events.allCities'));
+  const [selectedCategory, setSelectedCategory] = useState<string>(t('events.allTypes'));
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const filtered = useMemo(() => {
@@ -46,8 +48,8 @@ const EventsPage = () => {
       <section className="bg-white/40 backdrop-blur-sm border-b border-zinc-200/50 py-16">
         <div className="container mx-auto px-6 max-w-6xl space-y-10">
           <div className="space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-orange-600">Архів Подій</p>
-            <h1 className="text-4xl md:text-5xl font-black text-zinc-800 tracking-tighter uppercase leading-none">Експозиції</h1>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-orange-600">{t('events.subtitle')}</p>
+            <h1 className="text-4xl md:text-5xl font-black text-zinc-800 tracking-tighter uppercase leading-none">{t('events.title')}</h1>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-4">
@@ -55,7 +57,7 @@ const EventsPage = () => {
               <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-400" />
               <input
                 type="text"
-                placeholder="Знайти виставку..."
+                placeholder={t('events.search')}
                 className="w-full bg-white border border-zinc-200 rounded-2xl py-4 pl-14 pr-6 outline-none focus:border-zinc-800 transition-all text-base shadow-sm font-medium"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -66,15 +68,15 @@ const EventsPage = () => {
               className={`flex items-center gap-3 px-8 py-4 rounded-2xl text-xs font-bold uppercase border transition-all ${isFilterOpen ? "bg-zinc-800 text-white border-zinc-800 shadow-xl" : "bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50"
                 }`}
             >
-              <Filter size={16} /> Фільтри
+              <Filter size={16} /> {t('events.filters')}
             </button>
           </div>
 
           {isFilterOpen && (
             <div className="p-8 bg-white border border-zinc-100 rounded-[32px] shadow-2xl grid grid-cols-1 md:grid-cols-2 gap-10 animate-in slide-in-from-top-2">
-              <FilterSelect label="Місто" value={selectedCity} onChange={setSelectedCity} options={["Усі міста", "Київ", "Львів", "Одеса"]} />
+              <FilterSelect label={t('events.city')} value={selectedCity} onChange={setSelectedCity} options={[t('events.allCities'), "Київ", "Львів", "Одеса"]} />
               <div className="space-y-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Тип події</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">{t('events.eventType')}</p>
                 <div className="flex flex-wrap gap-2">
                   {["Усі типи", "Виставка", "Воркшоп", "Відкриття", "Лекція"].map(cat => (
                     <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all ${selectedCategory === cat ? "bg-zinc-800 text-white shadow-lg" : "bg-zinc-100 text-zinc-400 hover:bg-zinc-200"}`}>{cat}</button>
@@ -88,7 +90,7 @@ const EventsPage = () => {
 
       <section className="container mx-auto px-6 max-w-6xl mt-16">
         <div className="flex items-center gap-2 text-zinc-500 font-bold text-[10px] uppercase tracking-[0.25em] mb-10">
-          <LayoutGrid size={14} /> Знайдено {filtered.length} подій
+          <LayoutGrid size={14} /> {t('events.foundEvents', { count: filtered.length })}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filtered.map(event => <EventCard key={event.id} event={event} />)}

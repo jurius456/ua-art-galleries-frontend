@@ -1,5 +1,6 @@
 import { ArrowRight, MapPin, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const FEATURED = [
   { id: 1, name: 'PinchukArtCentre', city: 'Київ', rating: 4.9, tags: ['Сучасне мистецтво'] },
@@ -8,19 +9,20 @@ const FEATURED = [
 ];
 
 const HomeFeaturedGalleries = () => {
+  const { t } = useTranslation();
   return (
     <section className="space-y-12">
       {/* Заголовок у нашому фірмовому стилі */}
       <div className="flex justify-between items-end border-b border-zinc-100 pb-8">
         <div className="space-y-2">
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">Ексклюзивно</p>
-          <h2 className="text-3xl font-bold text-zinc-900 tracking-tight">Популярні галереї</h2>
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">{t('home.featured.badge')}</p>
+          <h2 className="text-3xl font-bold text-zinc-900 tracking-tight">{t('home.featured.title')}</h2>
         </div>
-        <Link 
-          to="/galleries" 
+        <Link
+          to="/galleries"
           className="group flex items-center gap-2 text-sm font-bold text-zinc-500 hover:text-black transition-all"
         >
-          Дивитися всі <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+          {t('home.featured.viewAll')} <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
 
@@ -46,7 +48,7 @@ const HomeFeaturedGalleries = () => {
                   </span>
                 ))}
               </div>
-              
+
               <div>
                 <h3 className="text-xl font-bold text-zinc-900 tracking-tight leading-none mb-1">
                   {gallery.name}

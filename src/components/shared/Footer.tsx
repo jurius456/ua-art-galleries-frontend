@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+  const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
 
   return (
     <footer className="bg-white/80 backdrop-blur-xl border-t border-zinc-100 py-10 mt-auto">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-10">
-          
+
           {/* ЛІВА ЧАСТИНА: Лого та опис (4 колонки) */}
           <div className="md:col-span-4 flex flex-col gap-4">
             <Link
@@ -17,37 +19,37 @@ const Footer = () => {
               UA Galleries
             </Link>
             <p className="text-sm text-zinc-500 font-medium leading-relaxed max-w-xs">
-              Платформа для об'єднання українського мистецтва в єдиний цифровий простір.
+              {t('footer.description')}
             </p>
           </div>
 
           {/* ПРАВА ЧАСТИНА: Колонки посилань (8 колонок) */}
           <div className="md:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-8">
-            <FooterColumn title="About">
-              <FooterLink to="/about">Team</FooterLink>
-              <FooterLink to="/about">Mission</FooterLink>
+            <FooterColumn title={t('footer.links.about')}>
+              <FooterLink to="/about">{t('footer.links.team')}</FooterLink>
+              <FooterLink to="/about">{t('footer.links.mission')}</FooterLink>
             </FooterColumn>
 
-            <FooterColumn title="Partnership">
-              <FooterLink to="/galleries">Galleries</FooterLink>
+            <FooterColumn title={t('footer.links.partnership')}>
+              <FooterLink to="/galleries">{t('nav.galleries')}</FooterLink>
             </FooterColumn>
 
-            <FooterColumn title="Support">
-              <FooterLink to="/faq">FAQ</FooterLink>
+            <FooterColumn title={t('footer.links.support')}>
+              <FooterLink to="/faq">{t('footer.links.faq')}</FooterLink>
             </FooterColumn>
 
-            <FooterColumn title="Artists">
-              <FooterLink to="/join">Join us</FooterLink>
+            <FooterColumn title={t('footer.links.artists')}>
+              <FooterLink to="/join">{t('footer.links.join')}</FooterLink>
             </FooterColumn>
           </div>
         </div>
 
         {/* НИЖНЯ ПАНЕЛЬ */}
         <div className="pt-6 border-t border-zinc-50 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold uppercase tracking-[0.1em] text-zinc-400">
-          <p>© {currentYear} UA Galleries Team. All rights reserved.</p>
+          <p>© {currentYear} {t('footer.rights')}</p>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-zinc-900 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-zinc-900 transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-zinc-900 transition-colors">{t('footer.privacy')}</a>
+            <a href="#" className="hover:text-zinc-900 transition-colors">{t('footer.terms')}</a>
           </div>
         </div>
       </div>
@@ -69,8 +71,8 @@ const FooterColumn = ({ title, children }: { title: string; children: React.Reac
 );
 
 const FooterLink = ({ to, children }: { to: string; children: React.ReactNode }) => (
-  <Link 
-    to={to} 
+  <Link
+    to={to}
     className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 transition-colors duration-300 tracking-tight"
   >
     {children}

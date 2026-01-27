@@ -1,35 +1,37 @@
 import { Target, Users, Map, Mail, Handshake } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const HomeAbout = () => {
+  const { t } = useTranslation();
   return (
     <section className="space-y-10 pb-20">
       <div className="space-y-1">
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Контекст</p>
-        <h2 className="text-3xl font-bold text-zinc-900 tracking-tight">Про проєкт</h2>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">{t('home.about.context')}</p>
+        <h2 className="text-3xl font-bold text-zinc-900 tracking-tight">{t('home.about.title')}</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-auto md:h-[500px]">
-        
+
         {/* Головна картка - Місія (6 колонок) */}
         <div className="md:col-span-6 bg-zinc-900 rounded-[32px] p-10 flex flex-col justify-between text-white relative overflow-hidden group shadow-xl">
           <Target className="text-blue-500 mb-8" size={40} strokeWidth={1.5} />
           <div className="space-y-4 relative z-10">
-            <h3 className="text-3xl font-black uppercase tracking-tight">Наша Місія</h3>
+            <h3 className="text-3xl font-black uppercase tracking-tight">{t('home.about.missionTitle')}</h3>
             <p className="text-zinc-400 font-medium leading-relaxed">
-              Ми створюємо цифрову екосистему для українського мистецтва, де кожна галерея знаходить свій голос, а кожен поціновувач — свою картину.
+              {t('home.about.missionText')}
             </p>
           </div>
           <div className="absolute right-[-10%] bottom-[-10%] opacity-10 group-hover:scale-110 transition-transform duration-700">
-             <Target size={300} />
+            <Target size={300} />
           </div>
         </div>
 
         {/* Права сітка (6 колонок) */}
         <div className="md:col-span-6 grid grid-cols-2 gap-6">
-          <BentoTile icon={<Users className="text-orange-500" />} label="Команда" />
-          <BentoTile icon={<Map className="text-green-500" />} label="Дорожня карта" />
-          <BentoTile icon={<Mail className="text-purple-500" />} label="Контакти" />
-          <BentoTile icon={<Handshake className="text-blue-400" />} label="Партнери" />
+          <BentoTile icon={<Users className="text-orange-500" />} label={t('home.about.team')} />
+          <BentoTile icon={<Map className="text-green-500" />} label={t('home.about.roadmap')} />
+          <BentoTile icon={<Mail className="text-purple-500" />} label={t('home.about.contacts')} />
+          <BentoTile icon={<Handshake className="text-blue-400" />} label={t('home.about.partners')} />
         </div>
       </div>
     </section>

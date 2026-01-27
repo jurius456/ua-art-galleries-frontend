@@ -4,10 +4,12 @@ import { Search, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { useGalleriesQuery } from "../../hooks/useGalleriesQuery";
 import { useFavorites } from "../../context/FavoritesContext";
 import type { Gallery } from "../../api/galleries";
+import { useTranslation } from 'react-i18next';
 
 const PER_PAGE = 18;
 
 const GalleriesPage = () => {
+  const { t } = useTranslation();
   const { data: galleries = [], isLoading } = useGalleriesQuery();
   const { isFavorite, toggleFavorite } = useFavorites();
 
@@ -50,7 +52,7 @@ const GalleriesPage = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-zinc-400 font-semibold">
-        Loading galleries…
+        {t('galleries.loading')}
       </div>
     );
   }
@@ -61,7 +63,7 @@ const GalleriesPage = () => {
       <div className="pt-32 pb-20">
         <div className="max-w-6xl mx-auto px-6 space-y-12">
           <h1 className="text-5xl font-black uppercase tracking-tight">
-            Каталог <span className="text-zinc-400">галерей</span>
+            {t('galleries.title')} <span className="text-zinc-400">{t('galleries.subtitle')}</span>
           </h1>
 
           {/* SEARCH + CITY */}
@@ -79,7 +81,7 @@ const GalleriesPage = () => {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                placeholder="Пошук за назвою або містом"
+                placeholder={t('galleries.search')}
                 className="
                   w-full
                   h-[56px]
@@ -114,7 +116,7 @@ const GalleriesPage = () => {
                 focus:border-zinc-900
               "
             >
-              <option value="all">Усі міста</option>
+              <option value="all">{t('galleries.allCities')}</option>
               {cities.map((c) => (
                 <option key={c} value={c}>
                   {c}
@@ -127,7 +129,7 @@ const GalleriesPage = () => {
 
       {/* COUNT */}
       <div className="max-w-6xl mx-auto px-6 mb-10 text-xs uppercase tracking-widest text-zinc-400 font-bold">
-        Знайдено: {filtered.length}
+        {t('common.found')}: {filtered.length}
       </div>
 
       {/* GRID */}
@@ -163,11 +165,10 @@ const GalleriesPage = () => {
             <button
               key={i}
               onClick={() => setPage(i + 1)}
-              className={`px-4 py-2 rounded-xl font-bold ${
-                page === i + 1
+              className={`px-4 py-2 rounded-xl font-bold ${page === i + 1
                   ? "bg-zinc-900 text-white"
                   : "border border-zinc-200"
-              }`}
+                }`}
             >
               {i + 1}
             </button>
@@ -212,11 +213,10 @@ const GalleryCard = ({
             e.preventDefault();
             onToggle();
           }}
-          className={`transition ${
-            favorite
+          className={`transition ${favorite
               ? "text-red-500"
               : "text-zinc-300 hover:text-zinc-900"
-          }`}
+            }`}
         >
           <Heart size={18} fill={favorite ? "currentColor" : "none"} />
         </button>

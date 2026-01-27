@@ -3,8 +3,11 @@ import { useAuth } from "../../hooks/useAuth";
 import { useGlobalSearch } from "../../hooks/useGlobalSearch";
 import { useEffect, useRef, useState } from "react";
 import { User, Settings, LogOut, ChevronDown, Search, Bookmark, MapPin, Calendar } from "lucide-react";
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Header = () => {
+  const { t } = useTranslation();
   const { user, isLoading, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,20 +48,20 @@ const Header = () => {
 
         {/* 2. ЦЕНТРАЛЬНА ЧАСТИНА: Навігація */}
         <nav className="hidden lg:flex gap-8 text-sm font-medium text-gray-500 flex-initial">
-          <Link to="/about" className="hover:text-black transition">About Us</Link>
-          <Link to="/galleries" className="hover:text-black transition">Galleries</Link>
-          <Link to="/events" className="hover:text-black transition">Events</Link>
+          <Link to="/about" className="hover:text-black transition">{t('nav.about')}</Link>
+          <Link to="/galleries" className="hover:text-black transition">{t('nav.galleries')}</Link>
+          <Link to="/events" className="hover:text-black transition">{t('nav.events')}</Link>
         </nav>
 
-        {/* 3. ПРАВА ЧАСТИНА: Пошук + Авторизація */}
-        <div className="flex-1 flex items-center gap-6 justify-end">
+        {/* 3. ПРАВА ЧАСТИНА: Пошук + Авторизація + Мова */}
+        <div className="flex-1 flex items-center gap-4 justify-end">
           <div className="relative group hidden md:block max-w-[240px] w-full" ref={searchRef}>
             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-black transition-colors z-10">
               <Search size={16} strokeWidth={2.5} />
             </div>
             <input
               type="text"
-              placeholder="Пошук..."
+              placeholder={t('header.search')}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -73,7 +76,7 @@ const Header = () => {
               <div className="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-xl border border-gray-100 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                 {!hasResults ? (
                   <div className="px-4 py-6 text-center text-xs text-gray-400 font-medium">
-                    Нічого не знайдено
+                    {t('header.noResults')}
                   </div>
                 ) : (
                   <div className="py-2 max-h-[360px] overflow-y-auto">
@@ -81,7 +84,7 @@ const Header = () => {
                     {galleries.length > 0 && (
                       <div>
                         <div className="px-4 py-2 text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">
-                          Галереї
+                          {t('nav.galleries')}
                         </div>
                         {galleries.map((g) => (
                           <Link
@@ -111,7 +114,7 @@ const Header = () => {
                     {events.length > 0 && (
                       <div>
                         <div className="px-4 py-2 text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 border-t border-gray-50 mt-2 pt-3">
-                          Події
+                          {t('nav.events')}
                         </div>
                         {events.map((e) => (
                           <Link
@@ -163,7 +166,7 @@ const Header = () => {
                 {open && (
                   <div className="absolute right-0 top-full mt-4 w-64 bg-white/95 backdrop-blur-2xl border border-gray-50 rounded-[24px] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] py-3 animate-in fade-in zoom-in-95 duration-300 origin-top-right">
                     <div className="px-5 py-3 mb-2">
-                      <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-400 mb-1">Акаунт</p>
+                      <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-400 mb-1">{t('header.account')}</p>
                       <div className="flex flex-col">
                         <span className="text-sm font-bold text-black truncate leading-tight">
                           {user.first_name} {user.last_name}
@@ -176,20 +179,20 @@ const Header = () => {
                       <MenuLink
                         to="/profile"
                         icon={<User size={18} strokeWidth={1.5} />}
-                        label="Мій профіль"
+                        label={t('header.profile')}
                         onClick={() => setOpen(false)}
                       />
                       {/* НОВА КНОПКА */}
                       <MenuLink
                         to="/settings/archive"
                         icon={<Bookmark size={18} strokeWidth={1.5} />}
-                        label="Збережені галереї"
+                        label={t('header.savedGalleries')}
                         onClick={() => setOpen(false)}
                       />
                       <MenuLink
                         to="/settings"
                         icon={<Settings size={18} strokeWidth={1.5} />}
-                        label="Налаштування"
+                        label={t('header.settings')}
                         onClick={() => setOpen(false)}
                       />
                     </div>
@@ -202,7 +205,7 @@ const Header = () => {
                         className="w-full group flex items-center gap-3 px-4 py-3 text-sm text-gray-500 hover:text-red-600 hover:bg-red-50/50 rounded-2xl transition-all duration-300 font-semibold"
                       >
                         <LogOut size={18} strokeWidth={1.5} className="group-hover:-translate-x-1 transition-transform" />
-                        Вийти з системи
+                        {t('header.logout')}
                       </button>
                     </div>
                   </div>
@@ -213,21 +216,31 @@ const Header = () => {
                 to="/login"
                 className="px-6 py-2 text-[11px] font-bold uppercase tracking-[0.2em] rounded-xl text-zinc-800 bg-transparent border border-zinc-300 hover:border-zinc-800 hover:bg-zinc-800 hover:text-white transition-all duration-300"
               >
-                Log In
+                {t('header.login')}
               </Link>
             )}
           </div>
+
+          {/* Перемикач мови в кінці */}
+          <LanguageSwitcher />
         </div>
       </div>
     </header>
   );
 };
 
-const MenuLink = ({ to, icon, label, onClick }: any) => (
+interface MenuLinkProps {
+  to: string;
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}
+
+const MenuLink = ({ to, icon, label, onClick }: MenuLinkProps) => (
   <Link
     to={to}
     onClick={onClick}
-    className="group flex items-center gap-3 px-4 py-3 text-sm text-gray-500 hover:text-black hover:bg-gray-50 rounded-2xl transition-all duration-300"
+    className="group flex items-center gap-3 px-4 py-3 text-sm text-gray-600 hover:text-black hover:bg-gray-50 rounded-2xl transition-all duration-300 font-semibold"
   >
     <span className="text-gray-400 group-hover:text-black transition-colors">{icon}</span>
     <span className="font-semibold tracking-tight">{label}</span>
