@@ -134,7 +134,7 @@ const CITY_COORDINATES: Record<string, [number, number]> = {
 /* ===================== MOCK DATA (Fallback) ===================== */
 const MOCK_GALLERIES: Gallery[] = [
   {
-    id: 1, name_ua: 'PinchukArtCentre', name_en: 'PinchukArtCentre', city_ua: 'Київ', city_en: 'Kyiv', slug: 'pinchukartcentre',
+    id: 'mock-pinchukartcentre', name_ua: 'PinchukArtCentre', name_en: 'PinchukArtCentre', city_ua: 'Київ', city_en: 'Kyiv', slug: 'pinchukartcentre',
     short_description_ua: 'Сучасне мистецтво', short_description_en: 'Contemporary art',
     address_ua: 'тестова адреса', address_en: 'test address', image: null, cover_image: null,
     email: null, phone: null, website: null, social_links: null, founding_year: '2006',
