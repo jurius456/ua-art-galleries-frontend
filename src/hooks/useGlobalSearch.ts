@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { useGalleriesQuery } from "./useGalleriesQuery";
 import { MOCK_EVENTS, type ArtEvent } from "../pages/Events/index";
 import type { Gallery } from "../api/galleries";
+import { useTranslation } from 'react-i18next';
+import { getGalleryName, getGalleryCity } from '../utils/gallery';
 
 export interface SearchResults {
     galleries: Gallery[];
@@ -12,6 +14,7 @@ export interface SearchResults {
 
 export function useGlobalSearch(query: string): SearchResults {
     const { data: galleries = [], isLoading } = useGalleriesQuery();
+    const { i18n } = useTranslation();
 
     const results = useMemo(() => {
         const q = query.trim().toLowerCase();
@@ -24,9 +27,11 @@ export function useGlobalSearch(query: string): SearchResults {
         // Фільтруємо галереї
         const galleriesArray = Array.isArray(galleries) ? galleries : [];
         const filteredGalleries = galleriesArray.filter(
-            (g: Gallery) =>
-                g.name.toLowerCase().includes(q) ||
-                g.city.toLowerCase().includes(q)
+            (g: Gallery) => {
+                const name = getGalleryName(g, i18n.language);
+                const city = getGalleryCity(g, i18n.language);
+                return name.toLowerCase().includes(q) || city.toLowerCase().includes(q);
+            }
         ).slice(0, 5); // Максимум 5 результатів
 
         // Фільтруємо події
@@ -41,7 +46,7 @@ export function useGlobalSearch(query: string): SearchResults {
             galleries: filteredGalleries,
             events: filteredEvents,
         };
-    }, [query, galleries]);
+    }, [query, galleries, i18n.language]);
 
     return {
         ...results,
