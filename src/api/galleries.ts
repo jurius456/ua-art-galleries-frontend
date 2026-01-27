@@ -1,7 +1,8 @@
 import { http } from "./http";
+import type { Document } from '@contentful/rich-text-types';
 
 export type Gallery = {
-  id: number;
+  id: string;
   slug: string;
   status: boolean;
   name_ua: string;
@@ -28,8 +29,8 @@ export type Gallery = {
 };
 
 export type GalleryDetail = Gallery & {
-  full_description_ua: string;
-  full_description_en: string;
+  full_description_ua: Document | string;
+  full_description_en: Document | string;
   founders_ua: string | null;
   founders_en: string | null;
   curators_ua: string | null;

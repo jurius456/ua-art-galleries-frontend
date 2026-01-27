@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, MapPin, Mail, Phone, Globe, Instagram } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import type { Document } from '@contentful/rich-text-types';
 
 import { fetchGalleryBySlug } from "../../api/galleries";
 import type { GalleryDetail } from "../../api/galleries";
@@ -122,7 +124,10 @@ const GalleryPage = () => {
 
             {fullDesc && (
               <div className="prose prose-zinc max-w-none">
-                <div className="whitespace-pre-wrap">{fullDesc}</div>
+                {typeof fullDesc === 'string'
+                  ? <div className="whitespace-pre-wrap">{fullDesc}</div>
+                  : documentToReactComponents(fullDesc as Document)
+                }
               </div>
             )}
 

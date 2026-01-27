@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 type Favorite = {
-  id: number;
+  id: string;
   name: string;
   slug: string;
 };
@@ -9,7 +9,7 @@ type Favorite = {
 interface FavoritesContextType {
   favorites: Favorite[];
   toggleFavorite: (gallery: Favorite) => void;
-  isFavorite: (id: number) => boolean;
+  isFavorite: (id: string) => boolean;
 }
 
 const FavoritesContext = createContext<FavoritesContextType | undefined>(
@@ -38,7 +38,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
   }, [favorites]);
 
-  const isFavorite = (id: number) => {
+  const isFavorite = (id: string) => {
     return favorites.some((f) => f.id === id);
   };
 

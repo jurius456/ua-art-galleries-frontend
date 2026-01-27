@@ -26,7 +26,7 @@ export function getGallerySpecialization(gallery: Gallery, language: string): st
 }
 
 // For GalleryDetail
-export function getGalleryFullDescription(gallery: GalleryDetail, language: string): string {
+export function getGalleryFullDescription(gallery: GalleryDetail, language: string): any {
     return language === 'en' ? (gallery.full_description_en || gallery.full_description_ua || '') : (gallery.full_description_ua || gallery.full_description_en || '');
 }
 
