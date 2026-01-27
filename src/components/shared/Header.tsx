@@ -101,7 +101,7 @@ const Header = () => {
                               className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                             >
                               <div className="w-8 h-8 bg-zinc-900 text-white rounded-lg flex items-center justify-center text-[10px] font-bold">
-                                {name[0]}
+                                {name && name.length > 0 ? name[0].toUpperCase() : '?'}
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-bold text-zinc-800 truncate">{name}</p>

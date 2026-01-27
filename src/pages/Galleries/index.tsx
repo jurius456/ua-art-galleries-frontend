@@ -213,7 +213,7 @@ const GalleryCard = ({
     >
       <div className="flex items-start justify-between mb-6">
         <div className="w-12 h-12 rounded-xl bg-zinc-900 text-white flex items-center justify-center font-black">
-          {name[0]}
+          {name && name.length > 0 ? name[0].toUpperCase() : '?'}
         </div>
 
         <button
