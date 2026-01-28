@@ -117,27 +117,47 @@ const GalleryPage = () => {
           )}
         </div>
 
-        {/* Main content with blur overlay */}
+        {/* Main content with improved blur overlay */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 relative">
-          {/* Blur overlay для незалогінених - covers entire grid */}
+          {/* Gradient blur overlay для незалогінених */}
           {!isAuth && (
-            <div className="absolute inset-0 z-50 backdrop-blur-sm bg-white/40 rounded-3xl flex items-center justify-center p-6">
-              <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-md text-center space-y-4 border border-zinc-200">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
-                  <Lock className="text-blue-600" size={28} />
+            <>
+              {/* Gradient blur background */}
+              <div
+                className="absolute inset-0 z-40"
+                style={{
+                  background: 'linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.9) 100%)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                }}
+              />
+
+              {/* Modal overlay */}
+              <div className="absolute inset-0 z-50 flex items-center justify-center p-6">
+                <div className="bg-white/95 backdrop-blur-xl rounded-[32px] p-10 shadow-[0_20px_60px_rgba(0,0,0,0.15)] max-w-md text-center space-y-6 border border-zinc-100">
+                  {/* Icon */}
+                  <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto shadow-lg">
+                    <Lock className="text-white" size={32} />
+                  </div>
+
+                  {/* Title */}
+                  <div className="space-y-2">
+                    <h3 className="text-2xl font-black text-zinc-900">Увійдіть, щоб переглянути</h3>
+                    <p className="text-sm text-zinc-500 leading-relaxed">
+                      Повна інформація про галерею доступна тільки для зареєстрованих користувачів
+                    </p>
+                  </div>
+
+                  {/* Button */}
+                  <button
+                    onClick={() => navigate('/auth')}
+                    className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl font-bold text-sm hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                  >
+                    Увійти або зареєструватися
+                  </button>
                 </div>
-                <h3 className="text-xl font-black text-zinc-800">Увійдіть, щоб переглянути</h3>
-                <p className="text-sm text-zinc-600">
-                  Повна інформація про галерею доступна тільки для зареєстрованих користувачів
-                </p>
-                <button
-                  onClick={() => navigate('/auth')}
-                  className="w-full py-3 bg-black text-white rounded-2xl font-bold text-sm hover:bg-zinc-800 transition-colors"
-                >
-                  Увійти або зареєструватися
-                </button>
               </div>
-            </div>
+            </>
           )}
 
           <div className="lg:col-span-7 space-y-10">

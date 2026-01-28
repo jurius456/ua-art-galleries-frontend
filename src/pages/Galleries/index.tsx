@@ -219,12 +219,14 @@ const GalleryCard = ({
         <button
           onClick={(e) => {
             e.preventDefault();
+            e.stopPropagation();
             onToggle();
           }}
-          className={`transition ${favorite
-            ? "text-red-500"
+          className={`transition-colors ${favorite
+            ? "text-red-500 hover:text-red-600"
             : "text-zinc-300 hover:text-zinc-900"
             }`}
+          aria-label="Toggle favorite"
         >
           <Heart size={18} fill={favorite ? "currentColor" : "none"} />
         </button>
