@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { getFavorites, toggleFavorite as toggleFavoriteAPI } from "../api/favorites";
+import { useAuth } from "./AuthContext";
 
 type Favorite = {
   id: string;
@@ -10,51 +12,81 @@ interface FavoritesContextType {
   favorites: Favorite[];
   toggleFavorite: (gallery: Favorite) => void;
   isFavorite: (id: string) => boolean;
+  isLoading: boolean;
 }
 
 const FavoritesContext = createContext<FavoritesContextType | undefined>(
   undefined
 );
 
-const STORAGE_KEY = "ua-art-galleries-favorites";
-
-// 🔑 СИНХРОННЕ ЗЧИТУВАННЯ (КЛЮЧ)
-function loadInitialFavorites(): Favorite[] {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
-  } catch {
-    return [];
-  }
-}
-
 export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [favorites, setFavorites] = useState<Favorite[]>(loadInitialFavorites);
+  const [favorites, setFavorites] = useState<Favorite[]>([]);
+  const [favoriteSlugs, setFavoriteSlugs] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
 
-  // 🔁 ЗБЕРІГАННЯ (без race condition)
+  // Завантажити улюблені галереї при монтуванні або зміні користувача
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
-  }, [favorites]);
+    if (user) {
+      loadFavorites();
+    } else {
+      // Очистити улюблені якщо користувач вийшов
+      setFavorites([]);
+      setFavoriteSlugs([]);
+    }
+  }, [user]);
 
-  const isFavorite = (id: string) => {
-    return favorites.some((f) => f.id === id);
+  const loadFavorites = async () => {
+    try {
+      setIsLoading(true);
+      const slugs = await getFavorites();
+      setFavoriteSlugs(slugs);
+      // Конвертуємо slugs у Favorite об'єкти (тимчасово)
+      const favs = slugs.map(slug => ({
+        id: slug,
+        slug: slug,
+        name: slug
+      }));
+      setFavorites(favs);
+    } catch (error) {
+      console.error("Failed to load favorites:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const toggleFavorite = (gallery: Favorite) => {
-    setFavorites((prev) => {
-      const exists = prev.some((f) => f.id === gallery.id);
-      if (exists) {
-        return prev.filter((f) => f.id !== gallery.id);
+  const isFavorite = (id: string) => {
+    return favoriteSlugs.includes(id);
+  };
+
+  const toggleFavorite = async (gallery: Favorite) => {
+    if (!user) {
+      // Якщо користувач не авторизований, нічого не робимо
+      console.warn("User must be logged in to save favorites");
+      return;
+    }
+
+    try {
+      const result = await toggleFavoriteAPI(gallery.slug);
+
+      // Оновити локальний стан
+      if (result.is_favorite) {
+        setFavorites(prev => [...prev, gallery]);
+        setFavoriteSlugs(prev => [...prev, gallery.slug]);
+      } else {
+        setFavorites(prev => prev.filter(f => f.slug !== gallery.slug));
+        setFavoriteSlugs(prev => prev.filter(s => s !== gallery.slug));
       }
-      return [...prev, gallery];
-    });
+    } catch (error) {
+      console.error("Failed to toggle favorite:", error);
+    }
   };
 
   return (
     <FavoritesContext.Provider
-      value={{ favorites, toggleFavorite, isFavorite }}
+      value={{ favorites, toggleFavorite, isFavorite, isLoading }}
     >
       {children}
     </FavoritesContext.Provider>

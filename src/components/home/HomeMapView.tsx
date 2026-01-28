@@ -96,7 +96,7 @@ const GALLERY_COORDINATES: Record<string, [number, number]> = {
 
   // Odesa
   'ofam': [46.4947, 30.7303], // Odesa Fine Arts Museum
-  'dymchuk-gallery': [50.4600, 30.5100], // Wait, Dymchuk is in Kyiv usually? Or Odesa. It says Dymchuk Gallery. Let's assume Kyiv for now or use city fallback. Actually Dymchuk is Kyiv.
+  'dymchuk-gallery': [50.4600, 30.5100], // Dymchuk Gallery (Kyiv)
   'invogue': [46.4800, 30.7400],
 
   // Dnipro

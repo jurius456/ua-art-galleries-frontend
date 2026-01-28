@@ -46,6 +46,11 @@
                 "subtitle": "Find galleries in your city"
             }
         },
+        "featured": {
+            "badge": "Exclusive",
+            "title": "Popular Galleries",
+            "viewAll": "View all"
+        },
         "about": {
             "context": "Context",
             "title": "About the Project",
