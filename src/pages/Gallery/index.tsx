@@ -158,7 +158,7 @@ const GalleryPage = () => {
                         <div className="flex-shrink-0 w-full md:w-auto">
                           <button
                             onClick={() => navigate('/auth')}
-                            className="group relative w-full md:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[20px] font-bold text-sm overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
+                            className="group relative w-full md:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[20px] font-bold text-sm overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] pointer-events-auto cursor-pointer"
                           >
                             {/* Hover gradient */}
                             <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
