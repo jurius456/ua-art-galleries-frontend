@@ -117,28 +117,30 @@ const GalleryPage = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
-          <div className="lg:col-span-7 space-y-10 relative">
-            {/* Blur overlay для незалогінених */}
-            {!isAuth && (
-              <div className="absolute inset-0 z-10 backdrop-blur-md bg-white/30 rounded-3xl flex items-center justify-center">
-                <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-8 shadow-2xl max-w-md text-center space-y-4">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
-                    <Lock className="text-blue-600" size={28} />
-                  </div>
-                  <h3 className="text-xl font-black text-zinc-800">Увійдіть, щоб переглянути</h3>
-                  <p className="text-sm text-zinc-600">
-                    Повна інформація про галерею доступна тільки для зареєстрованих користувачів
-                  </p>
-                  <button
-                    onClick={() => navigate('/auth')}
-                    className="w-full py-3 bg-black text-white rounded-2xl font-bold text-sm hover:bg-zinc-800 transition-colors"
-                  >
-                    Увійти або зареєструватися
-                  </button>
+        {/* Main content with blur overlay */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 relative">
+          {/* Blur overlay для незалогінених - covers entire grid */}
+          {!isAuth && (
+            <div className="absolute inset-0 z-50 backdrop-blur-sm bg-white/40 rounded-3xl flex items-center justify-center p-6">
+              <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-md text-center space-y-4 border border-zinc-200">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+                  <Lock className="text-blue-600" size={28} />
                 </div>
+                <h3 className="text-xl font-black text-zinc-800">Увійдіть, щоб переглянути</h3>
+                <p className="text-sm text-zinc-600">
+                  Повна інформація про галерею доступна тільки для зареєстрованих користувачів
+                </p>
+                <button
+                  onClick={() => navigate('/auth')}
+                  className="w-full py-3 bg-black text-white rounded-2xl font-bold text-sm hover:bg-zinc-800 transition-colors"
+                >
+                  Увійти або зареєструватися
+                </button>
               </div>
-            )}
+            </div>
+          )}
+
+          <div className="lg:col-span-7 space-y-10">
             {shortDesc && (
               <p className="text-xl text-zinc-600">
                 {shortDesc}

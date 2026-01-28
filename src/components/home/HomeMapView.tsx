@@ -157,6 +157,8 @@ const HomeMapView = () => {
   const points = useMemo(() => {
     let sourceData = apiGalleries.length > 0 ? apiGalleries : MOCK_GALLERIES;
 
+    console.log('Total source galleries:', sourceData.length);
+
     const mapped = sourceData.map((g: Gallery) => {
       let lat = g.latitude;
       let lng = g.longitude;
@@ -164,6 +166,7 @@ const HomeMapView = () => {
       // 1. Try Specific Lookup (if API coords are missing)
       if ((lat == null || lng == null) && g.slug && GALLERY_COORDINATES[g.slug]) {
         [lat, lng] = GALLERY_COORDINATES[g.slug];
+        console.log(`Using specific coords for ${g.slug}:`, lat, lng);
       }
 
       // 2. Try City Lookup with Jitter (fallback if API and specific lookup are missing)
@@ -173,15 +176,24 @@ const HomeMapView = () => {
         // Add random jitter to avoid perfect stacking (approx 500m radius)
         lat = cityLat + (Math.random() - 0.5) * 0.01;
         lng = cityLng + (Math.random() - 0.5) * 0.01;
+        console.log(`Using city coords for ${g.slug} (${cityName}):`, lat, lng);
+      }
+
+      const hasCoords = lat != null && lng != null;
+      if (!hasCoords) {
+        console.warn(`No coordinates found for gallery: ${g.slug} (${getGalleryName(g, i18n.language)})`);
       }
 
       return {
         ...g,
-        coords: (lat && lng) ? [Number(lat), Number(lng)] as [number, number] : null,
+        coords: hasCoords ? [Number(lat), Number(lng)] as [number, number] : null,
       };
     });
 
-    return mapped.filter((g): g is Gallery & { coords: [number, number] } => g.coords !== null);
+    const withCoords = mapped.filter((g): g is Gallery & { coords: [number, number] } => g.coords !== null);
+    console.log('Mapped with coords:', withCoords.length);
+
+    return withCoords;
   }, [apiGalleries, i18n.language]);
 
   const zoomOut = () => {

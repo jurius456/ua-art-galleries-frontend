@@ -142,10 +142,10 @@ const GalleriesPage = () => {
           <GalleryCard
             key={gallery.id}
             gallery={gallery}
-            favorite={isFavorite(gallery.id)}
+            favorite={isFavorite(gallery.slug)}
             onToggle={() =>
               toggleFavorite({
-                id: gallery.id,
+                id: gallery.slug,
                 name: getGalleryName(gallery, i18n.language),
                 slug: gallery.slug,
               })

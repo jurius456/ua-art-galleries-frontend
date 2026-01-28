@@ -11,7 +11,7 @@ type Favorite = {
 interface FavoritesContextType {
   favorites: Favorite[];
   toggleFavorite: (gallery: Favorite) => void;
-  isFavorite: (id: string) => boolean;
+  isFavorite: (slug: string) => boolean;
   isLoading: boolean;
 }
 
@@ -57,8 +57,8 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const isFavorite = (id: string) => {
-    return favoriteSlugs.includes(id);
+  const isFavorite = (slug: string) => {
+    return favoriteSlugs.includes(slug);
   };
 
   const toggleFavorite = async (gallery: Favorite) => {
