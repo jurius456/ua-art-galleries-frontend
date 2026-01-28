@@ -157,7 +157,7 @@ const GalleryPage = () => {
                         {/* CTA Button */}
                         <div className="flex-shrink-0 w-full md:w-auto">
                           <button
-                            onClick={() => navigate('/auth')}
+                            onClick={() => navigate('/login')}
                             className="group relative w-full md:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[20px] font-bold text-sm overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] pointer-events-auto cursor-pointer"
                           >
                             {/* Hover gradient */}
