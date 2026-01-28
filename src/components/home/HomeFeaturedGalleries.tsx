@@ -44,7 +44,6 @@ const HomeFeaturedGalleries = () => {
           const specialization = getGallerySpecialization(gallery, i18n.language);
 
           return (
-          return (
             <Link
               key={gallery.id}
               to={`/galleries/${gallery.slug}`}
