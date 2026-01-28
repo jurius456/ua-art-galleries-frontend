@@ -122,11 +122,11 @@ const GalleryPage = () => {
           {/* Smooth gradient overlay for non-authenticated users */}
           {!isAuth && (
             <>
-              {/* Smooth gradient fade overlay - NO blur, just opacity fade */}
+              {/* Aggressive gradient fade overlay to completely hide text */}
               <div
                 className="absolute inset-0 z-40 pointer-events-none"
                 style={{
-                  background: 'linear-gradient(to bottom, transparent 0%, transparent 15%, rgba(255,255,255,0.3) 25%, rgba(255,255,255,0.6) 35%, rgba(255,255,255,0.85) 45%, rgba(255,255,255,0.95) 55%, rgb(255,255,255) 70%)',
+                  background: 'linear-gradient(to bottom, transparent 0%, transparent 10%, rgba(255,255,255,0.4) 18%, rgba(255,255,255,0.7) 25%, rgba(255,255,255,0.9) 35%, rgba(255,255,255,0.98) 45%, rgb(255,255,255) 50%)',
                 }}
               />
 
