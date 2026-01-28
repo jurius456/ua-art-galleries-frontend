@@ -122,51 +122,51 @@ const GalleryPage = () => {
           {/* Enhanced glassmorphism overlay для незалогінених */}
           {!isAuth && (
             <>
-              {/* Sophisticated gradient blur background */}
+              {/* Sophisticated gradient blur background with stronger fade */}
               <div
                 className="absolute inset-0 z-40 animate-[fadeIn_0.4s_ease-out]"
                 style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(249,250,251,0.7) 40%, rgba(255,255,255,0.95) 100%)',
-                  backdropFilter: 'blur(16px) saturate(180%)',
-                  WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+                  background: 'linear-gradient(to bottom, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.85) 30%, rgba(255,255,255,0.95) 60%, rgba(255,255,255,1) 100%)',
+                  backdropFilter: 'blur(20px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
                 }}
               />
 
-              {/* Premium glassmorphism modal */}
+              {/* Compact premium glassmorphism modal */}
               <div className="absolute inset-0 z-50 flex items-center justify-center p-6 animate-[fadeIn_0.5s_ease-out]">
                 <div
-                  className="relative bg-white/80 backdrop-blur-2xl rounded-[40px] p-12 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_32px_64px_rgba(0,0,0,0.12)] max-w-lg text-center space-y-8 border border-white/40 transform transition-all duration-300 hover:scale-[1.01]"
+                  className="relative bg-white/80 backdrop-blur-2xl rounded-[32px] p-8 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_32px_64px_rgba(0,0,0,0.12)] max-w-md text-center space-y-6 border border-white/40 transform transition-all duration-300 hover:scale-[1.01]"
                   style={{
                     background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%)',
                   }}
                 >
-                  {/* Decorative gradient orb */}
-                  <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-blue-400/30 to-purple-400/30 rounded-full blur-3xl pointer-events-none" />
-                  <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-br from-indigo-400/30 to-blue-400/30 rounded-full blur-3xl pointer-events-none" />
+                  {/* Decorative gradient orbs - smaller */}
+                  <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-blue-400/30 to-purple-400/30 rounded-full blur-3xl pointer-events-none" />
+                  <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-gradient-to-br from-indigo-400/30 to-blue-400/30 rounded-full blur-3xl pointer-events-none" />
 
-                  {/* Animated icon with glow */}
+                  {/* Animated icon with glow - smaller */}
                   <div className="relative">
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full blur-xl opacity-40 animate-pulse" />
-                    <div className="relative w-24 h-24 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto shadow-[0_8px_24px_rgba(59,130,246,0.4)] transform transition-transform duration-300 hover:scale-110">
-                      <Lock className="text-white drop-shadow-lg" size={36} strokeWidth={2.5} />
+                    <div className="relative w-20 h-20 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto shadow-[0_8px_24px_rgba(59,130,246,0.4)] transform transition-transform duration-300 hover:scale-110">
+                      <Lock className="text-white drop-shadow-lg" size={28} strokeWidth={2.5} />
                     </div>
                   </div>
 
-                  {/* Enhanced typography */}
-                  <div className="space-y-3 relative">
-                    <h3 className="text-3xl font-black text-zinc-900 tracking-tight">
+                  {/* Enhanced typography - more compact */}
+                  <div className="space-y-2 relative">
+                    <h3 className="text-2xl font-black text-zinc-900 tracking-tight">
                       Увійдіть, щоб переглянути
                     </h3>
-                    <p className="text-base text-zinc-600 leading-relaxed max-w-sm mx-auto font-medium">
+                    <p className="text-sm text-zinc-600 leading-relaxed max-w-xs mx-auto font-medium">
                       Повна інформація про галерею доступна тільки для зареєстрованих користувачів
                     </p>
                   </div>
 
-                  {/* Premium CTA button with enhanced effects */}
-                  <div className="relative pt-2">
+                  {/* Premium CTA button with enhanced effects - more compact */}
+                  <div className="relative pt-1">
                     <button
                       onClick={() => navigate('/auth')}
-                      className="group relative w-full py-5 px-8 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-[24px] font-bold text-base overflow-hidden shadow-[0_8px_24px_rgba(59,130,246,0.35)] hover:shadow-[0_12px_32px_rgba(59,130,246,0.45)] transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
+                      className="group relative w-full py-4 px-6 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-[20px] font-bold text-sm overflow-hidden shadow-[0_8px_24px_rgba(59,130,246,0.35)] hover:shadow-[0_12px_32px_rgba(59,130,246,0.45)] transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
                     >
                       {/* Animated gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-indigo-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -176,7 +176,7 @@ const GalleryPage = () => {
 
                       <span className="relative flex items-center justify-center gap-2">
                         Увійти або зареєструватися
-                        <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                         </svg>
                       </span>
