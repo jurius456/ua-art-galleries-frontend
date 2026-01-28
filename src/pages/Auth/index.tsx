@@ -97,17 +97,17 @@ const AuthPage = () => {
 
     const payload = isLogin
       ? {
-          username: formData.username,
-          password: formData.password,
-        }
+        username: formData.username,
+        password: formData.password,
+      }
       : {
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-          password2: formData.passwordConfirm,
-          first_name: formData.first_name,
-          last_name: formData.last_name,
-        };
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        password2: formData.passwordConfirm,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+      };
 
     try {
       const res = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -124,7 +124,7 @@ const AuthPage = () => {
       }
 
       // 🔥 ЄДИНЕ МІСЦЕ ЛОГІНУ
-      await login(data.access);
+      await login(data.key);
 
       navigate("/profile");
     } catch (err) {
@@ -181,7 +181,7 @@ const AuthPage = () => {
               value={formData.email}
               onChange={handleChange}
               error={errors.email}
-              
+
             />
           )}
 
@@ -262,9 +262,8 @@ const Input = ({ icon, error, ...props }: InputProps) => (
     </div>
     <input
       {...props}
-      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-neutral-500 focus:border-neutral-500 ${
-        error ? "border-red-500" : "border-gray-300"
-      }`}
+      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-neutral-500 focus:border-neutral-500 ${error ? "border-red-500" : "border-gray-300"
+        }`}
     />
     {error && <p className="text-sm text-red-600 mt-1">{error}</p>}
   </div>
