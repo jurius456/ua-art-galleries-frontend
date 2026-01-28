@@ -20,7 +20,6 @@ import { getGalleryName, getGalleryCity, getGalleryShortDescription } from '../.
 
 const INITIAL_CENTER: [number, number] = [48.3794, 31.1656]; // Geometric center of Ukraine
 const INITIAL_ZOOM = 6;
-const FOCUS_ZOOM = 15;
 
 /* ===================== MAP REF CONTROLLER ===================== */
 
@@ -65,11 +64,11 @@ const createClusterIcon = (cluster: Cluster) => {
   return new L.DivIcon({
     className: 'bg-transparent',
     html: `
-      <div class="w-12 h-12 bg-blue-600 text-white font-black text-sm rounded-full flex items-center justify-center shadow-[0_8px_20px_rgba(37,99,235,0.45)] border-4 border-white transform transition-transform hover:scale-110">
+      <div class="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-black text-base rounded-full flex items-center justify-center shadow-[0_8px_24px_rgba(37,99,235,0.5)] border-4 border-white transform transition-all duration-200 hover:scale-110 hover:shadow-[0_12px_32px_rgba(37,99,235,0.6)] cursor-pointer">
         ${count}
       </div>
     `,
-    iconSize: [48, 48],
+    iconSize: [56, 56],
   });
 };
 
@@ -108,6 +107,7 @@ const GALLERY_COORDINATES: Record<string, [number, number]> = {
 };
 
 const CITY_COORDINATES: Record<string, [number, number]> = {
+  // Ukrainian cities (Ukrainian)
   'Київ': [50.4501, 30.5234],
   'Львів': [49.8397, 24.0297],
   'Одеса': [46.4825, 30.7233],
@@ -123,12 +123,21 @@ const CITY_COORDINATES: Record<string, [number, number]> = {
   'Полтава': [49.5883, 34.5514],
   'Чернігів': [51.4982, 31.2893],
   'Запоріжжя': [47.8388, 35.1396],
-  // English versions
+  // Ukrainian cities (English)
   'Kyiv': [50.4501, 30.5234],
   'Lviv': [49.8397, 24.0297],
   'Odesa': [46.4825, 30.7233],
   'Dnipro': [48.4647, 35.0462],
   'Kharkiv': [49.9935, 36.2304],
+  // International cities
+  'Greenwich, Connecticut 06836, USA': [41.0262, -73.6282],
+  'Greenwich, Connecticut': [41.0262, -73.6282],
+  'Greenwich': [41.0262, -73.6282],
+  'Connecticut': [41.6032, -73.0877],
+  'Paphos': [34.7571, 32.4134],
+  'Cyprus': [35.1264, 33.4299],
+  'Пафос': [34.7571, 32.4134],
+  'Кіпр': [35.1264, 33.4299],
 };
 
 /* ===================== MOCK DATA (Fallback) ===================== */
@@ -200,10 +209,6 @@ const HomeMapView = () => {
     mapRef.current?.setView(INITIAL_CENTER, INITIAL_ZOOM, { animate: true });
   };
 
-  const zoomToGallery = (coords: [number, number]) => {
-    mapRef.current?.setView(coords, FOCUS_ZOOM, { animate: true });
-  };
-
   return (
     <section className="space-y-8 py-16">
       {/* HEADER */}
@@ -241,6 +246,11 @@ const HomeMapView = () => {
             <MarkerClusterGroup
               chunkedLoading
               iconCreateFunction={createClusterIcon}
+              maxClusterRadius={60}
+              spiderfyOnMaxZoom={true}
+              showCoverageOnHover={false}
+              zoomToBoundsOnClick={true}
+              spiderfyDistanceMultiplier={1.5}
             >
               {points.map((g) => {
                 const name = getGalleryName(g, i18n.language);
@@ -254,7 +264,8 @@ const HomeMapView = () => {
                     icon={galleryIcon}
                     eventHandlers={{
                       click: (e) => {
-                        zoomToGallery(g.coords);
+                        // Don't zoom here - let cluster handle it
+                        // Just open the popup
                         e.target.openPopup();
                       },
                     }}
