@@ -30,11 +30,11 @@ export async function login(payload: {
   password: string;
 }) {
   // POST /api/auth/login/
-  const data = await http<{ access: string }>("/api/auth/login/", {
+  const data = await http<{ key: string }>("/api/auth/login/", {
     method: "POST",
     body: payload,
   });
-  return data.access;
+  return data.key;
 }
 
 export async function register(payload: {
@@ -46,11 +46,11 @@ export async function register(payload: {
   last_name?: string;
 }) {
   // POST /api/auth/register/
-  const data = await http<{ access: string }>("/api/auth/register/", {
+  const data = await http<{ key: string }>("/api/auth/register/", {
     method: "POST",
     body: payload,
   });
-  return data.access;
+  return data.key;
 }
 
 export function fetchMe() {
