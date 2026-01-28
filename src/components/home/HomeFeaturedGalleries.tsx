@@ -71,16 +71,17 @@ const HomeFeaturedGalleries = () => {
 
               {/* Bottom: Info */}
               <div className="relative z-10">
-                <h3 className="text-3xl font-black text-zinc-900 tracking-tighter leading-[0.9] mb-4 group-hover:translate-x-1 transition-transform duration-300">
-                  {name}
-                </h3>
-                <div className="flex items-center gap-2 text-zinc-500 group-hover:text-zinc-900 transition-colors">
-                  <MapPin size={14} />
-                  <span className="text-xs font-bold uppercase tracking-wide">{city}, Україна</span>
+                <div>
+                  <h3 className="text-3xl font-black text-zinc-900 tracking-tighter leading-[0.9] mb-4 group-hover:translate-x-1 transition-transform duration-300">
+                    {name}
+                  </h3>
+                  <div className="flex items-center gap-2 text-zinc-500 group-hover:text-zinc-900 transition-colors">
+                    <MapPin size={14} />
+                    <span className="text-xs font-bold uppercase tracking-wide">{city}, Україна</span>
+                  </div>
                 </div>
               </div>
             </Link>
-          );
           );
         })}
       </div>
