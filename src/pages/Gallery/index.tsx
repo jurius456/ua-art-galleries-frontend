@@ -119,16 +119,9 @@ const GalleryPage = () => {
 
         {/* Main content with smooth gradient overlay */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 relative">
-          {/* Smooth gradient overlay for non-authenticated users */}
+          {/* Auth card for non-authenticated users */}
           {!isAuth && (
             <>
-              {/* Aggressive gradient fade overlay to completely hide text */}
-              <div
-                className="absolute inset-0 z-40 pointer-events-none"
-                style={{
-                  background: 'linear-gradient(to bottom, transparent 0%, transparent 10%, rgba(255,255,255,0.4) 18%, rgba(255,255,255,0.7) 25%, rgba(255,255,255,0.9) 35%, rgba(255,255,255,0.98) 45%, rgb(255,255,255) 50%)',
-                }}
-              />
 
               {/* Bottom overlay auth card */}
               <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none animate-[fadeIn_0.5s_ease-out]">
@@ -191,49 +184,60 @@ const GalleryPage = () => {
 
           <div className="lg:col-span-7 space-y-10">
             {shortDesc && (
-              <p className="text-xl text-zinc-600">
+              <div
+                className="text-xl text-zinc-600 relative"
+                style={!isAuth ? {
+                  WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 100%)',
+                  maskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 100%)',
+                } : {}}
+              >
                 {shortDesc}
-              </p>
-            )}
-
-            {fullDesc && (
-              <div className="prose prose-zinc max-w-none">
-                {typeof fullDesc === 'string'
-                  ? <div className="whitespace-pre-wrap">{fullDesc}</div>
-                  : documentToReactComponents(fullDesc as Document)
-                }
               </div>
             )}
 
-            {/* Founders, Curators, Artists */}
-            <div className="space-y-6 pt-8 border-t border-zinc-200">
-              {founders && (
-                <div>
-                  <p className="text-[9px] font-black uppercase text-zinc-400 mb-2">
-                    {t('gallery.founders')}
-                  </p>
-                  <p className="text-zinc-700 font-medium">{founders}</p>
-                </div>
-              )}
+            {/* Only show full content for authenticated users */}
+            {isAuth && (
+              <>
+                {fullDesc && (
+                  <div className="prose prose-zinc max-w-none">
+                    {typeof fullDesc === 'string'
+                      ? <div className="whitespace-pre-wrap">{fullDesc}</div>
+                      : documentToReactComponents(fullDesc as Document)
+                    }
+                  </div>
+                )}
 
-              {curators && (
-                <div>
-                  <p className="text-[9px] font-black uppercase text-zinc-400 mb-2">
-                    {t('gallery.curators')}
-                  </p>
-                  <p className="text-zinc-700 font-medium">{curators}</p>
-                </div>
-              )}
+                {/* Founders, Curators, Artists */}
+                <div className="space-y-6 pt-8 border-t border-zinc-200">
+                  {founders && (
+                    <div>
+                      <p className="text-[9px] font-black uppercase text-zinc-400 mb-2">
+                        {t('gallery.founders')}
+                      </p>
+                      <p className="text-zinc-700 font-medium">{founders}</p>
+                    </div>
+                  )}
 
-              {artists && (
-                <div>
-                  <p className="text-[9px] font-black uppercase text-zinc-400 mb-2">
-                    {t('gallery.artists')}
-                  </p>
-                  <p className="text-zinc-700 font-medium">{artists}</p>
+                  {curators && (
+                    <div>
+                      <p className="text-[9px] font-black uppercase text-zinc-400 mb-2">
+                        {t('gallery.curators')}
+                      </p>
+                      <p className="text-zinc-700 font-medium">{curators}</p>
+                    </div>
+                  )}
+
+                  {artists && (
+                    <div>
+                      <p className="text-[9px] font-black uppercase text-zinc-400 mb-2">
+                        {t('gallery.artists')}
+                      </p>
+                      <p className="text-zinc-700 font-medium">{artists}</p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              </>
+            )}
           </div>
 
           <aside className="lg:col-span-5">
