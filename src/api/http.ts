@@ -22,7 +22,7 @@ export async function http<T>(
 
   if (options.auth) {
     const token = getToken();
-    if (token) headers.Authorization = `Bearer ${token}`;
+    if (token) headers.Authorization = `Token ${token}`;
   }
 
   const res = await fetch(`${API_BASE_URL}${path}`, {
