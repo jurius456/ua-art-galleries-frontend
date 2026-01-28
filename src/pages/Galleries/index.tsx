@@ -138,19 +138,24 @@ const GalleriesPage = () => {
 
       {/* GRID */}
       <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-        {visible.map((gallery) => (
-          <GalleryCard
+        {visible.map((gallery, index) => (
+          <div
             key={gallery.id}
-            gallery={gallery}
-            favorite={isFavorite(gallery.slug)}
-            onToggle={() =>
-              toggleFavorite({
-                id: gallery.slug,
-                name: getGalleryName(gallery, i18n.language),
-                slug: gallery.slug,
-              })
-            }
-          />
+            className="animate-fade-in-up opacity-0"
+            style={{ animationDelay: `${Math.min(index * 100, 1000)}ms`, animationFillMode: 'forwards' }}
+          >
+            <GalleryCard
+              gallery={gallery}
+              favorite={isFavorite(gallery.slug)}
+              onToggle={() =>
+                toggleFavorite({
+                  id: gallery.slug,
+                  name: getGalleryName(gallery, i18n.language),
+                  slug: gallery.slug,
+                })
+              }
+            />
+          </div>
         ))}
       </div>
 

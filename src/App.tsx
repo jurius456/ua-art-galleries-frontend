@@ -47,34 +47,36 @@ const AppContent = () => {
       <Header />
 
       <main className="flex-grow w-full relative z-10">
-        <Routes>
-          {/* Публічні маршрути */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/galleries" element={<GalleriesPage />} />
-          <Route path="/galleries/:slug" element={<GalleryPage />} />
-          <Route path="/events" element={<EventsPage />} />
-          <Route path="/events/:id" element={<EventDetail />} />
-          <Route path="/login" element={<AuthPage />} />
+        <div key={location.pathname} className="animate-fade-in-up">
+          <Routes>
+            {/* Публічні маршрути */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/galleries" element={<GalleriesPage />} />
+            <Route path="/galleries/:slug" element={<GalleryPage />} />
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/events/:id" element={<EventDetail />} />
+            <Route path="/login" element={<AuthPage />} />
 
-          {/* Захищені маршрути */}
-          <Route element={<ProtectedRoute />}>
-            <Route element={<SettingsLayout />}>
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/settings" element={<GeneralSettingsPage />} />
-              <Route path="/settings/password" element={<ChangePasswordPage />} />
-              <Route path="/settings/archive" element={<SavedGalleriesPage />} />
+            {/* Захищені маршрути */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<SettingsLayout />}>
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/settings" element={<GeneralSettingsPage />} />
+                <Route path="/settings/password" element={<ChangePasswordPage />} />
+                <Route path="/settings/archive" element={<SavedGalleriesPage />} />
+              </Route>
             </Route>
-          </Route>
 
-          {/* 404 */}
-          <Route path="*" element={
-            <div className="text-center py-40">
-              <h1 className="text-9xl font-black text-zinc-100 uppercase tracking-tighter select-none">404</h1>
-              <p className="text-zinc-400 font-bold uppercase tracking-widest text-[10px] mt-4">Дані не знайдено в архіві</p>
-            </div>
-          } />
-        </Routes>
+            {/* 404 */}
+            <Route path="*" element={
+              <div className="text-center py-40">
+                <h1 className="text-9xl font-black text-zinc-100 uppercase tracking-tighter select-none">404</h1>
+                <p className="text-zinc-400 font-bold uppercase tracking-widest text-[10px] mt-4">Дані не знайдено в архіві</p>
+              </div>
+            } />
+          </Routes>
+        </div>
       </main>
 
       {!isAuthPage && <Footer />}

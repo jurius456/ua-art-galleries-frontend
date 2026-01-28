@@ -28,15 +28,21 @@ const HomeFeaturedGalleries = () => {
 
       {/* Сітка карток */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {FEATURED.map((gallery) => (
-          <div key={gallery.id} className="group cursor-pointer space-y-5">
+        {FEATURED.map((gallery, index) => (
+          <div
+            key={gallery.id}
+            className="group cursor-pointer space-y-5 animate-fade-in-up opacity-0"
+            style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'forwards' }}
+          >
             {/* Плейсхолдер під фото з ефектом "скла" */}
             <div className="aspect-[16/10] bg-zinc-100 rounded-[32px] overflow-hidden relative shadow-inner">
-              <div className="absolute top-4 right-4 px-3 py-1.5 bg-white/80 backdrop-blur-md rounded-2xl flex items-center gap-1.5 shadow-sm">
+              <div className="absolute top-4 right-4 px-3 py-1.5 bg-white/80 backdrop-blur-md rounded-2xl flex items-center gap-1.5 shadow-sm z-10">
                 <Star size={12} className="text-yellow-500 fill-yellow-500" />
                 <span className="text-[11px] font-black text-zinc-900">{gallery.rating}</span>
               </div>
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500" />
+              {/* Optional: Placeholder gradient or image if we had one for featured */}
+              <div className="absolute inset-0 bg-gradient-to-br from-zinc-100 to-zinc-200 group-hover:scale-105 transition-transform duration-700" />
             </div>
 
             {/* Інфо про галерею */}
@@ -50,7 +56,7 @@ const HomeFeaturedGalleries = () => {
               </div>
 
               <div>
-                <h3 className="text-xl font-bold text-zinc-900 tracking-tight leading-none mb-1">
+                <h3 className="text-xl font-bold text-zinc-900 tracking-tight leading-none mb-1 group-hover:text-blue-600 transition-colors">
                   {gallery.name}
                 </h3>
                 <div className="flex items-center gap-1 text-zinc-400">
