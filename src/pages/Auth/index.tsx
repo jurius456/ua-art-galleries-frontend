@@ -126,7 +126,7 @@ const AuthPage = () => {
       // 🔥 ЄДИНЕ МІСЦЕ ЛОГІНУ
       await login(data.key);
 
-      navigate("/profile");
+      navigate("/");
     } catch (err) {
       console.error(err);
       setApiError("Сервер недоступний.");
