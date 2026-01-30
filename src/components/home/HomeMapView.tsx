@@ -138,6 +138,29 @@ const CITY_COORDINATES: Record<string, [number, number]> = {
   'Cyprus': [35.1264, 33.4299],
   'Пафос': [34.7571, 32.4134],
   'Кіпр': [35.1264, 33.4299],
+  'London': [51.5074, -0.1278],
+  'Лондон': [51.5074, -0.1278],
+  'Berlin': [52.5200, 13.4050],
+  'Берлін': [52.5200, 13.4050],
+  'Paris': [48.8566, 2.3522],
+  'Париж': [48.8566, 2.3522],
+  'New York': [40.7128, -74.0060],
+  'Нью-Йорк': [40.7128, -74.0060],
+  'Warsaw': [52.2297, 21.0122],
+  'Варшава': [52.2297, 21.0122],
+  'Vienna': [48.2082, 16.3738],
+  'Відень': [48.2082, 16.3738],
+};
+
+// Deterministic random number generator based on string seed
+const seededRandom = (seed: string) => {
+  let value = 0;
+  for (let i = 0; i < seed.length; i++) {
+    value = (value << 5) - value + seed.charCodeAt(i);
+    value |= 0; // Convert to 32bit integer
+  }
+  const x = Math.sin(value) * 10000;
+  return x - Math.floor(x);
 };
 
 /* ===================== MOCK DATA (Fallback) ===================== */
@@ -182,9 +205,12 @@ const HomeMapView = () => {
       const cityName = getGalleryCity(g, i18n.language);
       if ((lat == null || lng == null) && cityName && CITY_COORDINATES[cityName]) {
         const [cityLat, cityLng] = CITY_COORDINATES[cityName];
-        // Add random jitter to avoid perfect stacking (approx 500m radius)
-        lat = cityLat + (Math.random() - 0.5) * 0.01;
-        lng = cityLng + (Math.random() - 0.5) * 0.01;
+        // Add deterministic jitter to avoid perfect stacking (approx 500m radius)
+        const latJitter = (seededRandom(g.slug + 'lat') - 0.5) * 0.01;
+        const lngJitter = (seededRandom(g.slug + 'lng') - 0.5) * 0.01;
+
+        lat = cityLat + latJitter;
+        lng = cityLng + lngJitter;
         console.log(`Using city coords for ${g.slug} (${cityName}):`, lat, lng);
       }
 
