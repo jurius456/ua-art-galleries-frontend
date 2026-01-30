@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, MapPin, Mail, Phone, Globe, Instagram, Lock, Clock, Calendar, BadgeCheck, Ban } from "lucide-react";
+import { ArrowLeft, MapPin, Mail, Phone, Globe, Instagram, Lock, Clock, Calendar, BadgeCheck, Ban, Heart } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
+import { useFavorites } from "../../context/FavoritesContext";
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import type { Document } from '@contentful/rich-text-types';
 
@@ -25,6 +26,7 @@ const GalleryPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { t, i18n } = useTranslation();
   const { isAuth } = useAuth();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const navigate = useNavigate();
 
   const [gallery, setGallery] = useState<GalleryDetail | null>(null);
@@ -246,14 +248,33 @@ const GalleryPage = () => {
 
             {/* Logo & Status Card */}
             <div className="bg-white rounded-[40px] border border-zinc-100 p-8 shadow-sm">
-              <div className="w-24 h-24 rounded-full bg-zinc-100 mb-6 overflow-hidden mx-auto lg:mx-0">
-                {gallery.image ? (
-                  <img src={gallery.image} alt="Logo" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-zinc-300 font-black text-2xl uppercase">
-                    {name[0]}
-                  </div>
-                )}
+              <div className="flex items-start justify-between mb-6">
+                <div className="w-24 h-24 rounded-full bg-zinc-100 overflow-hidden lg:mx-0">
+                  {gallery.image ? (
+                    <img src={gallery.image} alt="Logo" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-zinc-300 font-black text-2xl uppercase">
+                      {name[0]}
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={() =>
+                    toggleFavorite({
+                      id: gallery.slug,
+                      name: getGalleryName(gallery, i18n.language),
+                      slug: gallery.slug,
+                    })
+                  }
+                  className={`w-12 h-12 rounded-full border flex items-center justify-center transition-colors ${isFavorite(gallery.slug)
+                      ? "border-red-100 bg-red-50 text-red-500 hover:bg-red-100"
+                      : "border-zinc-100 text-zinc-300 hover:border-zinc-900 hover:text-zinc-900"
+                    }`}
+                  aria-label="Toggle favorite"
+                >
+                  <Heart size={20} fill={isFavorite(gallery.slug) ? "currentColor" : "none"} />
+                </button>
               </div>
 
               <h1 className="hidden lg:block text-3xl font-black text-zinc-900 uppercase mb-4 leading-0.9">
