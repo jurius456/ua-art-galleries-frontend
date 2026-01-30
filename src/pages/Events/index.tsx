@@ -21,8 +21,8 @@ export interface ArtEvent {
 
 export const MOCK_EVENTS: ArtEvent[] = [
   { id: 1, title: 'Металевий дух: ретроспектива', galleryName: 'Галерея Кузня', city: 'Київ', date: '20-25 Грудня 2025', category: "Виставка", price: "Free", image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&q=80&w=800" },
-  { id: 2, title: 'Digital Art Workshop', galleryName: 'PinchukArtCentre', city: 'Київ', date: '28 Грудня 2025', category: "Воркшоп", price: "Paid", image: "https://images.unsplash.com/photo-1547826039-adc3a421f8a6?auto=format&fit=crop&q=80&w=800" },
-  { id: 3, title: 'Ніч у музеї ССМ', galleryName: 'Музей ССМ', city: 'Одеса', date: '30 Грудня 2025', category: "Відкриття", price: "Free", image: "https://images.unsplash.com/photo-1499781350541-7783f6c6a0c8?auto=format&fit=crop&q=80&w=800" },
+  { id: 2, title: 'Digital Art Workshop', galleryName: 'PinchukArtCentre', city: 'Київ', date: '28 Грудня 2025', category: "Воркшоп", price: "Paid", image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800" },
+  { id: 3, title: 'Ніч у музеї ССМ', galleryName: 'Музей ССМ', city: 'Одеса', date: '30 Грудня 2025', category: "Відкриття", price: "Free", image: "https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&q=80&w=800" },
   { id: 4, title: 'Живопис старого Львова', galleryName: 'Арт-центр Світ', city: 'Львів', date: '05-10 Січня 2026', category: "Виставка", price: "Paid", image: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?auto=format&fit=crop&q=80&w=800" },
 ];
 
