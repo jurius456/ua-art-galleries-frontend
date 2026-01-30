@@ -157,7 +157,7 @@ const MOCK_GALLERIES: Gallery[] = [
 const HomeMapView = () => {
   const mapRef = useRef<L.Map | null>(null);
   const { data: apiGalleries = [] } = useGalleriesQuery();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   // 1. Try to use API galleries
   // 2. Determine coordinates (API or Lookup)
@@ -215,10 +215,10 @@ const HomeMapView = () => {
       <div className="container mx-auto px-6 max-w-6xl flex justify-between items-end">
         <div>
           <p className="text-[9px] font-black uppercase tracking-[0.3em] text-blue-600">
-            Карта архіву
+            {t('home.map.badge')}
           </p>
           <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter">
-            Карта <span className="text-zinc-300">галерей</span>
+            {t('home.map.titlePrefix')} <span className="text-zinc-300">{t('home.map.titleSuffix')}</span>
           </h2>
         </div>
 
@@ -226,7 +226,7 @@ const HomeMapView = () => {
           onClick={zoomOut}
           className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-800 transition-colors"
         >
-          <ZoomOut size={12} /> Огляд мапи
+          <ZoomOut size={12} /> {t('home.map.zoomOut')}
         </button>
       </div>
 
@@ -289,7 +289,7 @@ const HomeMapView = () => {
                           to={`/galleries/${g.slug}`}
                           className="flex items-center justify-center gap-2 py-2.5 bg-zinc-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-600 transition-colors"
                         >
-                          Відкрити <ArrowRight size={12} />
+                          {t('home.map.open')} <ArrowRight size={12} />
                         </Link>
                       </div>
                     </Popup>

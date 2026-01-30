@@ -60,6 +60,13 @@
             "roadmap": "Roadmap",
             "contacts": "Contacts",
             "partners": "Partners"
+        },
+        "map": {
+            "badge": "Archive Map",
+            "titlePrefix": "Map of",
+            "titleSuffix": "Galleries",
+            "zoomOut": "Map Overview",
+            "open": "Open"
         }
     },
     "featured": {
@@ -149,7 +156,21 @@
         "quote": "«From theory to real practice»",
         "ourMission": "Our Mission",
         "missionText": "We are learning to build complex systems to give Ukrainian art a tool for the future.",
-        "contact": "Contact"
+        "contact": "Contact",
+        "teamMembers": {
+            "roman": {
+                "role": "Frontend Lead / PM",
+                "bio": "React architecture and project management."
+            },
+            "nazar": {
+                "role": "Backend Lead",
+                "bio": "API development on Django and database logic."
+            },
+            "qa": {
+                "role": "QA Engineer",
+                "bio": "Testing and system stability."
+            }
+        }
     },
     "settings": {
         "general": "General Settings",
