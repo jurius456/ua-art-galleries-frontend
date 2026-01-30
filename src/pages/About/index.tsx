@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { GraduationCap, Code2, MapPin } from "lucide-react";
+import { GraduationCap, Code2, MapPin, ExternalLink } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 
 const AboutPage = () => {
@@ -49,29 +49,26 @@ const AboutPage = () => {
       </section>
 
       {/* 3. TEAM SECTION */}
-      <section id="team" className="py-24 bg-white container mx-auto px-6 max-w-6xl mb-24">
-        <div className="text-center mb-20 space-y-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">
-            {t('about.team')}
-          </p>
-          <h2 className="text-5xl md:text-6xl font-black uppercase tracking-tighter text-zinc-900">
+      <section id="team" className="py-20 bg-zinc-50 container mx-auto px-6 max-w-6xl rounded-[40px] mb-20">
+        <div className="text-center mb-16 space-y-2">
+          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-zinc-900">
             {t('about.teamTitle')}
           </h2>
-          <p className="text-xs font-bold uppercase tracking-widest text-zinc-300">
-            - {t('about.quote')} -
+          <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest italic">
+            {t('about.quote')}
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          <TeamMember initial="D" name={t('about.teamMembers.dmytro.name')} role={t('about.teamMembers.dmytro.role')} />
-          <TeamMember initial="R" name={t('about.teamMembers.roman.name')} role={t('about.teamMembers.roman.role')} />
-          <TeamMember initial="N" name={t('about.teamMembers.nazar.name')} role={t('about.teamMembers.nazar.role')} />
-          <TeamMember initial="R" name={t('about.teamMembers.rostyslav.name')} role={t('about.teamMembers.rostyslav.role')} />
-          <TeamMember initial="S" name={t('about.teamMembers.stanislav.name')} role={t('about.teamMembers.stanislav.role')} />
-          <TeamMember initial="O" name={t('about.teamMembers.oleksandr.name')} role={t('about.teamMembers.oleksandr.role')} />
-          <TeamMember initial="Y" name={t('about.teamMembers.yulia.name')} role={t('about.teamMembers.yulia.role')} />
-          <TeamMember initial="M" name={t('about.teamMembers.mykhailo.name')} role={t('about.teamMembers.mykhailo.role')} />
-          <TeamMember initial="D" name={t('about.teamMembers.danylo.name')} role={t('about.teamMembers.danylo.role')} />
+        <div className="grid md:grid-cols-3 gap-8">
+          <TeamMember initial="D" name={t('about.teamMembers.dmytro.name')} role={t('about.teamMembers.dmytro.role')} bio={t('about.teamMembers.dmytro.bio')} />
+          <TeamMember initial="R" name={t('about.teamMembers.roman.name')} role={t('about.teamMembers.roman.role')} bio={t('about.teamMembers.roman.bio')} />
+          <TeamMember initial="N" name={t('about.teamMembers.nazar.name')} role={t('about.teamMembers.nazar.role')} bio={t('about.teamMembers.nazar.bio')} />
+          <TeamMember initial="R" name={t('about.teamMembers.rostyslav.name')} role={t('about.teamMembers.rostyslav.role')} bio={t('about.teamMembers.rostyslav.bio')} />
+          <TeamMember initial="S" name={t('about.teamMembers.stanislav.name')} role={t('about.teamMembers.stanislav.role')} bio={t('about.teamMembers.stanislav.bio')} />
+          <TeamMember initial="O" name={t('about.teamMembers.oleksandr.name')} role={t('about.teamMembers.oleksandr.role')} bio={t('about.teamMembers.oleksandr.bio')} />
+          <TeamMember initial="Y" name={t('about.teamMembers.yulia.name')} role={t('about.teamMembers.yulia.role')} bio={t('about.teamMembers.yulia.bio')} />
+          <TeamMember initial="M" name={t('about.teamMembers.mykhailo.name')} role={t('about.teamMembers.mykhailo.role')} bio={t('about.teamMembers.mykhailo.bio')} />
+          <TeamMember initial="D" name={t('about.teamMembers.danylo.name')} role={t('about.teamMembers.danylo.role')} bio={t('about.teamMembers.danylo.bio')} />
         </div>
       </section>
 
@@ -110,17 +107,19 @@ const StatItem = ({ label, value }: any) => (
   </div>
 );
 
-const TeamMember = ({ name, role, initial }: any) => (
-  <div className="group relative p-8 bg-zinc-50/50 rounded-[32px] border border-transparent hover:bg-white hover:border-zinc-200 hover:shadow-2xl hover:shadow-zinc-200/50 transition-all duration-500 hover:-translate-y-2">
-    <div className="mb-6 relative">
-      <div className="w-20 h-20 mx-auto bg-white rounded-2xl flex items-center justify-center text-2xl font-black text-zinc-900 shadow-sm group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all duration-500">
-        {initial}
-      </div>
+const TeamMember = ({ name, role, bio, initial }: any) => (
+  <div className="bg-white/40 backdrop-blur-sm border border-white/60 p-8 rounded-[32px] shadow-sm hover:shadow-xl hover:bg-white transition-all duration-500 group">
+    <div className="w-12 h-12 bg-zinc-900 text-white rounded-2xl mb-6 flex items-center justify-center font-bold group-hover:rotate-6 transition-transform shadow-lg shadow-zinc-200">
+      {initial}
     </div>
-    <div className="space-y-2 text-center">
-      <h3 className="text-lg font-black text-zinc-900 tracking-tight">{name}</h3>
-      <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest group-hover:text-blue-600 transition-colors">{role}</p>
+    <div className="space-y-1 mb-4">
+      <h3 className="font-black text-zinc-900 tracking-tight">{name}</h3>
+      <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider">{role}</p>
     </div>
+    <p className="text-xs text-zinc-500 leading-relaxed mb-6">{bio}</p>
+    <button className="text-[9px] font-black uppercase tracking-widest flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      Contact <ExternalLink size={12} />
+    </button>
   </div>
 );
 
