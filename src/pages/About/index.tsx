@@ -78,6 +78,7 @@ const AboutPage = () => {
         <h2 className="text-3xl font-black uppercase tracking-tight mb-8">{t('about.missionTitle')}</h2>
         <p className="text-lg text-zinc-600 leading-relaxed font-medium">
           {t('about.mission')}
+          {t('about.missionText')}
         </p>
       </section>
     </div>
@@ -95,7 +96,7 @@ const StatItem = ({ label, value }: any) => (
 
 const TeamMember = ({ name, role, initial }: any) => (
   <div className="w-[180px] flex flex-col items-center text-center group">
-    <div className="w-20 h-20 bg-zinc-100 rounded-2xl mb-4 flex items-center justify-center font-bold text-xl text-zinc-900 group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all duration-300 shadow-sm">
+    <div className="w-20 h-20 bg-zinc-200 rounded-2xl mb-4 flex items-center justify-center font-bold text-xl text-zinc-900 group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all duration-300 shadow-sm">
       {initial}
     </div>
     <h3 className="font-black text-zinc-900 text-sm leading-tight mb-1.5">{name}</h3>
