@@ -40,7 +40,7 @@ const AboutPage = () => {
       <section className="container mx-auto px-6 mb-20">
         <div className="bg-white/70 backdrop-blur-md border border-white shadow-[0_8px_30px_rgba(0,0,0,0.04)] rounded-[32px] py-10 px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            <StatItem label={t('about.activeGalleries')} value="12+" />
+            <StatItem label={t('about.activeGalleries')} value="100+" />
             <StatItem label={t('about.artworks')} value="450+" />
             <StatItem label={t('about.students')} value="7" />
             <StatItem label={t('about.location')} value="Львів" />
