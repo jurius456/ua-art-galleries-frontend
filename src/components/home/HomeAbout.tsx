@@ -1,5 +1,6 @@
 import { Target, Users, Map, Mail, Handshake } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 const HomeAbout = () => {
   const { t } = useTranslation();
@@ -28,7 +29,9 @@ const HomeAbout = () => {
 
         {/* Права сітка (6 колонок) */}
         <div className="md:col-span-6 grid grid-cols-2 gap-6">
-          <BentoTile icon={<Users className="text-orange-500" />} label={t('home.about.team')} />
+          <Link to="/about#team">
+            <BentoTile icon={<Users className="text-orange-500" />} label={t('home.about.team')} />
+          </Link>
           <BentoTile icon={<Map className="text-green-500" />} label={t('home.about.roadmap')} />
           <BentoTile icon={<Mail className="text-purple-500" />} label={t('home.about.contacts')} />
           <BentoTile icon={<Handshake className="text-blue-400" />} label={t('home.about.partners')} />

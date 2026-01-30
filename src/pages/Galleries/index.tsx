@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Heart, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Heart, ChevronLeft, ChevronRight, BadgeCheck, Ban } from "lucide-react";
 import { useGalleriesQuery } from "../../hooks/useGalleriesQuery";
 import { useFavorites } from "../../context/FavoritesContext";
 import type { Gallery } from "../../api/galleries";
@@ -16,6 +16,7 @@ const GalleriesPage = () => {
 
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("all");
+  const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
 
   /* ---------- CITIES ---------- */
@@ -41,9 +42,11 @@ const GalleriesPage = () => {
 
       const matchCity = city === "all" || cityName === city;
 
-      return matchSearch && matchCity;
+      const matchStatus = status === "all" || (status === "active" ? g.status : !g.status);
+
+      return matchSearch && matchCity && matchStatus;
     });
-  }, [galleries, search, city, i18n.language]);
+  }, [galleries, search, city, status, i18n.language]);
 
   /* ---------- PAGINATION ---------- */
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
@@ -70,10 +73,10 @@ const GalleriesPage = () => {
             {t('galleries.title')} <span className="text-zinc-400">{t('galleries.subtitle')}</span>
           </h1>
 
-          {/* SEARCH + CITY */}
+          {/* SEARCH + CITY + STATUS */}
           <div className="flex flex-col md:flex-row gap-4">
             {/* SEARCH */}
-            <div className="relative flex-1">
+            <div className="relative flex-[2]">
               <Search
                 size={18}
                 className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
@@ -118,6 +121,7 @@ const GalleriesPage = () => {
                 font-semibold
                 outline-none
                 focus:border-zinc-900
+                flex-1
               "
             >
               <option value="all">{t('galleries.allCities')}</option>
@@ -126,6 +130,31 @@ const GalleriesPage = () => {
                   {c}
                 </option>
               ))}
+            </select>
+
+            {/* STATUS */}
+            <select
+              value={status}
+              onChange={(e) => {
+                setStatus(e.target.value);
+                setPage(1);
+              }}
+              className="
+                h-[56px]
+                rounded-2xl
+                border
+                border-zinc-200
+                px-5
+                text-sm
+                font-semibold
+                outline-none
+                focus:border-zinc-900
+                flex-1
+              "
+            >
+              <option value="all">{t('galleries.allStatuses')}</option>
+              <option value="active">{t('gallery.active')}</option>
+              <option value="inactive">{t('gallery.inactive')}</option>
             </select>
           </div>
         </div>
@@ -207,43 +236,56 @@ const GalleryCard = ({
   favorite: boolean;
   onToggle: () => void;
 }) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const name = getGalleryName(gallery, i18n.language);
   const city = getGalleryCity(gallery, i18n.language);
 
   return (
     <Link
       to={`/galleries/${gallery.slug}`}
-      className="group block rounded-[28px] border border-zinc-200 bg-white p-8 hover:border-zinc-900 transition"
+      className="group block rounded-[28px] border border-zinc-200 bg-white p-8 hover:border-zinc-900 transition h-full flex flex-col justify-between"
     >
-      <div className="flex items-start justify-between mb-6">
-        <div className="w-12 h-12 rounded-xl bg-zinc-900 text-white flex items-center justify-center font-black">
-          {name && name.length > 0 ? name[0].toUpperCase() : '?'}
+      <div>
+        <div className="flex items-start justify-between mb-6">
+          <div className="w-12 h-12 rounded-xl bg-zinc-900 text-white flex items-center justify-center font-black overflow-hidden">
+            {gallery.image ? (
+              <img src={gallery.image} alt={name} className="w-full h-full object-cover" />
+            ) : (
+              <span>{name && name.length > 0 ? name[0].toUpperCase() : '?'}</span>
+            )}
+          </div>
+
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onToggle();
+            }}
+            className={`transition-colors ${favorite
+              ? "text-red-500 hover:text-red-600"
+              : "text-zinc-300 hover:text-zinc-900"
+              }`}
+            aria-label="Toggle favorite"
+          >
+            <Heart size={18} fill={favorite ? "currentColor" : "none"} />
+          </button>
         </div>
 
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onToggle();
-          }}
-          className={`transition-colors ${favorite
-            ? "text-red-500 hover:text-red-600"
-            : "text-zinc-300 hover:text-zinc-900"
-            }`}
-          aria-label="Toggle favorite"
-        >
-          <Heart size={18} fill={favorite ? "currentColor" : "none"} />
-        </button>
+        <h3 className="font-black uppercase text-lg leading-tight mb-2">
+          {name}
+        </h3>
+
+        <p className="text-xs uppercase tracking-widest text-zinc-400 mb-4">
+          {city}
+        </p>
       </div>
 
-      <h3 className="font-black uppercase text-lg leading-tight">
-        {name}
-      </h3>
-
-      <p className="mt-2 text-xs uppercase tracking-widest text-zinc-400">
-        {city}
-      </p>
+      <div className="pt-4 border-t border-zinc-100 flex items-center justify-between">
+        <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${gallery.status ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+          {gallery.status ? <BadgeCheck size={12} /> : <Ban size={12} />}
+          {gallery.status ? t('gallery.active') : t('gallery.inactive')}
+        </div>
+      </div>
     </Link>
   );
 };

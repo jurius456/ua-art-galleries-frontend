@@ -43,7 +43,7 @@ const Header = () => {
             to="/"
             className="text-xl font-bold text-neutral-900 hover:text-neutral-600 transition tracking-tight"
           >
-            UA Galleries
+            UA Galleries Database
           </Link>
         </div>
 
@@ -219,7 +219,7 @@ const Header = () => {
             ) : (
               <Link
                 to="/login"
-                className="px-6 py-2 text-[11px] font-bold uppercase tracking-[0.2em] rounded-xl text-zinc-800 bg-transparent border border-zinc-300 hover:border-zinc-800 hover:bg-zinc-800 hover:text-white transition-all duration-300"
+                className="px-6 py-2 text-[11px] font-bold uppercase tracking-[0.2em] rounded-xl text-zinc-800 bg-transparent border border-zinc-300 hover:border-zinc-800 hover:bg-zinc-800 hover:text-white transition-all duration-300 whitespace-nowrap"
               >
                 {t('header.login')}
               </Link>

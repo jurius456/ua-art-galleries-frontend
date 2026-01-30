@@ -89,8 +89,9 @@
     "galleries": {
         "title": "Catalog",
         "subtitle": "of galleries",
-        "search": "Search by name or city",
-        "allCities": "All cities",
+        "search": "Search",
+        "allCities": "All Cities",
+        "allStatuses": "All Statuses",
         "loading": "Loading galleries..."
     },
     "gallery": {

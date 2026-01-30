@@ -1,8 +1,22 @@
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { GraduationCap, Code2, MapPin, ExternalLink } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 
 const AboutPage = () => {
   const { t } = useTranslation();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash === '#team') {
+      const el = document.getElementById('team');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [location]);
   return (
     <div className="relative z-0 animate-in fade-in duration-700">
 
@@ -32,11 +46,12 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* 3. TEAM SECTION — Прозорі картки */}
-      <section className="container mx-auto px-6 py-12 space-y-12">
-        <div className="flex justify-between items-end border-b border-zinc-200 pb-8">
-          <h2 className="text-3xl font-black text-zinc-900 tracking-tight uppercase">{t('about.ourTeam')}</h2>
-          <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest hidden md:block italic">
+      {/* 3. TEAM SECTION */}
+      <section id="team" className="py-20 bg-zinc-50 container mx-auto px-6 max-w-6xl rounded-[40px] mb-20">
+        <div className="text-center mb-16 space-y-4">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">{t('about.team')}</p>
+          <h2 className="text-4xl md:text-5xl font-black text-zinc-900 uppercase tracking-tight">{t('about.teamTitle')}</h2>
+          <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest italic">
             {t('about.quote')}
           </p>
         </div>
