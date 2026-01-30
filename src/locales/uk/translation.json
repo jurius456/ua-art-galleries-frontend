@@ -78,7 +78,8 @@
         "delete": "Видалити",
         "edit": "Редагувати",
         "error": "Помилка",
-        "back": "Назад"
+        "back": "Назад",
+        "country": "Україна"
     },
     "galleries": {
         "title": "Каталог",
@@ -154,14 +155,42 @@
         "contact": "Contact",
         "teamMembers": {
             "roman": {
+                "name": "Роман",
                 "role": "Frontend Lead / PM",
                 "bio": "Архітектура React та управління проєктом."
             },
             "nazar": {
+                "name": "Назар",
                 "role": "Backend Lead",
                 "bio": "Розробка API на Django та логіка баз даних."
             },
-            "qa": {
+            "rostyslav": {
+                "name": "Ростислав",
+                "role": "QA Engineer",
+                "bio": "Тестування та стабільність системи."
+            },
+            "danylo": {
+                "name": "Данило",
+                "role": "QA Engineer",
+                "bio": "Тестування та стабільність системи."
+            },
+            "oleksandr": {
+                "name": "Олександр",
+                "role": "QA Engineer",
+                "bio": "Тестування та стабільність системи."
+            },
+            "stas": {
+                "name": "Стас",
+                "role": "QA Engineer",
+                "bio": "Тестування та стабільність системи."
+            },
+            "dmytro": {
+                "name": "Дмитро",
+                "role": "QA Engineer",
+                "bio": "Тестування та стабільність системи."
+            },
+            "mykhailo": {
+                "name": "Михайло",
                 "role": "QA Engineer",
                 "bio": "Тестування та стабільність системи."
             }

@@ -77,7 +77,7 @@ const HomeFeaturedGalleries = () => {
                   </h3>
                   <div className="flex items-center gap-2 text-zinc-500 group-hover:text-zinc-900 transition-colors">
                     <MapPin size={14} />
-                    <span className="text-xs font-bold uppercase tracking-wide">{city}, Україна</span>
+                    <span className="text-xs font-bold uppercase tracking-wide">{city}, {t('common.country')}</span>
                   </div>
                 </div>
               </div>

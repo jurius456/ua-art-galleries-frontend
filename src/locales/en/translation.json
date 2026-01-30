@@ -83,7 +83,8 @@
         "delete": "Delete",
         "edit": "Edit",
         "error": "Error",
-        "back": "Back"
+        "back": "Back",
+        "country": "Ukraine"
     },
     "galleries": {
         "title": "Catalog",
@@ -159,14 +160,42 @@
         "contact": "Contact",
         "teamMembers": {
             "roman": {
+                "name": "Roman",
                 "role": "Frontend Lead / PM",
                 "bio": "React architecture and project management."
             },
             "nazar": {
+                "name": "Nazar",
                 "role": "Backend Lead",
                 "bio": "API development on Django and database logic."
             },
-            "qa": {
+            "rostyslav": {
+                "name": "Rostyslav",
+                "role": "QA Engineer",
+                "bio": "Testing and system stability."
+            },
+            "danylo": {
+                "name": "Danylo",
+                "role": "QA Engineer",
+                "bio": "Testing and system stability."
+            },
+            "oleksandr": {
+                "name": "Oleksandr",
+                "role": "QA Engineer",
+                "bio": "Testing and system stability."
+            },
+            "stas": {
+                "name": "Stas",
+                "role": "QA Engineer",
+                "bio": "Testing and system stability."
+            },
+            "dmytro": {
+                "name": "Dmytro",
+                "role": "QA Engineer",
+                "bio": "Testing and system stability."
+            },
+            "mykhailo": {
+                "name": "Mykhailo",
                 "role": "QA Engineer",
                 "bio": "Testing and system stability."
             }
