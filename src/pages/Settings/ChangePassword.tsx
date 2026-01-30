@@ -100,7 +100,7 @@ const ChangePasswordPage = () => {
   };
 
   return (
-    <div className="max-w-md animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="max-w-md animate-in fade-in duration-700">
 
       {/* Скляна картка у стилі Dropdown */}
       <div className="bg-white/90 backdrop-blur-2xl border border-gray-100 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-8 space-y-8">

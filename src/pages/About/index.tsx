@@ -29,9 +29,11 @@ const AboutPage = () => {
           {t('about.title')} <br />
           <span className="text-zinc-400">{t('about.subtitle')}</span>
         </h1>
-        <p className="max-w-xl mx-auto text-zinc-500 font-medium text-base leading-relaxed px-6">
-          {t('about.description')}
-        </p>
+        <div className="max-w-4xl mx-auto px-6">
+          <p className="text-zinc-500 font-medium text-lg leading-loose text-center">
+            {t('about.description')}
+          </p>
+        </div>
       </section>
 
       {/* 2. STATS — "Скляний" блок, який виділяється на текстурному фоні */}

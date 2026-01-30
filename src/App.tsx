@@ -25,6 +25,9 @@ import SettingsLayout from "./pages/Settings";
 import ChangePasswordPage from "./pages/Settings/ChangePassword";
 import GeneralSettingsPage from "./pages/Settings/GeneralSettingsPage";
 import SavedGalleriesPage from "./pages/Galleries/SavedGalleriesPage";
+import RoadmapPage from "./pages/Roadmap";
+import ContactsPage from "./pages/Contacts";
+import PartnersPage from "./pages/Partners";
 
 // Компонент для автоматичного прокручування вгору
 const ScrollToTop = () => {
@@ -47,7 +50,7 @@ const AppContent = () => {
       <Header />
 
       <main className="flex-grow w-full relative z-10">
-        <div key={location.pathname} className="animate-fade-in-up">
+        <div className="animate-fade-in-up">
           <Routes>
             {/* Публічні маршрути */}
             <Route path="/" element={<HomePage />} />
@@ -56,6 +59,9 @@ const AppContent = () => {
             <Route path="/galleries/:slug" element={<GalleryPage />} />
             <Route path="/events" element={<EventsPage />} />
             <Route path="/events/:id" element={<EventDetail />} />
+            <Route path="/roadmap" element={<RoadmapPage />} />
+            <Route path="/contacts" element={<ContactsPage />} />
+            <Route path="/partners" element={<PartnersPage />} />
             <Route path="/login" element={<AuthPage />} />
 
             {/* Захищені маршрути */}

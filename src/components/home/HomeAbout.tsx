@@ -29,12 +29,18 @@ const HomeAbout = () => {
 
         {/* Права сітка (6 колонок) */}
         <div className="md:col-span-6 grid grid-cols-2 gap-6">
-          <Link to="/about#team">
+          <Link to="/about#team" className="block w-full h-full">
             <BentoTile icon={<Users className="text-orange-500" />} label={t('home.about.team')} />
           </Link>
-          <BentoTile icon={<Map className="text-green-500" />} label={t('home.about.roadmap')} />
-          <BentoTile icon={<Mail className="text-purple-500" />} label={t('home.about.contacts')} />
-          <BentoTile icon={<Handshake className="text-blue-400" />} label={t('home.about.partners')} />
+          <Link to="/roadmap" className="block w-full h-full">
+            <BentoTile icon={<Map className="text-green-500" />} label={t('home.about.roadmap')} />
+          </Link>
+          <Link to="/contacts" className="block w-full h-full">
+            <BentoTile icon={<Mail className="text-purple-500" />} label={t('home.about.contacts')} />
+          </Link>
+          <Link to="/partners" className="block w-full h-full">
+            <BentoTile icon={<Handshake className="text-blue-400" />} label={t('home.about.partners')} />
+          </Link>
         </div>
       </div>
     </section>
@@ -42,7 +48,7 @@ const HomeAbout = () => {
 };
 
 const BentoTile = ({ icon, label }: any) => (
-  <div className="bg-white border border-zinc-100 rounded-[32px] p-6 flex flex-col justify-between hover:border-zinc-300 hover:shadow-xl hover:shadow-zinc-100 transition-all cursor-pointer group">
+  <div className="bg-white border border-zinc-100 rounded-[32px] p-6 flex flex-col justify-between hover:border-zinc-300 hover:shadow-xl hover:shadow-zinc-100 transition-all cursor-pointer group h-full">
     <div className="w-12 h-12 bg-zinc-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
       {icon}
     </div>

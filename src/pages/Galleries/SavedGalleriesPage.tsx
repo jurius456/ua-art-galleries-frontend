@@ -6,9 +6,9 @@ const SavedGalleriesPage = () => {
   const { favorites, toggleFavorite } = useFavorites();
 
   return (
-    <div className="max-w-2xl animate-in fade-in slide-in-from-bottom-6 duration-700">
+    <div className="max-w-2xl animate-in fade-in duration-700">
       <div className="bg-white/90 backdrop-blur-3xl border border-zinc-100 rounded-[40px] shadow-[0_30px_60px_rgba(0,0,0,0.03)] p-10 space-y-10">
-        
+
         <header className="flex justify-between items-end border-b border-zinc-50 pb-8">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2 text-zinc-400">
