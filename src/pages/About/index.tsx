@@ -42,16 +42,14 @@ const AboutPage = () => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="grid md:grid-cols-3 gap-8">
-            <TeamMember initial="R" name={t('about.teamMembers.roman.name')} role={t('about.teamMembers.roman.role')} bio={t('about.teamMembers.roman.bio')} />
-            <TeamMember initial="A" name={t('about.teamMembers.nazar.name')} role={t('about.teamMembers.nazar.role')} bio={t('about.teamMembers.nazar.bio')} />
-            <TeamMember initial="S" name={t('about.teamMembers.rostyslav.name')} role={t('about.teamMembers.rostyslav.role')} bio={t('about.teamMembers.rostyslav.bio')} />
-            <TeamMember initial="S" name={t('about.teamMembers.danylo.name')} role={t('about.teamMembers.danylo.role')} bio={t('about.teamMembers.danylo.bio')} />
-            <TeamMember initial="O" name={t('about.teamMembers.oleksandr.name')} role={t('about.teamMembers.oleksandr.role')} bio={t('about.teamMembers.oleksandr.bio')} />
-            <TeamMember initial="S" name={t('about.teamMembers.stas.name')} role={t('about.teamMembers.stas.role')} bio={t('about.teamMembers.stas.bio')} />
-            <TeamMember initial="D" name={t('about.teamMembers.dmytro.name')} role={t('about.teamMembers.dmytro.role')} bio={t('about.teamMembers.dmytro.bio')} />
-            <TeamMember initial="M" name={t('about.teamMembers.mykhailo.name')} role={t('about.teamMembers.mykhailo.role')} bio={t('about.teamMembers.mykhailo.bio')} />
-          </div>
+          <TeamMember initial="R" name={t('about.teamMembers.roman.name')} role={t('about.teamMembers.roman.role')} bio={t('about.teamMembers.roman.bio')} />
+          <TeamMember initial="N" name={t('about.teamMembers.nazar.name')} role={t('about.teamMembers.nazar.role')} bio={t('about.teamMembers.nazar.bio')} />
+          <TeamMember initial="R" name={t('about.teamMembers.rostyslav.name')} role={t('about.teamMembers.rostyslav.role')} bio={t('about.teamMembers.rostyslav.bio')} />
+          <TeamMember initial="D" name={t('about.teamMembers.danylo.name')} role={t('about.teamMembers.danylo.role')} bio={t('about.teamMembers.danylo.bio')} />
+          <TeamMember initial="O" name={t('about.teamMembers.oleksandr.name')} role={t('about.teamMembers.oleksandr.role')} bio={t('about.teamMembers.oleksandr.bio')} />
+          <TeamMember initial="S" name={t('about.teamMembers.stas.name')} role={t('about.teamMembers.stas.role')} bio={t('about.teamMembers.stas.bio')} />
+          <TeamMember initial="D" name={t('about.teamMembers.dmytro.name')} role={t('about.teamMembers.dmytro.role')} bio={t('about.teamMembers.dmytro.bio')} />
+          <TeamMember initial="M" name={t('about.teamMembers.mykhailo.name')} role={t('about.teamMembers.mykhailo.role')} bio={t('about.teamMembers.mykhailo.bio')} />
         </div>
       </section>
 

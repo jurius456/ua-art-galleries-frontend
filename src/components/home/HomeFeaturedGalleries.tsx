@@ -60,7 +60,10 @@ const HomeFeaturedGalleries = () => {
                 <div className="flex flex-wrap gap-2">
                   {specialization && (
                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 border border-zinc-200 px-3 py-1.5 rounded-full bg-white">
-                      {specialization}
+                      {/* Temporary Frontend Translation Fix */}
+                      {i18n.language === 'en' && specialization === 'Сучасне українське мистецтво' ? 'Contemporary Ukrainian Art' :
+                        i18n.language === 'en' && specialization === 'Сучасна українська фотографія' ? 'Contemporary Ukrainian Photography' :
+                          specialization}
                     </span>
                   )}
                 </div>
