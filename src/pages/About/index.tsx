@@ -75,9 +75,8 @@ const AboutPage = () => {
       {/* 4. MISSION SECTION */}
       <section className="py-20 container mx-auto px-6 max-w-4xl text-center">
         <div className="w-16 h-1 bg-zinc-200 mx-auto mb-12 rounded-full" />
-        <h2 className="text-3xl font-black uppercase tracking-tight mb-8">{t('about.missionTitle')}</h2>
+        <h2 className="text-3xl font-black uppercase tracking-tight mb-8">{t('about.ourMission')}</h2>
         <p className="text-lg text-zinc-600 leading-relaxed font-medium">
-          {t('about.mission')}
           {t('about.missionText')}
         </p>
       </section>
