@@ -104,7 +104,16 @@
         "backToGalleries": "Gallery Archive",
         "notFound": "404_DATA_NOT_FOUND",
         "loading": "Loading_Gallery_Data...",
-        "return": "Go back"
+        "return": "Go back",
+        "status": "Status",
+        "active": "Active",
+        "inactive": "Closed",
+        "workingHours": "Working Hours",
+        "exhibitions": "Exhibitions",
+        "publications": "Publications",
+        "loginToView": "Log in to view full information",
+        "loginDesc": "Details about exhibitions, artists, and publications are available only for registered users",
+        "loginBtn": "Log In or Sign Up"
     },
     "events": {
         "title": "Exhibitions",
@@ -146,9 +155,9 @@
     },
     "about": {
         "badge": "Educational Project",
-        "title": "UA Galleries.",
-        "subtitle": "Digital evolution of art.",
-        "description": "We are building a bridge between Ukraine's classical galleries and modern technologies to make culture accessible to everyone.",
+        "title": "UA Galleries Database.",
+        "subtitle": "The First Digital Art Gallery Database.",
+        "description": "Ukrainian Galleries Database is the first digital database of art galleries in Ukraine, uniting galleries in Ukraine and Ukrainian galleries abroad in a single open digital space. The platform is created for convenient search, research, and promotion of Ukraine's gallery landscape, as well as to increase the visibility of Ukrainian art in the global cultural context.",
         "activeGalleries": "Active Galleries",
         "artworks": "Artworks Uploaded",
         "students": "Students",
@@ -159,45 +168,50 @@
         "missionText": "We are learning to build complex systems to give Ukrainian art a tool for the future.",
         "contact": "Contact",
         "teamMembers": {
+            "dmytro": {
+                "name": "Dmytro Kachan",
+                "role": "Backend Developer",
+                "bio": ""
+            },
             "roman": {
-                "name": "Roman",
-                "role": "Frontend Lead / PM",
-                "bio": "React architecture and project management."
+                "name": "Roman Maslyana",
+                "role": "Frontend Developer",
+                "bio": ""
             },
             "nazar": {
-                "name": "Nazar",
-                "role": "Backend Lead",
-                "bio": "API development on Django and database logic."
+                "name": "Nazar Chyburovskyi",
+                "role": "Business Analyst (BA)",
+                "bio": ""
             },
             "rostyslav": {
-                "name": "Rostyslav",
-                "role": "QA Engineer",
-                "bio": "Testing and system stability."
+                "name": "Rostyslav Foots",
+                "role": "Project Manager (PM)",
+                "bio": ""
             },
-            "danylo": {
-                "name": "Danylo",
+            "stanislav": {
+                "name": "Stanislav Yazlovetskyi",
                 "role": "QA Engineer",
-                "bio": "Testing and system stability."
+                "bio": ""
             },
             "oleksandr": {
-                "name": "Oleksandr",
-                "role": "QA Engineer",
-                "bio": "Testing and system stability."
+                "name": "Oleksandr Skibidinskyi",
+                "role": "Frontend Developer",
+                "bio": ""
             },
-            "stas": {
-                "name": "Stas",
-                "role": "QA Engineer",
-                "bio": "Testing and system stability."
-            },
-            "dmytro": {
-                "name": "Dmytro",
-                "role": "QA Engineer",
-                "bio": "Testing and system stability."
+            "yulia": {
+                "name": "Yulia Melnyk",
+                "role": "Customer",
+                "bio": ""
             },
             "mykhailo": {
-                "name": "Mykhailo",
-                "role": "QA Engineer",
-                "bio": "Testing and system stability."
+                "name": "Mykhailo Moskalchuk",
+                "role": "Designer",
+                "bio": ""
+            },
+            "danylo": {
+                "name": "Danylo Hordyi",
+                "role": "Backend Developer",
+                "bio": ""
             }
         }
     },

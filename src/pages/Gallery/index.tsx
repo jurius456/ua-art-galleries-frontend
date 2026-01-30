@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, MapPin, Mail, Phone, Globe, Instagram, Lock } from "lucide-react";
+import { ArrowLeft, MapPin, Mail, Phone, Globe, Instagram, Lock, Clock, Calendar, BadgeCheck, Ban } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
@@ -85,237 +85,260 @@ const GalleryPage = () => {
       <div className="container mx-auto px-6 max-w-6xl pt-12">
         <Link
           to="/galleries"
-          className="group flex items-center gap-3 text-zinc-400 hover:text-zinc-800 text-[10px] font-black uppercase tracking-widest mb-16"
+          className="group flex items-center gap-3 text-zinc-400 hover:text-zinc-800 text-[10px] font-black uppercase tracking-widest mb-12"
         >
           <ArrowLeft size={14} />
           {t('gallery.backToGalleries')}
         </Link>
 
-        {/* Cover Image */}
-        {gallery.cover_image && (
-          <div className="mb-12 rounded-[32px] overflow-hidden">
-            <img
-              src={gallery.cover_image}
-              alt={name}
-              className="w-full h-[400px] object-cover"
-            />
+        {/* Gallery Header (Mobile Only for Name/City) */}
+        <div className="lg:hidden mb-8">
+          <h1 className="text-4xl font-black text-zinc-900 uppercase mb-4 leading-none">
+            {name}
+          </h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2 px-3 py-1 bg-zinc-100 rounded-full">
+              <MapPin size={12} className="text-zinc-500" />
+              <span className="text-xs font-bold uppercase text-zinc-600">{city}</span>
+            </div>
+            {gallery.status ? (
+              <div className="flex items-center gap-1.5 px-3 py-1 bg-green-100 rounded-full text-green-700">
+                <BadgeCheck size={12} />
+                <span className="text-[10px] font-black uppercase tracking-wider">{t('gallery.active')}</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 px-3 py-1 bg-red-100 rounded-full text-red-700">
+                <Ban size={12} />
+                <span className="text-[10px] font-black uppercase tracking-wider">{t('gallery.inactive')}</span>
+              </div>
+            )}
           </div>
-        )}
-
-        <h1 className="text-5xl md:text-7xl font-black text-zinc-800 uppercase mb-4">
-          {name}
-        </h1>
-
-        <div className="flex items-center gap-4 mb-12">
-          <p className="text-zinc-500 font-bold">
-            {city} — {address}
-          </p>
-          {specialization && (
-            <span className="text-[9px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-3 py-1.5 rounded-md">
-              {specialization}
-            </span>
-          )}
         </div>
 
-        {/* Main content with smooth gradient overlay */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 relative">
-          {/* Auth card for non-authenticated users */}
-          {!isAuth && (
-            <>
 
-              {/* Bottom overlay auth card */}
-              <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none animate-[fadeIn_0.5s_ease-out]">
-                <div className="container mx-auto px-6 max-w-6xl pb-12">
-                  <div
-                    className="bg-white rounded-[32px] p-8 shadow-[0_-4px_24px_rgba(0,0,0,0.08),0_-12px_48px_rgba(0,0,0,0.12)] border border-zinc-100 pointer-events-auto"
-                  >
-                    <div className="max-w-2xl mx-auto">
-                      <div className="flex flex-col md:flex-row items-center gap-8">
-                        {/* Icon and text section */}
-                        <div className="flex items-center gap-6 flex-1">
-                          {/* Icon */}
-                          <div className="flex-shrink-0">
-                            <div className="relative">
-                              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full blur-lg opacity-30" />
-                              <div className="relative w-16 h-16 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-                                <Lock className="text-white" size={24} strokeWidth={2.5} />
-                              </div>
-                            </div>
-                          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
 
-                          {/* Text */}
-                          <div className="flex-1 text-left">
-                            <h3 className="text-xl font-black text-zinc-900 mb-1">
-                              Увійдіть, щоб переглянути повну інформацію
-                            </h3>
-                            <p className="text-sm text-zinc-500 font-medium">
-                              Деталі галереї доступні лише для зареєстрованих користувачів
-                            </p>
-                          </div>
-                        </div>
+          {/* LEFT COLUMN: Content */}
+          <div className="lg:col-span-8 flex flex-col gap-12">
 
-                        {/* CTA Button */}
-                        <div className="flex-shrink-0 w-full md:w-auto">
-                          <button
-                            onClick={() => navigate('/login')}
-                            className="group relative w-full md:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-[20px] font-bold text-sm overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] pointer-events-auto cursor-pointer"
-                          >
-                            {/* Hover gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                            {/* Shimmer */}
-                            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-
-                            <span className="relative flex items-center justify-center gap-2 whitespace-nowrap">
-                              Увійти або зареєструватися
-                              <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                              </svg>
-                            </span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-
-          <div className="lg:col-span-7 space-y-10">
-            {shortDesc && (
-              <div
-                className="text-xl text-zinc-600 relative"
-                style={!isAuth ? {
-                  WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 100%)',
-                  maskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 100%)',
-                } : {}}
-              >
-                {shortDesc}
+            {/* Cover Image */}
+            {gallery.cover_image && (
+              <div className="rounded-[40px] overflow-hidden shadow-sm aspect-video lg:aspect-[16/9]">
+                <img
+                  src={gallery.cover_image}
+                  alt={name}
+                  className="w-full h-full object-cover"
+                />
               </div>
             )}
 
-            {/* Only show full content for authenticated users */}
-            {isAuth && (
-              <>
+            {/* About Section */}
+            <section className="space-y-6">
+              <h2 className="text-2xl font-black uppercase tracking-tight">{t('nav.about')}</h2>
+              <div className="prose prose-zinc max-w-none text-zinc-600">
+                {shortDesc && <p className="text-lg font-medium text-zinc-900 mb-6">{shortDesc}</p>}
                 {fullDesc && (
-                  <div className="prose prose-zinc max-w-none">
+                  <div className="text-base leading-relaxed">
                     {typeof fullDesc === 'string'
                       ? <div className="whitespace-pre-wrap">{fullDesc}</div>
                       : documentToReactComponents(fullDesc as Document)
                     }
                   </div>
                 )}
+              </div>
+            </section>
 
-                {/* Founders, Curators, Artists */}
-                <div className="space-y-6 pt-8 border-t border-zinc-200">
-                  {founders && (
-                    <div>
-                      <p className="text-[9px] font-black uppercase text-zinc-400 mb-2">
-                        {t('gallery.founders')}
-                      </p>
-                      <p className="text-zinc-700 font-medium">{founders}</p>
-                    </div>
-                  )}
-
-                  {curators && (
-                    <div>
-                      <p className="text-[9px] font-black uppercase text-zinc-400 mb-2">
-                        {t('gallery.curators')}
-                      </p>
-                      <p className="text-zinc-700 font-medium">{curators}</p>
-                    </div>
-                  )}
-
-                  {artists && (
-                    <div>
-                      <p className="text-[9px] font-black uppercase text-zinc-400 mb-2">
-                        {t('gallery.artists')}
-                      </p>
-                      <p className="text-zinc-700 font-medium">{artists}</p>
-                    </div>
-                  )}
+            {/* Founding Info */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 bg-zinc-50 rounded-[32px]">
+              {founders && (
+                <div>
+                  <p className="text-[9px] font-black uppercase text-zinc-400 mb-2">{t('gallery.founders')}</p>
+                  <p className="font-bold text-zinc-900">{founders}</p>
                 </div>
-              </>
-            )}
-          </div>
-
-          <aside className="lg:col-span-5">
-            <div className="bg-white rounded-[40px] p-10 space-y-8 shadow-sm sticky top-8">
-              {/* Founding Year */}
+              )}
+              {curators && (
+                <div>
+                  <p className="text-[9px] font-black uppercase text-zinc-400 mb-2">{t('gallery.curators')}</p>
+                  <p className="font-bold text-zinc-900">{curators}</p>
+                </div>
+              )}
               {gallery.founding_year && (
                 <div>
-                  <p className="text-[9px] font-black uppercase text-zinc-400">
-                    {t('gallery.founded')}
-                  </p>
-                  <p className="text-3xl font-black">
-                    {gallery.founding_year}
-                  </p>
+                  <p className="text-[9px] font-black uppercase text-zinc-400 mb-2">{t('gallery.founded')}</p>
+                  <p className="font-bold text-zinc-900">{gallery.founding_year}</p>
+                </div>
+              )}
+              {specialization && (
+                <div>
+                  <p className="text-[9px] font-black uppercase text-zinc-400 mb-2">{t('gallery.specialization')}</p>
+                  <p className="font-bold text-zinc-900">{specialization}</p>
+                </div>
+              )}
+            </div>
+
+            {/* RESTRICTED CONTENT */}
+            <div className="relative pt-12 border-t border-zinc-100">
+              {!isAuth && (
+                <div className="absolute inset-0 z-10 bg-gradient-to-b from-white/60 to-white flex items-center justify-center pt-20">
+                  <div className="bg-white p-8 rounded-[32px] shadow-xl border border-zinc-100 max-w-md text-center">
+                    <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                      <Lock size={32} />
+                    </div>
+                    <h3 className="text-xl font-bold mb-2">{t('gallery.loginToView')}</h3>
+                    <p className="text-zinc-500 mb-8">{t('gallery.loginDesc')}</p>
+                    <button
+                      onClick={() => navigate('/login')}
+                      className="w-full py-4 bg-black text-white rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-zinc-800 transition-colors"
+                    >
+                      {t('gallery.loginBtn')}
+                    </button>
+                  </div>
                 </div>
               )}
 
-              {/* Address */}
-              <div className="flex items-start gap-3 font-bold">
-                <MapPin size={16} className="mt-1 flex-shrink-0" />
-                <span>{address}</span>
+              <div className={`space-y-16 ${!isAuth ? 'blur-md select-none opacity-50' : ''}`}>
+                {/* Exhibitions */}
+                <section>
+                  <h3 className="text-xl font-black uppercase mb-6 flex items-center gap-3">
+                    <Calendar size={20} className="text-zinc-400" />
+                    {t('gallery.exhibitions')}
+                  </h3>
+                  <div className="p-12 bg-zinc-50 rounded-[32px] text-center border border-dashed border-zinc-200">
+                    <p className="text-zinc-400 font-medium">No active exhibitions</p>
+                  </div>
+                </section>
+
+                {/* Artists */}
+                <section>
+                  <h3 className="text-xl font-black uppercase mb-6 flex items-center gap-3">
+                    <Globe size={20} className="text-zinc-400" />
+                    {t('gallery.artists')}
+                  </h3>
+                  {artists ? (
+                    <div className="p-8 bg-zinc-50 rounded-[32px]">
+                      <p className="font-medium text-zinc-800 leading-relaxed">{artists}</p>
+                    </div>
+                  ) : (
+                    <div className="p-12 bg-zinc-50 rounded-[32px] text-center border border-dashed border-zinc-200">
+                      <p className="text-zinc-400 font-medium">No artists info</p>
+                    </div>
+                  )}
+                </section>
+
+                {/* Publications */}
+                <section>
+                  <h3 className="text-xl font-black uppercase mb-6 flex items-center gap-3">
+                    <div className="rotate-45"><ArrowLeft size={20} className="text-zinc-400" /></div>
+                    {t('gallery.publications')}
+                  </h3>
+                  <div className="p-12 bg-zinc-50 rounded-[32px] text-center border border-dashed border-zinc-200">
+                    <p className="text-zinc-400 font-medium">No publications found</p>
+                  </div>
+                </section>
+              </div>
+            </div>
+
+          </div>
+
+          {/* RIGHT COLUMN: Sidebar */}
+          <aside className="lg:col-span-4 space-y-8">
+
+            {/* Logo & Status Card */}
+            <div className="bg-white rounded-[40px] border border-zinc-100 p-8 shadow-sm">
+              <div className="w-24 h-24 rounded-full bg-zinc-100 mb-6 overflow-hidden mx-auto lg:mx-0">
+                {gallery.image ? (
+                  <img src={gallery.image} alt="Logo" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-zinc-300 font-black text-2xl uppercase">
+                    {name[0]}
+                  </div>
+                )}
               </div>
 
-              {/* Contacts */}
-              <div className="space-y-3 pt-6 border-t">
-                <p className="text-[9px] font-black uppercase text-zinc-400 mb-4">
-                  {t('gallery.contacts')}
-                </p>
+              <h1 className="hidden lg:block text-3xl font-black text-zinc-900 uppercase mb-4 leading-0.9">
+                {name}
+              </h1>
 
-                {gallery.email && (
-                  <a
-                    href={`mailto:${gallery.email}`}
-                    className="flex items-center gap-3 text-sm hover:text-blue-600 transition-colors"
-                  >
-                    <Mail size={16} />
-                    {gallery.email}
-                  </a>
+              <div className="flex flex-wrap gap-2 mb-6">
+                {gallery.status ? (
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 rounded-full text-green-700 border border-green-100">
+                    <BadgeCheck size={14} />
+                    <span className="text-[10px] font-black uppercase tracking-widest">{t('gallery.active')}</span>
+                  </div>
+                ) : (
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 rounded-full text-red-700 border border-red-100">
+                    <Ban size={14} />
+                    <span className="text-[10px] font-black uppercase tracking-widest">{t('gallery.inactive')}</span>
+                  </div>
                 )}
+              </div>
+
+              {/* Contacts List */}
+              <div className="space-y-5">
+                <div className="flex items-start gap-4">
+                  <div className="p-2 bg-zinc-50 rounded-lg text-zinc-500 shrink-0">
+                    <MapPin size={18} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-zinc-400 mb-1">{t('events.city')}</p>
+                    <p className="font-bold text-sm leading-tight">{city}, {address}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="p-2 bg-zinc-50 rounded-lg text-zinc-500 shrink-0">
+                    <Clock size={18} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-zinc-400 mb-1">{t('gallery.workingHours')}</p>
+                    <p className="font-bold text-sm">11:00 — 19:00</p>
+                    <p className="text-xs text-zinc-400">Mon — Sun</p>
+                  </div>
+                </div>
 
                 {gallery.phone && (
-                  <a
-                    href={`tel:${gallery.phone}`}
-                    className="flex items-center gap-3 text-sm hover:text-blue-600 transition-colors"
-                  >
-                    <Phone size={16} />
-                    {gallery.phone}
-                  </a>
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 bg-zinc-50 rounded-lg text-zinc-500 shrink-0">
+                      <Phone size={18} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase text-zinc-400 mb-1">{t('gallery.contacts')}</p>
+                      <a href={`tel:${gallery.phone}`} className="font-bold text-sm hover:text-blue-600 transition-colors block">{gallery.phone}</a>
+                    </div>
+                  </div>
                 )}
 
+                {gallery.email && (
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 bg-zinc-50 rounded-lg text-zinc-500 shrink-0">
+                      <Mail size={18} />
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="text-[10px] font-black uppercase text-zinc-400 mb-1">Email</p>
+                      <a href={`mailto:${gallery.email}`} className="font-bold text-sm hover:text-blue-600 transition-colors block truncate">{gallery.email}</a>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-8 pt-8 border-t border-zinc-100 flex flex-col gap-3">
                 {gallery.website && (
-                  <a
-                    href={gallery.website}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-3 text-sm text-blue-600 hover:text-blue-700 transition-colors"
-                  >
+                  <a href={gallery.website} target="_blank" rel="noreferrer" className="w-full py-3 border border-zinc-200 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase hover:bg-zinc-50 transition-colors">
                     <Globe size={16} />
                     {t('gallery.website')}
                   </a>
                 )}
 
-                {/* Social Links */}
-                {gallery.social_links && Object.keys(gallery.social_links).length > 0 && (
-                  <div className="pt-4 border-t">
-                    {gallery.social_links.instagram && (
-                      <a
-                        href={gallery.social_links.instagram}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center gap-3 text-sm hover:text-pink-600 transition-colors"
-                      >
-                        <Instagram size={16} />
-                        Instagram
-                      </a>
-                    )}
-                  </div>
+                {gallery.social_links?.instagram && (
+                  <a href={gallery.social_links.instagram} target="_blank" rel="noreferrer" className="w-full py-3 bg-zinc-900 text-white rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase hover:bg-zinc-800 transition-colors">
+                    <Instagram size={16} />
+                    Instagram
+                  </a>
                 )}
               </div>
+
             </div>
+
           </aside>
         </div>
       </div>
