@@ -6,6 +6,7 @@ import { useFavorites } from "../../context/FavoritesContext";
 import type { Gallery } from "../../api/galleries";
 import { useTranslation } from 'react-i18next';
 import { getGalleryName, getGalleryCity } from "../../utils/gallery";
+import { CustomSelect } from "../../components/shared/CustomSelect";
 
 const PER_PAGE = 18;
 
@@ -105,57 +106,33 @@ const GalleriesPage = () => {
             </div>
 
             {/* CITY */}
-            <select
+            <CustomSelect
               value={city}
-              onChange={(e) => {
-                setCity(e.target.value);
+              onChange={(val) => {
+                setCity(val);
                 setPage(1);
               }}
-              className="
-                h-[56px]
-                rounded-2xl
-                border
-                border-zinc-200
-                px-5
-                text-sm
-                font-semibold
-                outline-none
-                focus:border-zinc-900
-                flex-1
-              "
-            >
-              <option value="all">{t('galleries.allCities')}</option>
-              {cities.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+              options={[
+                { value: "all", label: t('galleries.allCities') },
+                ...cities.map(c => ({ value: c, label: c }))
+              ]}
+              className="flex-1"
+            />
 
             {/* STATUS */}
-            <select
+            <CustomSelect
               value={status}
-              onChange={(e) => {
-                setStatus(e.target.value);
+              onChange={(val) => {
+                setStatus(val);
                 setPage(1);
               }}
-              className="
-                h-[56px]
-                rounded-2xl
-                border
-                border-zinc-200
-                px-5
-                text-sm
-                font-semibold
-                outline-none
-                focus:border-zinc-900
-                flex-1
-              "
-            >
-              <option value="all">{t('galleries.allStatuses')}</option>
-              <option value="active">{t('gallery.active')}</option>
-              <option value="inactive">{t('gallery.inactive')}</option>
-            </select>
+              options={[
+                { value: "all", label: t('galleries.allStatuses') },
+                { value: "active", label: t('gallery.active') },
+                { value: "inactive", label: t('gallery.inactive') }
+              ]}
+              className="flex-1"
+            />
           </div>
         </div>
       </div>

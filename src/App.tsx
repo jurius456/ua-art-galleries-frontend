@@ -50,7 +50,10 @@ const AppContent = () => {
       <Header />
 
       <main className="flex-grow w-full relative z-10">
-        <div className="animate-fade-in-up">
+        <div
+          key={location.pathname.startsWith('/settings') || location.pathname.startsWith('/profile') ? 'settings' : location.pathname}
+          className="animate-fade-in-up"
+        >
           <Routes>
             {/* Публічні маршрути */}
             <Route path="/" element={<HomePage />} />
