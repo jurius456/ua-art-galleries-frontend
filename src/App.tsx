@@ -52,7 +52,11 @@ const AppContent = () => {
       <main className="flex-grow w-full relative z-10">
         <div
           key={location.pathname.startsWith('/settings') || location.pathname.startsWith('/profile') ? 'settings' : location.pathname}
-          className="animate-fade-in-up"
+          className={
+            location.pathname.startsWith('/settings') || location.pathname.startsWith('/profile')
+              ? "animate-in fade-in duration-500"
+              : "animate-fade-in-up"
+          }
         >
           <Routes>
             {/* Публічні маршрути */}

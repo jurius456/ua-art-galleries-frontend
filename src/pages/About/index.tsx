@@ -49,16 +49,20 @@ const AboutPage = () => {
       </section>
 
       {/* 3. TEAM SECTION */}
-      <section id="team" className="py-20 bg-zinc-50 container mx-auto px-6 max-w-6xl rounded-[40px] mb-20">
-        <div className="text-center mb-16 space-y-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">{t('about.team')}</p>
-          <h2 className="text-4xl md:text-5xl font-black text-zinc-900 uppercase tracking-tight">{t('about.teamTitle')}</h2>
-          <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest italic">
-            {t('about.quote')}
+      <section id="team" className="py-24 bg-white container mx-auto px-6 max-w-6xl mb-24">
+        <div className="text-center mb-20 space-y-4">
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">
+            {t('about.team')}
+          </p>
+          <h2 className="text-5xl md:text-6xl font-black uppercase tracking-tighter text-zinc-900">
+            {t('about.teamTitle')}
+          </h2>
+          <p className="text-xs font-bold uppercase tracking-widest text-zinc-300">
+            - {t('about.quote')} -
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           <TeamMember initial="D" name={t('about.teamMembers.dmytro.name')} role={t('about.teamMembers.dmytro.role')} />
           <TeamMember initial="R" name={t('about.teamMembers.roman.name')} role={t('about.teamMembers.roman.role')} />
           <TeamMember initial="N" name={t('about.teamMembers.nazar.name')} role={t('about.teamMembers.nazar.role')} />
@@ -107,13 +111,15 @@ const StatItem = ({ label, value }: any) => (
 );
 
 const TeamMember = ({ name, role, initial }: any) => (
-  <div className="flex flex-col items-center text-center space-y-4 group cursor-default">
-    <div className="w-24 h-24 bg-zinc-100 rounded-full flex items-center justify-center text-2xl font-black text-zinc-300 group-hover:bg-black group-hover:text-white transition-colors duration-500">
-      {initial}
+  <div className="group relative p-8 bg-zinc-50/50 rounded-[32px] border border-transparent hover:bg-white hover:border-zinc-200 hover:shadow-2xl hover:shadow-zinc-200/50 transition-all duration-500 hover:-translate-y-2">
+    <div className="mb-6 relative">
+      <div className="w-20 h-20 mx-auto bg-white rounded-2xl flex items-center justify-center text-2xl font-black text-zinc-900 shadow-sm group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all duration-500">
+        {initial}
+      </div>
     </div>
-    <div className="space-y-1">
-      <h3 className="font-bold text-zinc-900 leading-tight">{name}</h3>
-      <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{role}</p>
+    <div className="space-y-2 text-center">
+      <h3 className="text-lg font-black text-zinc-900 tracking-tight">{name}</h3>
+      <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest group-hover:text-blue-600 transition-colors">{role}</p>
     </div>
   </div>
 );
