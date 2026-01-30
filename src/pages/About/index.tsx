@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { GraduationCap, ExternalLink } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 
 const AboutPage = () => {
@@ -49,8 +49,8 @@ const AboutPage = () => {
       </section>
 
       {/* 3. TEAM SECTION */}
-      <section id="team" className="py-32 scroll-mt-32 bg-zinc-50 container mx-auto px-6 max-w-6xl rounded-[40px] mb-20">
-        <div className="text-center mb-16 space-y-4">
+      <section id="team" className="py-20 scroll-mt-20 container mx-auto px-6 max-w-7xl">
+        <div className="text-center mb-12 space-y-4">
           <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-zinc-900">
             {t('about.teamTitle')}
           </h2>
@@ -59,7 +59,7 @@ const AboutPage = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="flex flex-wrap justify-center gap-10">
           <TeamMember initial="D" name={t('about.teamMembers.dmytro.name')} role={t('about.teamMembers.dmytro.role')} />
           <TeamMember initial="R" name={t('about.teamMembers.roman.name')} role={t('about.teamMembers.roman.role')} />
           <TeamMember initial="N" name={t('about.teamMembers.nazar.name')} role={t('about.teamMembers.nazar.role')} />
@@ -93,19 +93,13 @@ const StatItem = ({ label, value }: any) => (
   </div>
 );
 
-const TeamMember = ({ name, role, bio, initial }: any) => (
-  <div className="bg-white/40 backdrop-blur-sm border border-white/60 p-8 rounded-[32px] shadow-sm hover:shadow-xl hover:bg-white transition-all duration-500 group">
-    <div className="w-12 h-12 bg-zinc-900 text-white rounded-2xl mb-6 flex items-center justify-center font-bold group-hover:rotate-6 transition-transform shadow-lg shadow-zinc-200">
+const TeamMember = ({ name, role, initial }: any) => (
+  <div className="w-[180px] flex flex-col items-center text-center group">
+    <div className="w-20 h-20 bg-zinc-100 rounded-2xl mb-4 flex items-center justify-center font-bold text-xl text-zinc-900 group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all duration-300 shadow-sm">
       {initial}
     </div>
-    <div className="space-y-1 mb-4">
-      <h3 className="font-black text-zinc-900 tracking-tight">{name}</h3>
-      <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider">{role}</p>
-    </div>
-    <p className="text-xs text-zinc-500 leading-relaxed mb-6">{bio}</p>
-    <button className="text-[9px] font-black uppercase tracking-widest flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-      Contact <ExternalLink size={12} />
-    </button>
+    <h3 className="font-black text-zinc-900 text-sm leading-tight mb-1.5">{name}</h3>
+    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest group-hover:text-black transition-colors">{role}</p>
   </div>
 );
 
