@@ -19,6 +19,7 @@ import {
   getGalleryCurators,
   getGalleryArtists,
 } from "../../utils/gallery";
+import GalleryMap from "../../components/gallery/GalleryMap";
 
 const GalleryPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -271,6 +272,11 @@ const GalleryPage = () => {
                     <span className="text-[10px] font-black uppercase tracking-widest">{t('gallery.inactive')}</span>
                   </div>
                 )}
+              </div>
+
+              {/* Map Block */}
+              <div className="mb-8">
+                <GalleryMap gallery={gallery} />
               </div>
 
               {/* Contacts List */}
