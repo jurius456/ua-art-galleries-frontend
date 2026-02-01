@@ -228,6 +228,8 @@
     },
     "favorites": {
         "addedTitle": "Додано в збережені",
-        "goToFavorites": "Перейти в улюблені"
+        "goToFavorites": "Перейти в улюблені",
+        "loginRequiredTitle": "Потрібна авторизація",
+        "loginRequiredDesc": "Увійдіть, щоб зберігати галереї"
     }
 }

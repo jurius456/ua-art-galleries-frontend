@@ -15,6 +15,8 @@ interface FavoritesContextType {
   isLoading: boolean;
   lastAddedFavorite: Favorite | null;
   clearLastAddedFavorite: () => void;
+  loginPromptVisible: boolean;
+  closeLoginPrompt: () => void;
 }
 
 const FavoritesContext = createContext<FavoritesContextType | undefined>(
@@ -28,6 +30,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [favoriteSlugs, setFavoriteSlugs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [lastAddedFavorite, setLastAddedFavorite] = useState<Favorite | null>(null);
+  const [loginPromptVisible, setLoginPromptVisible] = useState(false);
   const { user } = useAuth();
 
   // Завантажити улюблені галереї при монтуванні або зміні користувача
@@ -69,8 +72,9 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
     console.log('Current user:', user);
 
     if (!user) {
-      // Якщо користувач не авторизований, нічого не робимо
+      // Якщо користувач не авторизований, показуємо вікно входу
       console.warn("User must be logged in to save favorites");
+      setLoginPromptVisible(true);
       return;
     }
 
@@ -99,6 +103,10 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
     setLastAddedFavorite(null);
   };
 
+  const closeLoginPrompt = () => {
+    setLoginPromptVisible(false);
+  };
+
   return (
     <FavoritesContext.Provider
       value={{
@@ -107,7 +115,9 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
         isFavorite,
         isLoading,
         lastAddedFavorite,
-        clearLastAddedFavorite
+        clearLastAddedFavorite,
+        loginPromptVisible,
+        closeLoginPrompt
       }}
     >
       {children}
