@@ -225,5 +225,9 @@
         "currentPassword": "Поточний пароль",
         "newPassword": "Новий пароль",
         "confirmNewPassword": "Підтвердіть новий пароль"
+    },
+    "favorites": {
+        "addedTitle": "Додано в збережені",
+        "goToFavorites": "Перейти в улюблені"
     }
 }

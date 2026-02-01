@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Header from "./components/shared/Header";
 import Footer from "./components/shared/Footer";
 import BackgroundDecorator from "./components/shared/BackgroundDecorator";
+import FavoritesNotification from "./components/shared/FavoritesNotification";
 
 // 3. Сторінки
 import HomePage from "./pages/Home";
@@ -48,6 +49,9 @@ const AppContent = () => {
       <ScrollToTop />
       <BackgroundDecorator />
       <Header />
+
+      {/* Глобальні сповіщення */}
+      <FavoritesNotification />
 
       <main className="flex-grow w-full relative z-10">
         <div

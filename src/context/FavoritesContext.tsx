@@ -13,6 +13,8 @@ interface FavoritesContextType {
   toggleFavorite: (gallery: Favorite) => void;
   isFavorite: (slug: string) => boolean;
   isLoading: boolean;
+  lastAddedFavorite: Favorite | null;
+  clearLastAddedFavorite: () => void;
 }
 
 const FavoritesContext = createContext<FavoritesContextType | undefined>(
@@ -25,6 +27,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [favoriteSlugs, setFavoriteSlugs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [lastAddedFavorite, setLastAddedFavorite] = useState<Favorite | null>(null);
   const { user } = useAuth();
 
   // Завантажити улюблені галереї при монтуванні або зміні користувача
@@ -81,6 +84,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
         console.log('Adding to favorites');
         setFavorites(prev => [...prev, gallery]);
         setFavoriteSlugs(prev => [...prev, gallery.slug]);
+        setLastAddedFavorite(gallery); // Встановлюємо останню додану галерею
       } else {
         console.log('Removing from favorites');
         setFavorites(prev => prev.filter(f => f.slug !== gallery.slug));
@@ -91,9 +95,20 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const clearLastAddedFavorite = () => {
+    setLastAddedFavorite(null);
+  };
+
   return (
     <FavoritesContext.Provider
-      value={{ favorites, toggleFavorite, isFavorite, isLoading }}
+      value={{
+        favorites,
+        toggleFavorite,
+        isFavorite,
+        isLoading,
+        lastAddedFavorite,
+        clearLastAddedFavorite
+      }}
     >
       {children}
     </FavoritesContext.Provider>
