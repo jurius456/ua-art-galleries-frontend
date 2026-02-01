@@ -85,12 +85,7 @@ const HomeHero = () => {
             {t(currentSlide.subtitleKey)}
           </p>
 
-          {/* Button */}
-          <div className="animate-fade-in-up delay-400 pt-4">
-            <button className="px-8 md:px-10 py-3.5 md:py-4 bg-white text-black rounded-2xl font-black uppercase text-[10px] md:text-xs tracking-widest hover:scale-105 hover:shadow-2xl hover:bg-blue-50 transition-all duration-300 flex items-center gap-3">
-              {t('common.more')} <ArrowRight size={16} />
-            </button>
-          </div>
+
         </div>
 
         {/* Navigation Arrows */}

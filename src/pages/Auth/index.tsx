@@ -2,6 +2,7 @@ import React, { useState, type FormEvent, type ChangeEvent } from "react";
 import { Mail, Lock, User, AlertTriangle, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import RegistrationSuccessModal from "../../components/Auth/RegistrationSuccessModal";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 
@@ -22,6 +23,7 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -126,7 +128,11 @@ const AuthPage = () => {
       // 🔥 ЄДИНЕ МІСЦЕ ЛОГІНУ
       await login(data.key);
 
-      navigate("/");
+      if (!isLogin) {
+        setShowSuccessModal(true);
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       console.error(err);
       setApiError("Сервер недоступний.");
@@ -139,6 +145,10 @@ const AuthPage = () => {
 
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-50">
+      {showSuccessModal && (
+        <RegistrationSuccessModal onClose={() => setShowSuccessModal(false)} />
+      )}
+
       <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-xl rounded-xl border">
         <h2 className="text-3xl font-extrabold text-center">
           {isLogin ? "Вхід до системи" : "Реєстрація"}

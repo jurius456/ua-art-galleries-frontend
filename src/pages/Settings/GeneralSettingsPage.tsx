@@ -1,7 +1,15 @@
 import React from 'react';
 import { Globe, ChevronRight, Monitor } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 const GeneralSettingsPage = () => {
+  const { t, i18n } = useTranslation();
+
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'uk' ? 'en' : 'uk';
+    i18n.changeLanguage(newLang);
+  };
+
   return (
     <div className="max-w-2xl animate-in fade-in duration-700">
 
@@ -10,8 +18,8 @@ const GeneralSettingsPage = () => {
 
         {/* Заголовок */}
         <section className="space-y-1">
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-500">Система</p>
-          <h2 className="text-xl font-bold text-black">Загальні налаштування</h2>
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-500">{t('settings.system')}</p>
+          <h2 className="text-xl font-bold text-black">{t('settings.general')}</h2>
         </section>
 
         {/* Списоком налаштувань */}
@@ -19,14 +27,15 @@ const GeneralSettingsPage = () => {
 
           <SettingItem
             icon={<Globe size={18} />}
-            label="Мова інтерфейсу"
-            value="Українська"
+            label={t('settings.language')}
+            value={i18n.language === 'uk' ? 'Українська' : 'English'}
+            onClick={toggleLanguage}
           />
 
           <SettingItem
             icon={<Monitor size={18} />}
-            label="Тема оформлення"
-            value="Системна"
+            label={t('settings.theme')}
+            value={t('settings.systemTheme')}
           />
 
 
@@ -35,7 +44,7 @@ const GeneralSettingsPage = () => {
 
         {/* Кнопка збереження */}
         <button className="w-full py-4 bg-black text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all duration-300">
-          Зберегти зміни
+          {t('settings.saveChanges')}
         </button>
       </div>
     </div>
@@ -43,8 +52,8 @@ const GeneralSettingsPage = () => {
 };
 
 /* Рядок налаштування з вибором */
-const SettingItem = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string }) => (
-  <button className="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors group">
+const SettingItem = ({ icon, label, value, onClick }: { icon: React.ReactNode, label: string, value: string, onClick?: () => void }) => (
+  <button onClick={onClick} className="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors group">
     <div className="flex items-center gap-4">
       <div className="text-zinc-400 group-hover:text-black transition-colors">{icon}</div>
       <span className="text-sm font-bold text-black">{label}</span>

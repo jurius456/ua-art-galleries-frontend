@@ -127,7 +127,7 @@ const ChangePasswordPage = () => {
             <div className="pt-2 space-y-5 border-t border-gray-100">
               <PasswordInput
                 label="Новий пароль"
-                placeholder="Мінімум 8 символів"
+                placeholder="Введіть новий пароль"
                 name="newPassword"
                 value={formData.newPassword}
                 onChange={handleChange}
