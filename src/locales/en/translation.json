@@ -218,6 +218,11 @@
         }
     },
     "settings": {
+        "sidebar": {
+            "profile": "Profile",
+            "security": "Security",
+            "archive": "My Archive"
+        },
         "general": "General Settings",
         "system": "System",
         "language": "Interface Language",

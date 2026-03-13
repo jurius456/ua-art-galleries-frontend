@@ -28,13 +28,19 @@ const LanguageSwitcher = () => {
     return (
         <div className="relative z-50" ref={menuRef}>
             <button 
-                onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-gray-50 bg-white hover:bg-gray-50 transition-all shadow-sm"
             >
-                <span className="text-sm font-bold uppercase tracking-widest text-zinc-800">
+                <span 
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="text-sm font-bold uppercase tracking-widest text-zinc-800 cursor-pointer"
+                >
                     {currentLang === 'uk' ? 'UA' : 'ENG'}
                 </span>
-                <ChevronDown size={14} className={`text-zinc-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                <ChevronDown 
+                  size={14} 
+                  className={`text-zinc-400 transition-transform cursor-pointer ${isOpen ? "rotate-180" : ""}`} 
+                  onClick={() => setIsOpen(!isOpen)}
+                />
             </button>
 
             {/* Dropdown */}

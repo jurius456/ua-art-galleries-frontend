@@ -26,8 +26,8 @@ const HomeSearch = () => {
   const showSearchResults = searchQuery.length >= 2 && searchOpen;
 
   return (
-    <div className="container mx-auto px-4 md:px-6 relative z-40 -mt-10 md:-mt-12 mb-16" ref={searchRef}>
-      <div className="max-w-2xl mx-auto shadow-2xl rounded-[32px] animate-fade-in-up delay-500">
+    <div className="container mx-auto px-4 md:px-6 relative z-40 -mb-28 pt-8 md:pt-12 pb-8" ref={searchRef}>
+      <div className="max-w-4xl mx-auto shadow-2xl rounded-[32px] animate-fade-in-up delay-500">
         <div className="relative group">
           <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none text-zinc-400 group-focus-within:text-zinc-900 transition-colors">
             <Search size={22} strokeWidth={2.5} />
