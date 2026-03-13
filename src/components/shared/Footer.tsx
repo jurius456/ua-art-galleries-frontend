@@ -28,18 +28,19 @@ const Footer = () => {
             <FooterColumn title={t('footer.links.about')}>
               <FooterLink to="/about">{t('footer.links.team')}</FooterLink>
               <FooterLink to="/about">{t('footer.links.mission')}</FooterLink>
+              <FooterLink to="/about">{t('footer.links.contacts')}</FooterLink>
             </FooterColumn>
 
-            <FooterColumn title={t('footer.links.partnership')}>
-              <FooterLink to="/galleries">{t('nav.galleries')}</FooterLink>
+            <FooterColumn title={t('footer.links.galleries')}>
+              <FooterLink to="/galleries">{t('footer.links.joinGalleries')}</FooterLink>
+            </FooterColumn>
+            
+            <FooterColumn title={t('footer.links.partners')}>
+              <FooterLink to="/partners">{t('footer.links.joinPartners')}</FooterLink>
             </FooterColumn>
 
             <FooterColumn title={t('footer.links.support')}>
               <FooterLink to="/faq">{t('footer.links.faq')}</FooterLink>
-            </FooterColumn>
-
-            <FooterColumn title={t('footer.links.artists')}>
-              <FooterLink to="/join">{t('footer.links.join')}</FooterLink>
             </FooterColumn>
           </div>
         </div>

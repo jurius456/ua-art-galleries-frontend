@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { GraduationCap, Code2, MapPin } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 
 const AboutPage = () => {
@@ -39,11 +39,9 @@ const AboutPage = () => {
       {/* 2. STATS — "Скляний" блок, який виділяється на текстурному фоні */}
       <section className="container mx-auto px-6 mb-20">
         <div className="bg-white/70 backdrop-blur-md border border-white shadow-[0_8px_30px_rgba(0,0,0,0.04)] rounded-[32px] py-10 px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-2 gap-8 max-w-2xl mx-auto">
             <StatItem label={t('about.activeGalleries')} value="100+" />
-            <StatItem label={t('about.artworks')} value="450+" />
-            <StatItem label={t('about.students')} value="7" />
-            <StatItem label={t('about.location')} value="Львів" />
+            <StatItem label={t('about.cities', 'Міст')} value="11" />
           </div>
         </div>
       </section>
@@ -80,17 +78,6 @@ const AboutPage = () => {
             <p className="text-zinc-400 text-base font-medium leading-relaxed">
               {t('about.missionText')}
             </p>
-            <div className="flex flex-wrap gap-3 pt-4">
-              <div className="px-4 py-2 bg-zinc-800 rounded-xl border border-zinc-700 text-[11px] font-bold flex items-center gap-2">
-                <Code2 size={14} className="text-blue-400" /> React + Django
-              </div>
-              <div className="px-4 py-2 bg-zinc-800 rounded-xl border border-zinc-700 text-[11px] font-bold flex items-center gap-2">
-                <MapPin size={14} className="text-red-400" /> Lviv, Ukraine
-              </div>
-            </div>
-          </div>
-          <div className="absolute right-[-5%] bottom-[-10%] opacity-10 rotate-12 hidden lg:block scale-110">
-            <GraduationCap size={350} />
           </div>
         </div>
       </section>

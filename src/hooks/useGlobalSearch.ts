@@ -3,7 +3,6 @@ import { useGalleriesQuery } from "./useGalleriesQuery";
 import { MOCK_EVENTS, type ArtEvent } from "../pages/Events/index";
 import type { Gallery } from "../api/galleries";
 import { useTranslation } from 'react-i18next';
-import { getGalleryName, getGalleryCity } from '../utils/gallery';
 
 export interface SearchResults {
     galleries: Gallery[];
@@ -18,21 +17,26 @@ export function useGlobalSearch(query: string): SearchResults {
 
     const results = useMemo(() => {
         const q = query.trim().toLowerCase();
+        const galleriesArray = Array.isArray(galleries) ? galleries : [];
 
         // Не шукаємо, якщо менше 2 символів
         if (q.length < 2) {
-            return { galleries: [], events: [] };
+            return { galleries: galleriesArray, events: MOCK_EVENTS };
         }
 
-        // Фільтруємо галереї
-        const galleriesArray = Array.isArray(galleries) ? galleries : [];
+        // Фільтруємо галереї по різних полях
         const filteredGalleries = galleriesArray.filter(
             (g: Gallery) => {
-                const name = getGalleryName(g, i18n.language);
-                const city = getGalleryCity(g, i18n.language);
-                return name.toLowerCase().includes(q) || city.toLowerCase().includes(q);
+                const nameUa = g.name_ua?.toLowerCase() || '';
+                const nameEn = g.name_en?.toLowerCase() || '';
+                const cityUa = g.city_ua?.toLowerCase() || '';
+                const cityEn = g.city_en?.toLowerCase() || '';
+                const specUa = g.specialization_ua?.toLowerCase() || '';
+                const specEn = g.specialization_en?.toLowerCase() || '';
+
+                return nameUa.includes(q) || nameEn.includes(q) || cityUa.includes(q) || cityEn.includes(q) || specUa.includes(q) || specEn.includes(q);
             }
-        ).slice(0, 5); // Максимум 5 результатів
+        );
 
         // Фільтруємо події
         const filteredEvents = MOCK_EVENTS.filter(
@@ -40,7 +44,7 @@ export function useGlobalSearch(query: string): SearchResults {
                 e.title.toLowerCase().includes(q) ||
                 e.galleryName.toLowerCase().includes(q) ||
                 e.city.toLowerCase().includes(q)
-        ).slice(0, 5); // Максимум 5 результатів
+        );
 
         return {
             galleries: filteredGalleries,
