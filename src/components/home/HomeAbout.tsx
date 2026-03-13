@@ -1,4 +1,4 @@
-import { Target, Users, Map, Mail, Handshake } from 'lucide-react';
+import { Target, Users, Mail, Handshake } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
@@ -32,13 +32,10 @@ const HomeAbout = () => {
           <Link to="/about#team" className="block w-full h-full">
             <BentoTile icon={<Users className="text-orange-500" />} label={t('home.about.team')} />
           </Link>
-          <Link to="/roadmap" className="block w-full h-full">
-            <BentoTile icon={<Map className="text-green-500" />} label={t('home.about.roadmap')} />
-          </Link>
           <Link to="/contacts" className="block w-full h-full">
             <BentoTile icon={<Mail className="text-purple-500" />} label={t('home.about.contacts')} />
           </Link>
-          <Link to="/partners" className="block w-full h-full">
+          <Link to="/partners" className="block w-full h-full col-span-2">
             <BentoTile icon={<Handshake className="text-blue-400" />} label={t('home.about.partners')} />
           </Link>
         </div>

@@ -48,7 +48,6 @@ const EventsPage = () => {
       <section className="bg-white/40 backdrop-blur-sm border-b border-zinc-200/50 py-16">
         <div className="container mx-auto px-6 max-w-6xl space-y-10">
           <div className="space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-orange-600">{t('events.subtitle')}</p>
             <h1 className="text-4xl md:text-5xl font-black text-zinc-800 tracking-tighter uppercase leading-none">{t('events.title')}</h1>
           </div>
 
@@ -92,9 +91,27 @@ const EventsPage = () => {
         <div className="flex items-center gap-2 text-zinc-500 font-bold text-[10px] uppercase tracking-[0.25em] mb-10">
           <LayoutGrid size={14} /> {t('events.foundEvents', { count: filtered.length })}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filtered.map(event => <EventCard key={event.id} event={event} />)}
-        </div>
+        {filtered.length === 0 ? (
+          <div className="max-w-xl mx-auto py-20 text-center flex flex-col items-center">
+            <div className="w-24 h-24 bg-zinc-50 rounded-full flex items-center justify-center mb-6">
+              <Calendar size={32} className="text-zinc-300" />
+            </div>
+            <h3 className="text-2xl font-black uppercase text-zinc-900 mb-2">{t('events.emptyTitle', 'Подій не знайдено')}</h3>
+            <p className="text-zinc-500 font-medium mb-8 leading-relaxed">
+              {t('events.emptyDesc', 'За обраними критеріями подій немає.')}
+            </p>
+            <button 
+              onClick={() => { setSearch(""); setSelectedCity(t('events.allCities')); setSelectedCategory(t('events.allTypes')); }}
+              className="px-6 py-3 bg-zinc-900 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
+            >
+              {t('events.clearFilters', 'Очистити пошук')}
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filtered.map(event => <EventCard key={event.id} event={event} />)}
+          </div>
+        )}
       </section>
     </div>
   );

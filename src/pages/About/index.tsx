@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { GraduationCap, Code2, MapPin } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 
 const AboutPage = () => {
@@ -37,14 +37,11 @@ const AboutPage = () => {
       </section>
 
       {/* 2. STATS — "Скляний" блок, який виділяється на текстурному фоні */}
-      <section className="container mx-auto px-6 mb-20">
-        <div className="bg-white/70 backdrop-blur-md border border-white shadow-[0_8px_30px_rgba(0,0,0,0.04)] rounded-[32px] py-10 px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+      <section className="container mx-auto px-4 md:px-6 mb-20 flex justify-center">
+        <div className="inline-flex flex-col md:flex-row items-center gap-12 md:gap-32 bg-white/70 backdrop-blur-md border border-white shadow-[0_8px_40px_rgba(0,0,0,0.04)] rounded-[40px] py-8 px-16">
             <StatItem label={t('about.activeGalleries')} value="100+" />
-            <StatItem label={t('about.artworks')} value="450+" />
-            <StatItem label={t('about.students')} value="7" />
-            <StatItem label={t('about.location')} value="Львів" />
-          </div>
+            <div className="w-px h-16 bg-zinc-200 hidden md:block"></div>
+            <StatItem label={t('about.cities', 'Міст')} value="11" />
         </div>
       </section>
 
@@ -61,13 +58,13 @@ const AboutPage = () => {
 
         <div className="flex flex-wrap justify-center gap-10">
           <TeamMember initial="Y" name={t('about.teamMembers.yulia.name')} role={t('about.teamMembers.yulia.role')} />
-          <TeamMember initial="D" name={t('about.teamMembers.dmytro.name')} role={t('about.teamMembers.dmytro.role')} />
-          <TeamMember initial="R" name={t('about.teamMembers.roman.name')} role={t('about.teamMembers.roman.role')} />
-          <TeamMember initial="N" name={t('about.teamMembers.nazar.name')} role={t('about.teamMembers.nazar.role')} />
           <TeamMember initial="R" name={t('about.teamMembers.rostyslav.name')} role={t('about.teamMembers.rostyslav.role')} />
-          <TeamMember initial="S" name={t('about.teamMembers.stanislav.name')} role={t('about.teamMembers.stanislav.role')} />
-          <TeamMember initial="O" name={t('about.teamMembers.oleksandr.name')} role={t('about.teamMembers.oleksandr.role')} />
+          <TeamMember initial="N" name={t('about.teamMembers.nazar.name')} role={t('about.teamMembers.nazar.role')} />
           <TeamMember initial="M" name={t('about.teamMembers.mykhailo.name')} role={t('about.teamMembers.mykhailo.role')} />
+          <TeamMember initial="S" name={t('about.teamMembers.stanislav.name')} role={t('about.teamMembers.stanislav.role')} />
+          <TeamMember initial="R" name={t('about.teamMembers.roman.name')} role={t('about.teamMembers.roman.role')} />
+          <TeamMember initial="O" name={t('about.teamMembers.oleksandr.name')} role={t('about.teamMembers.oleksandr.role')} />
+          <TeamMember initial="D" name={t('about.teamMembers.dmytro.name')} role={t('about.teamMembers.dmytro.role')} />
           <TeamMember initial="D" name={t('about.teamMembers.danylo.name')} role={t('about.teamMembers.danylo.role')} />
         </div>
       </section>
@@ -80,17 +77,6 @@ const AboutPage = () => {
             <p className="text-zinc-400 text-base font-medium leading-relaxed">
               {t('about.missionText')}
             </p>
-            <div className="flex flex-wrap gap-3 pt-4">
-              <div className="px-4 py-2 bg-zinc-800 rounded-xl border border-zinc-700 text-[11px] font-bold flex items-center gap-2">
-                <Code2 size={14} className="text-blue-400" /> React + Django
-              </div>
-              <div className="px-4 py-2 bg-zinc-800 rounded-xl border border-zinc-700 text-[11px] font-bold flex items-center gap-2">
-                <MapPin size={14} className="text-red-400" /> Lviv, Ukraine
-              </div>
-            </div>
-          </div>
-          <div className="absolute right-[-5%] bottom-[-10%] opacity-10 rotate-12 hidden lg:block scale-110">
-            <GraduationCap size={350} />
           </div>
         </div>
       </section>

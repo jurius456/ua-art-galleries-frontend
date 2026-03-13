@@ -1,37 +1,40 @@
 import { Link, useLocation } from "react-router-dom";
-import { User, Lock, Settings as SettingsIcon, Bookmark } from "lucide-react";
+import { User, Lock, Bookmark, Settings } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const SettingsSidebar = () => {
   const location = useLocation();
+  const { t } = useTranslation();
 
-  const menuItems = [
-    { path: "/profile", label: "Профіль", icon: <User size={20} /> },
-    { path: "/settings", label: "Налаштування", icon: <SettingsIcon size={20} /> },
-    { path: "/settings/password", label: "Безпека", icon: <Lock size={20} /> },
-    // Нова вкладка для вподобаного
-    { path: "/settings/archive", label: "Мій Архів", icon: <Bookmark size={20} /> },
+  const menu = [
+    { path: "/settings/profile", label: t("settings.sidebar.profile", "Профіль"), icon: <User size={20} /> },
+    { path: "/settings/general", label: t("settings.sidebar.general", "Налаштування"), icon: <Settings size={20} /> },
+    { path: "/settings/password", label: t("settings.sidebar.security", "Безпека"), icon: <Lock size={20} /> },
+    { path: "/settings/archive", label: t("settings.sidebar.archive", "Мій Архів"), icon: <Bookmark size={20} /> },
   ];
 
   return (
-    <nav className="space-y-1">
-      {menuItems.map((item) => {
-        const isActive = location.pathname === item.path;
-        return (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-              isActive 
-                ? "bg-gray-100 text-black shadow-sm" 
-                : "text-gray-500 hover:text-black hover:bg-gray-50"
-            }`}
-          >
-            {item.icon}
-            {item.label}
-          </Link>
-        );
-      })}
-    </nav>
+    <aside className="w-full lg:w-64 space-y-2">
+      <div className="bg-white rounded-[32px] p-4 shadow-sm border border-zinc-100 flex flex-col gap-1">
+        {menu.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 font-bold text-sm ${
+                isActive
+                  ? "bg-zinc-900 text-white shadow-md"
+                  : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900"
+              }`}
+            >
+              {item.icon}
+              {item.label}
+            </Link>
+          );
+        })}
+      </div>
+    </aside>
   );
 };
 
