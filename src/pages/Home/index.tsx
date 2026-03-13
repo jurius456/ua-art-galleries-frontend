@@ -8,8 +8,8 @@ import HomeAbout from '../../components/home/HomeAbout.tsx';
 const HomePage = () => {
   return (
     <div className="pb-24 space-y-32 animate-in fade-in duration-700">
-      <HomeSearch />
       <HomeHero />
+      <HomeSearch />
       <div className="container mx-auto px-6 space-y-32">
         <HomeFeaturedGalleries /> {/* Замість HomeNews */}
         <HomeMapView />
