@@ -49,8 +49,8 @@ const GalleryPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-zinc-400 text-[10px] font-black uppercase tracking-widest">
-        {t('gallery.loading')}
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-zinc-200 border-t-zinc-900 rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -124,22 +124,42 @@ const GalleryPage = () => {
               </div>
             </div>
 
-            <button
-              onClick={() =>
-                toggleFavorite({
-                  id: gallery.slug,
-                  name: getGalleryName(gallery, i18n.language),
-                  slug: gallery.slug,
-                })
-              }
-              className={`w-14 h-14 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${isFavorite(gallery.slug)
-                  ? "border-red-100 bg-red-50 text-red-500 hover:bg-red-100"
-                  : "border-zinc-100 text-zinc-300 hover:border-zinc-900 hover:text-zinc-900"
-                }`}
-              aria-label="Toggle favorite"
-            >
-              <Heart size={24} fill={isFavorite(gallery.slug) ? "currentColor" : "none"} />
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({
+                      title: name,
+                      text: shortDesc || 'Check out this gallery!',
+                      url: window.location.href,
+                    }).catch(console.error);
+                  } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert("Лінк скопійовано!");
+                  }
+                }}
+                className="w-14 h-14 rounded-full border-2 border-zinc-100 flex items-center justify-center shrink-0 text-zinc-400 hover:bg-zinc-50 hover:text-zinc-900 transition-colors"
+                aria-label="Share"
+              >
+                <Globe size={20} />
+              </button>
+              <button
+                onClick={() =>
+                  toggleFavorite({
+                    id: gallery.slug,
+                    name: getGalleryName(gallery, i18n.language),
+                    slug: gallery.slug,
+                  })
+                }
+                className={`w-14 h-14 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${isFavorite(gallery.slug)
+                    ? "border-red-100 bg-red-50 text-red-500 hover:bg-red-100"
+                    : "border-zinc-100 text-zinc-300 hover:border-zinc-900 hover:text-zinc-900"
+                  }`}
+                aria-label="Toggle favorite"
+              >
+                <Heart size={24} fill={isFavorite(gallery.slug) ? "currentColor" : "none"} />
+              </button>
+            </div>
           </div>
         </div>
 

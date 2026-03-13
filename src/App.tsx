@@ -30,6 +30,8 @@ const SavedGalleriesPage = React.lazy(() => import("./pages/Galleries/SavedGalle
 const RoadmapPage = React.lazy(() => import("./pages/Roadmap"));
 const ContactsPage = React.lazy(() => import("./pages/Contacts"));
 const PartnersPage = React.lazy(() => import("./pages/Partners"));
+const FAQPage = React.lazy(() => import("./pages/FAQ"));
+const SupportPage = React.lazy(() => import("./pages/Support"));
 
 // Компонент для автоматичного прокручування вгору
 const ScrollToTop = () => {
@@ -75,6 +77,8 @@ const AppContent = () => {
               <Route path="/roadmap" element={<RoadmapPage />} />
               <Route path="/contacts" element={<ContactsPage />} />
               <Route path="/partners" element={<PartnersPage />} />
+              <Route path="/faq" element={<FAQPage />} />
+              <Route path="/support" element={<SupportPage />} />
               <Route path="/login" element={<AuthPage />} />
 
               {/* Захищені маршрути */}

@@ -89,10 +89,16 @@
     "galleries": {
         "title": "Catalog",
         "subtitle": "of galleries",
-        "search": "Search",
+        "search": "Search by name or city",
         "allCities": "All Cities",
-        "allStatuses": "All Statuses",
-        "loading": "Loading galleries..."
+        "allYears": "All Years",
+        "sortAlpha": "Alphabetical",
+        "sortNewest": "Newest First",
+        "sortOldest": "Oldest First",
+        "loading": "Loading galleries...",
+        "emptyTitle": "Nothing Found",
+        "emptyDesc": "No galleries found matching your criteria. Try changing your search filters.",
+        "clearFilters": "Clear Filters"
     },
     "gallery": {
         "founded": "Founded",
@@ -130,7 +136,10 @@
         "opening": "Opening",
         "lecture": "Lecture",
         "foundEvents": "Found {{count}} events",
-        "details": "Details"
+        "details": "Details",
+        "emptyTitle": "No events found",
+        "emptyDesc": "There are no events matching your selected criteria.",
+        "clearFilters": "Clear Search"
     },
     "auth": {
         "login": "Log In",

@@ -79,8 +79,8 @@ const GalleriesPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-zinc-400 font-semibold">
-        {t('galleries.loading')}
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-zinc-200 border-t-zinc-900 rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -161,28 +161,46 @@ const GalleriesPage = () => {
         {t('common.found')}: {sortedAndFiltered.length}
       </div>
 
-      {/* GRID */}
-      <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-        {visible.map((gallery, index) => (
-          <div
-            key={gallery.id}
-            className="animate-fade-in-up opacity-0"
-            style={{ animationDelay: `${Math.min(index * 100, 1000)}ms`, animationFillMode: 'forwards' }}
-          >
-            <GalleryCard
-              gallery={gallery}
-              favorite={isFavorite(gallery.slug)}
-              onToggle={() =>
-                toggleFavorite({
-                  id: gallery.slug,
-                  name: getGalleryName(gallery, i18n.language),
-                  slug: gallery.slug,
-                })
-              }
-            />
+      {/* MAIN CONTENT */}
+      {visible.length === 0 ? (
+        <div className="max-w-xl mx-auto px-6 py-20 text-center flex flex-col items-center">
+          <div className="w-24 h-24 bg-zinc-50 rounded-full flex items-center justify-center mb-6">
+            <Search size={32} className="text-zinc-300" />
           </div>
-        ))}
-      </div>
+          <h3 className="text-2xl font-black uppercase text-zinc-900 mb-2">{t('galleries.emptyTitle', 'Нічого не знайдено')}</h3>
+          <p className="text-zinc-500 font-medium mb-8 leading-relaxed">
+            {t('galleries.emptyDesc', 'За вашими критеріями не знайдено жодної галереї. Спробуйте змінити фільтри пошуку.')}
+          </p>
+          <button 
+            onClick={() => { setSearch(""); setCity("all"); setStatus("all"); setYear("all"); setPage(1); }}
+            className="px-6 py-3 bg-zinc-900 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
+          >
+            {t('galleries.clearFilters', 'Скинути фільтри')}
+          </button>
+        </div>
+      ) : (
+        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {visible.map((gallery, index) => (
+            <div
+              key={gallery.id}
+              className="animate-fade-in-up opacity-0"
+              style={{ animationDelay: `${Math.min(index * 100, 1000)}ms`, animationFillMode: 'forwards' }}
+            >
+              <GalleryCard
+                gallery={gallery}
+                favorite={isFavorite(gallery.slug)}
+                onToggle={() =>
+                  toggleFavorite({
+                    id: gallery.slug,
+                    name: getGalleryName(gallery, i18n.language),
+                    slug: gallery.slug,
+                  })
+                }
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* PAGINATION */}
       {totalPages > 1 && (
