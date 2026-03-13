@@ -249,6 +249,7 @@
     "settings": {
         "sidebar": {
             "profile": "Профіль",
+            "general": "Загальні",
             "security": "Безпека",
             "archive": "Мій Архів"
         },

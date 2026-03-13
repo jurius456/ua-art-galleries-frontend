@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 
 import React, { Suspense } from "react";
@@ -84,8 +84,10 @@ const AppContent = () => {
               {/* Захищені маршрути */}
               <Route element={<ProtectedRoute />}>
                 <Route element={<SettingsLayout />}>
-                  <Route path="/profile" element={<ProfilePage />} />
-                  <Route path="/settings" element={<GeneralSettingsPage />} />
+                  {/* Default /settings redirects to /settings/profile or we can just mount ProfilePage there, but let's be explicit */}
+                  <Route path="/settings" element={<Navigate to="/settings/profile" replace />} />
+                  <Route path="/settings/profile" element={<ProfilePage />} />
+                  <Route path="/settings/general" element={<GeneralSettingsPage />} />
                   <Route path="/settings/password" element={<ChangePasswordPage />} />
                   <Route path="/settings/archive" element={<SavedGalleriesPage />} />
                 </Route>

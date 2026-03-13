@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { User, Lock, Bookmark } from "lucide-react";
+import { User, Lock, Bookmark, Settings } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 const SettingsSidebar = () => {
@@ -7,9 +7,10 @@ const SettingsSidebar = () => {
   const { t } = useTranslation();
 
   const menu = [
-    { path: "/settings", label: t("settings.sidebar.profile"), icon: <User size={20} /> },
-    { path: "/settings/password", label: t("settings.sidebar.security"), icon: <Lock size={20} /> },
-    { path: "/settings/archive", label: t("settings.sidebar.archive"), icon: <Bookmark size={20} /> },
+    { path: "/settings/profile", label: t("settings.sidebar.profile", "Профіль"), icon: <User size={20} /> },
+    { path: "/settings/general", label: t("settings.sidebar.general", "Налаштування"), icon: <Settings size={20} /> },
+    { path: "/settings/password", label: t("settings.sidebar.security", "Безпека"), icon: <Lock size={20} /> },
+    { path: "/settings/archive", label: t("settings.sidebar.archive", "Мій Архів"), icon: <Bookmark size={20} /> },
   ];
 
   return (

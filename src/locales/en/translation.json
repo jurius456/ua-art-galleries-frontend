@@ -229,6 +229,7 @@
     "settings": {
         "sidebar": {
             "profile": "Profile",
+            "general": "General",
             "security": "Security",
             "archive": "My Archive"
         },

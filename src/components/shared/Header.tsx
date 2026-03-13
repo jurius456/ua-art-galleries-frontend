@@ -78,12 +78,11 @@ const Header = () => {
 
                     <div className="px-2 space-y-1">
                       <MenuLink
-                        to="/profile"
+                        to="/settings/profile"
                         icon={<User size={18} strokeWidth={1.5} />}
                         label={t('header.profile')}
                         onClick={() => setOpen(false)}
                       />
-                      {/* НОВА КНОПКА */}
                       <MenuLink
                         to="/settings/archive"
                         icon={<Bookmark size={18} strokeWidth={1.5} />}
@@ -91,7 +90,7 @@ const Header = () => {
                         onClick={() => setOpen(false)}
                       />
                       <MenuLink
-                        to="/settings"
+                        to="/settings/general"
                         icon={<Settings size={18} strokeWidth={1.5} />}
                         label={t('header.settings')}
                         onClick={() => setOpen(false)}
