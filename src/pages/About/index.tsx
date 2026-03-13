@@ -37,12 +37,11 @@ const AboutPage = () => {
       </section>
 
       {/* 2. STATS — "Скляний" блок, який виділяється на текстурному фоні */}
-      <section className="container mx-auto px-6 mb-20">
-        <div className="bg-white/70 backdrop-blur-md border border-white shadow-[0_8px_30px_rgba(0,0,0,0.04)] rounded-[32px] py-10 px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-2 gap-8 max-w-2xl mx-auto">
+      <section className="container mx-auto px-4 md:px-6 mb-20 flex justify-center">
+        <div className="inline-flex flex-col md:flex-row items-center gap-12 md:gap-32 bg-white/70 backdrop-blur-md border border-white shadow-[0_8px_40px_rgba(0,0,0,0.04)] rounded-[40px] py-8 px-16">
             <StatItem label={t('about.activeGalleries')} value="100+" />
+            <div className="w-px h-16 bg-zinc-200 hidden md:block"></div>
             <StatItem label={t('about.cities', 'Міст')} value="11" />
-          </div>
         </div>
       </section>
 
@@ -59,13 +58,13 @@ const AboutPage = () => {
 
         <div className="flex flex-wrap justify-center gap-10">
           <TeamMember initial="Y" name={t('about.teamMembers.yulia.name')} role={t('about.teamMembers.yulia.role')} />
-          <TeamMember initial="D" name={t('about.teamMembers.dmytro.name')} role={t('about.teamMembers.dmytro.role')} />
-          <TeamMember initial="R" name={t('about.teamMembers.roman.name')} role={t('about.teamMembers.roman.role')} />
-          <TeamMember initial="N" name={t('about.teamMembers.nazar.name')} role={t('about.teamMembers.nazar.role')} />
           <TeamMember initial="R" name={t('about.teamMembers.rostyslav.name')} role={t('about.teamMembers.rostyslav.role')} />
-          <TeamMember initial="S" name={t('about.teamMembers.stanislav.name')} role={t('about.teamMembers.stanislav.role')} />
-          <TeamMember initial="O" name={t('about.teamMembers.oleksandr.name')} role={t('about.teamMembers.oleksandr.role')} />
+          <TeamMember initial="N" name={t('about.teamMembers.nazar.name')} role={t('about.teamMembers.nazar.role')} />
           <TeamMember initial="M" name={t('about.teamMembers.mykhailo.name')} role={t('about.teamMembers.mykhailo.role')} />
+          <TeamMember initial="S" name={t('about.teamMembers.stanislav.name')} role={t('about.teamMembers.stanislav.role')} />
+          <TeamMember initial="R" name={t('about.teamMembers.roman.name')} role={t('about.teamMembers.roman.role')} />
+          <TeamMember initial="O" name={t('about.teamMembers.oleksandr.name')} role={t('about.teamMembers.oleksandr.role')} />
+          <TeamMember initial="D" name={t('about.teamMembers.dmytro.name')} role={t('about.teamMembers.dmytro.role')} />
           <TeamMember initial="D" name={t('about.teamMembers.danylo.name')} role={t('about.teamMembers.danylo.role')} />
         </div>
       </section>

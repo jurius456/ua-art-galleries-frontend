@@ -26,11 +26,11 @@ const HomeSearch = () => {
   const showSearchResults = searchQuery.length >= 2 && searchOpen;
 
   return (
-    <div className="container mx-auto px-4 md:px-6 relative z-40 -mt-20 md:-mt-24 mb-16" ref={searchRef}>
-      <div className="max-w-3xl mx-auto bg-white/90 backdrop-blur-xl p-4 md:p-6 rounded-[32px] shadow-2xl border border-white/50 animate-fade-in-up delay-500">
-        <div className="relative">
-          <div className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400">
-            <Search size={24} strokeWidth={2} />
+    <div className="container mx-auto px-4 md:px-6 relative z-40 -mt-10 md:-mt-12 mb-16" ref={searchRef}>
+      <div className="max-w-2xl mx-auto shadow-2xl rounded-[32px] animate-fade-in-up delay-500">
+        <div className="relative group">
+          <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none text-zinc-400 group-focus-within:text-zinc-900 transition-colors">
+            <Search size={22} strokeWidth={2.5} />
           </div>
           <input
             type="text"
@@ -41,7 +41,7 @@ const HomeSearch = () => {
               setSearchOpen(true);
             }}
             onFocus={() => setSearchOpen(true)}
-            className="w-full bg-zinc-50 border border-zinc-200 rounded-[24px] pl-16 pr-6 py-4 text-base font-semibold outline-none placeholder:text-zinc-400 text-zinc-900 focus:bg-white focus:border-zinc-300 focus:shadow-inner transition-all"
+            className="w-full bg-white/95 backdrop-blur-xl border border-white/50 rounded-[32px] pl-[68px] pr-6 py-5 text-base font-semibold outline-none placeholder:text-zinc-400 text-zinc-900 focus:bg-white focus:border-zinc-200 focus:shadow-[0_8px_40px_rgba(0,0,0,0.12)] transition-all"
           />
 
           {showSearchResults && (
