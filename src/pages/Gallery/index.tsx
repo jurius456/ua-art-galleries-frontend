@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, MapPin, Mail, Phone, Globe, Instagram, Lock, Clock, Calendar, BadgeCheck, Ban, Heart, Info, Users, ExternalLink } from "lucide-react";
+import { ArrowLeft, MapPin, Mail, Phone, Globe, Instagram, Facebook, Twitter, Youtube, Linkedin, Lock, Clock, Calendar, BadgeCheck, Ban, Heart, Info, Users, ExternalLink } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
 import { useFavorites } from "../../context/FavoritesContext";
@@ -19,6 +19,19 @@ import {
   getGalleryArtists,
 } from "../../utils/gallery";
 import GalleryMap from "../../components/gallery/GalleryMap";
+
+const getSocialLinkDetails = (url: string) => {
+  if (!url) return { icon: Globe, name: 'Link' };
+  const lowerUrl = url.toLowerCase();
+  if (lowerUrl.includes('instagram.com')) return { icon: Instagram, name: 'Instagram' };
+  if (lowerUrl.includes('facebook.com')) return { icon: Facebook, name: 'Facebook' };
+  if (lowerUrl.includes('twitter.com') || lowerUrl.includes('x.com')) return { icon: Twitter, name: 'Twitter' };
+  if (lowerUrl.includes('youtube.com')) return { icon: Youtube, name: 'YouTube' };
+  if (lowerUrl.includes('linkedin.com')) return { icon: Linkedin, name: 'LinkedIn' };
+  if (lowerUrl.includes('t.me') || lowerUrl.includes('telegram.org')) return { icon: Globe, name: 'Telegram' };
+  if (lowerUrl.includes('tiktok.com')) return { icon: Globe, name: 'TikTok' };
+  return { icon: Globe, name: 'Мережа' };
+};
 
 const GalleryPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -274,12 +287,28 @@ const GalleryPage = () => {
                         {t('gallery.website')}
                       </a>
                     )}
-                    {gallery.social_links?.instagram && (
-                      <a href={gallery.social_links.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm font-bold text-zinc-800 hover:text-blue-600 transition-colors">
-                        <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center shrink-0"><Instagram size={14} className="text-zinc-400"/></div>
-                        Instagram
-                      </a>
-                    )}
+                    {Array.isArray(gallery.social_links)
+                      ? gallery.social_links.map((link, idx) => {
+                          if (!link || typeof link !== 'string') return null;
+                          const { icon: Icon, name } = getSocialLinkDetails(link);
+                          return (
+                            <a key={idx} href={link} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm font-bold text-zinc-800 hover:text-blue-600 transition-colors truncate">
+                              <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center shrink-0"><Icon size={14} className="text-zinc-400"/></div>
+                              <span className="truncate">{name}</span>
+                            </a>
+                          );
+                        })
+                      : gallery.social_links && Object.entries(gallery.social_links).map(([key, link]) => {
+                          if (!link || typeof link !== 'string') return null;
+                          const { icon: Icon, name } = getSocialLinkDetails(link);
+                          return (
+                            <a key={key} href={link} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm font-bold text-zinc-800 hover:text-blue-600 transition-colors truncate">
+                              <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center shrink-0"><Icon size={14} className="text-zinc-400"/></div>
+                              <span className="truncate">{name}</span>
+                            </a>
+                          );
+                        })
+                    }
                   </div>
                 </div>
 

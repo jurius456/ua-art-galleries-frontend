@@ -20,7 +20,7 @@ export type Gallery = {
   email: string | null;
   phone: string | null;
   website: string | null;
-  social_links: Record<string, string> | null;
+  social_links: Record<string, string> | string[] | null;
   founding_year: string | null;
   latitude?: number;
   longitude?: number;
