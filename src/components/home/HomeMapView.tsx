@@ -109,7 +109,8 @@ const HomeMapView = () => {
     let sourceData = apiGalleries.length > 0 ? apiGalleries : MOCK_GALLERIES;
 
     const loadPoints = async () => {
-      const promises = sourceData.map(async (g) => {
+      // First pass: fast coordinates
+      const immediatePoints = sourceData.map((g) => {
         let lat = g.latitude;
         let lng = g.longitude;
 
@@ -117,27 +118,10 @@ const HomeMapView = () => {
           [lat, lng] = GALLERY_COORDINATES[g.slug];
         }
 
-        const address = getGalleryAddress(g, i18n.language) || '';
         const cityName = getGalleryCity(g, i18n.language) || '';
-        
-        let query = address;
-        if (query && cityName && !query.includes(cityName) && !query.includes(cityName.substring(0, 4))) {
-            query = `${cityName}, ${query}`;
-        }
-        
-        if (query && !query.includes('Україна') && !query.includes('Ukraine')) {
-            // Append Ukraine to limit search bounds to relevant regions
-            query += ', Україна';
-        }
+        const hasExact = lat != null && lng != null;
 
-        if ((lat == null || lng == null) && query) {
-           const geocoded = await geocodeAddress(query);
-           if (geocoded) {
-              [lat, lng] = geocoded;
-           }
-        }
-
-        if ((lat == null || lng == null) && cityName && CITY_COORDINATES[cityName]) {
+        if (!hasExact && cityName && CITY_COORDINATES[cityName]) {
           const [cityLat, cityLng] = CITY_COORDINATES[cityName];
           const latJitter = (seededRandom(g.slug + 'lat') - 0.5) * 0.01;
           const lngJitter = (seededRandom(g.slug + 'lng') - 0.5) * 0.01;
@@ -145,15 +129,37 @@ const HomeMapView = () => {
           lng = cityLng + lngJitter;
         }
 
-        if (lat != null && lng != null) {
-          return { ...g, coords: [Number(lat), Number(lng)] as [number, number] };
-        }
-        return null;
-      });
+        return { 
+          ...g, 
+          coords: (lat != null && lng != null) ? [Number(lat), Number(lng)] as [number, number] : null, 
+          _hasExact: hasExact 
+        };
+      }).filter(g => g.coords !== null) as (Gallery & { coords: [number, number], _hasExact: boolean })[];
 
-      const updatedPoints = (await Promise.all(promises)).filter((g): g is (Gallery & { coords: [number, number] }) => g !== null);
-      if (isMounted) {
-        setPoints(updatedPoints);
+      if (isMounted) setPoints(immediatePoints);
+
+      // Async pass: fine geocoding
+      for (const g of immediatePoints) {
+        if (!isMounted) break;
+        if (g._hasExact) continue;
+
+        const address = getGalleryAddress(g, i18n.language) || '';
+        const cityName = getGalleryCity(g, i18n.language) || '';
+        let query = address;
+        
+        if (query && cityName && !query.includes(cityName) && !query.includes(cityName.substring(0, 4))) {
+            query = `${cityName}, ${query}`;
+        }
+        if (query && !query.includes('Україна') && !query.includes('Ukraine')) {
+            query += ', Україна';
+        }
+
+        if (query) {
+           const geocoded = await geocodeAddress(query);
+           if (geocoded && isMounted) {
+              setPoints(prev => prev.map(p => p.id === g.id ? { ...p, coords: geocoded, _hasExact: true } : p));
+           }
+        }
       }
     };
 
