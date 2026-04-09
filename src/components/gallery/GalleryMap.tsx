@@ -1,5 +1,5 @@
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -7,6 +7,7 @@ import { MapPin } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { GALLERY_COORDINATES, CITY_COORDINATES, seededRandom } from "../../utils/maps";
 import { getGalleryName, getGalleryCity, getGalleryAddress } from "../../utils/gallery";
+import { geocodeAddress } from "../../utils/geocode";
 import type { Gallery } from "../../api/galleries";
 
 // --- Icons ---
@@ -43,30 +44,56 @@ interface GalleryMapProps {
 const GalleryMap = ({ gallery }: GalleryMapProps) => {
     const { i18n } = useTranslation();
 
-    const coords = useMemo(() => {
-        let lat = gallery.latitude;
-        let lng = gallery.longitude;
+    const [coords, setCoords] = useState<[number, number] | null>(null);
 
-        // 1. Try Specific Lookup
-        if ((lat == null || lng == null) && gallery.slug && GALLERY_COORDINATES[gallery.slug]) {
-            [lat, lng] = GALLERY_COORDINATES[gallery.slug];
-        }
+    useEffect(() => {
+        let isMounted = true;
+        
+        const loadCoords = async () => {
+            let lat = gallery.latitude;
+            let lng = gallery.longitude;
 
-        // 2. Try City Lookup
-        if ((lat == null || lng == null)) {
-            const cityName = getGalleryCity(gallery, i18n.language);
-            if (cityName && CITY_COORDINATES[cityName]) {
-                const [cityLat, cityLng] = CITY_COORDINATES[cityName];
-                // Use deterministic jitter
-                const latJitter = (seededRandom(gallery.slug + 'lat') - 0.5) * 0.01;
-                const lngJitter = (seededRandom(gallery.slug + 'lng') - 0.5) * 0.01;
-
-                lat = cityLat + latJitter;
-                lng = cityLng + lngJitter;
+            if ((lat == null || lng == null) && gallery.slug && GALLERY_COORDINATES[gallery.slug]) {
+                [lat, lng] = GALLERY_COORDINATES[gallery.slug];
             }
-        }
 
-        return (lat != null && lng != null) ? [lat, lng] as [number, number] : null;
+            const address = getGalleryAddress(gallery, i18n.language) || '';
+            const cityName = getGalleryCity(gallery, i18n.language) || '';
+            
+            let query = address;
+            if (query && cityName && !query.includes(cityName) && !query.includes(cityName.substring(0, 4))) {
+                query = `${cityName}, ${query}`;
+            }
+            
+            if (query && !query.includes('Україна') && !query.includes('Ukraine')) {
+                query += ', Україна';
+            }
+
+            if ((lat == null || lng == null) && query) {
+               const geocoded = await geocodeAddress(query);
+               if (geocoded) {
+                  [lat, lng] = geocoded;
+               }
+            }
+
+            if (lat == null || lng == null) {
+                if (cityName && CITY_COORDINATES[cityName]) {
+                    const [cityLat, cityLng] = CITY_COORDINATES[cityName];
+                    const latJitter = (seededRandom(gallery.slug + 'lat') - 0.5) * 0.01;
+                    const lngJitter = (seededRandom(gallery.slug + 'lng') - 0.5) * 0.01;
+                    lat = cityLat + latJitter;
+                    lng = cityLng + lngJitter;
+                }
+            }
+
+            if (isMounted) {
+                setCoords(lat != null && lng != null ? [lat, lng] as [number, number] : null);
+            }
+        };
+
+        loadCoords();
+
+        return () => { isMounted = false; };
     }, [gallery, i18n.language]);
 
     if (!coords) return null;

@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo, type MutableRefObject } from 'react';
+import { useRef, useEffect, useState, type MutableRefObject } from 'react';
 import { MapPin, ArrowRight, ZoomOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
@@ -14,7 +14,8 @@ import 'leaflet/dist/leaflet.css';
 import { useGalleriesQuery } from '../../hooks/useGalleriesQuery';
 import type { Gallery } from '../../api/galleries';
 import { useTranslation } from 'react-i18next';
-import { getGalleryName, getGalleryCity, getGalleryShortDescription } from '../../utils/gallery';
+import { getGalleryName, getGalleryCity, getGalleryShortDescription, getGalleryAddress } from '../../utils/gallery';
+import { geocodeAddress } from '../../utils/geocode';
 
 /* ===================== MAP CONSTANTS ===================== */
 
@@ -101,49 +102,64 @@ const HomeMapView = () => {
   // 2. Determine coordinates (API or Lookup)
   // 3. If list empty, use MOCK
 
-  const points = useMemo(() => {
+  const [points, setPoints] = useState<(Gallery & { coords: [number, number] })[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
     let sourceData = apiGalleries.length > 0 ? apiGalleries : MOCK_GALLERIES;
 
-    console.log('Total source galleries:', sourceData.length);
+    const loadPoints = async () => {
+      const promises = sourceData.map(async (g) => {
+        let lat = g.latitude;
+        let lng = g.longitude;
 
-    const mapped = sourceData.map((g: Gallery) => {
-      let lat = g.latitude;
-      let lng = g.longitude;
+        if ((lat == null || lng == null) && g.slug && GALLERY_COORDINATES[g.slug]) {
+          [lat, lng] = GALLERY_COORDINATES[g.slug];
+        }
 
-      // 1. Try Specific Lookup (if API coords are missing)
-      if ((lat == null || lng == null) && g.slug && GALLERY_COORDINATES[g.slug]) {
-        [lat, lng] = GALLERY_COORDINATES[g.slug];
-        console.log(`Using specific coords for ${g.slug}:`, lat, lng);
+        const address = getGalleryAddress(g, i18n.language) || '';
+        const cityName = getGalleryCity(g, i18n.language) || '';
+        
+        let query = address;
+        if (query && cityName && !query.includes(cityName) && !query.includes(cityName.substring(0, 4))) {
+            query = `${cityName}, ${query}`;
+        }
+        
+        if (query && !query.includes('Україна') && !query.includes('Ukraine')) {
+            // Append Ukraine to limit search bounds to relevant regions
+            query += ', Україна';
+        }
+
+        if ((lat == null || lng == null) && query) {
+           const geocoded = await geocodeAddress(query);
+           if (geocoded) {
+              [lat, lng] = geocoded;
+           }
+        }
+
+        if ((lat == null || lng == null) && cityName && CITY_COORDINATES[cityName]) {
+          const [cityLat, cityLng] = CITY_COORDINATES[cityName];
+          const latJitter = (seededRandom(g.slug + 'lat') - 0.5) * 0.01;
+          const lngJitter = (seededRandom(g.slug + 'lng') - 0.5) * 0.01;
+          lat = cityLat + latJitter;
+          lng = cityLng + lngJitter;
+        }
+
+        if (lat != null && lng != null) {
+          return { ...g, coords: [Number(lat), Number(lng)] as [number, number] };
+        }
+        return null;
+      });
+
+      const updatedPoints = (await Promise.all(promises)).filter((g): g is (Gallery & { coords: [number, number] }) => g !== null);
+      if (isMounted) {
+        setPoints(updatedPoints);
       }
+    };
 
-      // 2. Try City Lookup with Jitter (fallback if API and specific lookup are missing)
-      const cityName = getGalleryCity(g, i18n.language);
-      if ((lat == null || lng == null) && cityName && CITY_COORDINATES[cityName]) {
-        const [cityLat, cityLng] = CITY_COORDINATES[cityName];
-        // Add deterministic jitter to avoid perfect stacking (approx 500m radius)
-        const latJitter = (seededRandom(g.slug + 'lat') - 0.5) * 0.01;
-        const lngJitter = (seededRandom(g.slug + 'lng') - 0.5) * 0.01;
+    loadPoints();
 
-        lat = cityLat + latJitter;
-        lng = cityLng + lngJitter;
-        console.log(`Using city coords for ${g.slug} (${cityName}):`, lat, lng);
-      }
-
-      const hasCoords = lat != null && lng != null;
-      if (!hasCoords) {
-        console.warn(`No coordinates found for gallery: ${g.slug} (${getGalleryName(g, i18n.language)})`);
-      }
-
-      return {
-        ...g,
-        coords: hasCoords ? [Number(lat), Number(lng)] as [number, number] : null,
-      };
-    });
-
-    const withCoords = mapped.filter((g): g is Gallery & { coords: [number, number] } => g.coords !== null);
-    console.log('Mapped with coords:', withCoords.length);
-
-    return withCoords;
+    return () => { isMounted = false; };
   }, [apiGalleries, i18n.language]);
 
   const zoomOut = () => {
