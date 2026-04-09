@@ -7,7 +7,7 @@ import { MapPin } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { GALLERY_COORDINATES, CITY_COORDINATES, seededRandom } from "../../utils/maps";
 import { getGalleryName, getGalleryCity, getGalleryAddress } from "../../utils/gallery";
-import { geocodeAddress } from "../../utils/geocode";
+import { geocodeAddress, sanitizeAndBuildQueries } from "../../utils/geocode";
 import type { Gallery } from "../../api/galleries";
 
 // --- Icons ---
@@ -60,17 +60,11 @@ const GalleryMap = ({ gallery }: GalleryMapProps) => {
             const address = getGalleryAddress(gallery, i18n.language) || '';
             const cityName = getGalleryCity(gallery, i18n.language) || '';
             
-            let query = address;
-            if (query && cityName && !query.includes(cityName) && !query.includes(cityName.substring(0, 4))) {
-                query = `${cityName}, ${query}`;
-            }
-            
-            if (query && !query.includes('Україна') && !query.includes('Ukraine')) {
-                query += ', Україна';
-            }
+            const queries = sanitizeAndBuildQueries(address, cityName);
 
-            if ((lat == null || lng == null) && query) {
-               const geocoded = await geocodeAddress(query);
+            if ((lat == null || lng == null) && queries.length > 0) {
+               const addressKey = `${cityName}-${address}`;
+               const geocoded = await geocodeAddress(addressKey, queries);
                if (geocoded) {
                   [lat, lng] = geocoded;
                }

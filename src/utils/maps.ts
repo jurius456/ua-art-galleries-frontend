@@ -49,6 +49,7 @@ export const CITY_COORDINATES: Record<string, [number, number]> = {
     'Полтава': [49.5883, 34.5514],
     'Чернігів': [51.4982, 31.2893],
     'Запоріжжя': [47.8388, 35.1396],
+    'Рівне': [50.6199, 26.2516],
 
     // Ukrainian cities (English)
     'Kyiv': [50.4501, 30.5234],
@@ -56,6 +57,7 @@ export const CITY_COORDINATES: Record<string, [number, number]> = {
     'Odesa': [46.4825, 30.7233],
     'Dnipro': [48.4647, 35.0462],
     'Kharkiv': [49.9935, 36.2304],
+    'Rivne': [50.6199, 26.2516],
 
     // International cities
     'Greenwich, Connecticut 06836, USA': [41.0262, -73.6282],

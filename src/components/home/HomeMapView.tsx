@@ -15,7 +15,7 @@ import { useGalleriesQuery } from '../../hooks/useGalleriesQuery';
 import type { Gallery } from '../../api/galleries';
 import { useTranslation } from 'react-i18next';
 import { getGalleryName, getGalleryCity, getGalleryShortDescription, getGalleryAddress } from '../../utils/gallery';
-import { geocodeAddress } from '../../utils/geocode';
+import { geocodeAddress, sanitizeAndBuildQueries } from '../../utils/geocode';
 
 /* ===================== MAP CONSTANTS ===================== */
 
@@ -145,17 +145,12 @@ const HomeMapView = () => {
 
         const address = getGalleryAddress(g, i18n.language) || '';
         const cityName = getGalleryCity(g, i18n.language) || '';
-        let query = address;
         
-        if (query && cityName && !query.includes(cityName) && !query.includes(cityName.substring(0, 4))) {
-            query = `${cityName}, ${query}`;
-        }
-        if (query && !query.includes('Україна') && !query.includes('Ukraine')) {
-            query += ', Україна';
-        }
+        const queries = sanitizeAndBuildQueries(address, cityName);
 
-        if (query) {
-           const geocoded = await geocodeAddress(query);
+        if (queries.length > 0) {
+           const addressKey = `${cityName}-${address}`;
+           const geocoded = await geocodeAddress(addressKey, queries);
            if (geocoded && isMounted) {
               setPoints(prev => prev.map(p => p.id === g.id ? { ...p, coords: geocoded, _hasExact: true } : p));
            }
