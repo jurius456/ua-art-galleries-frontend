@@ -287,28 +287,39 @@ const GalleryPage = () => {
                         {t('gallery.website')}
                       </a>
                     )}
-                    {Array.isArray(gallery.social_links)
-                      ? gallery.social_links.map((link, idx) => {
-                          if (!link || typeof link !== 'string') return null;
-                          const { icon: Icon, name } = getSocialLinkDetails(link);
-                          return (
-                            <a key={idx} href={link} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm font-bold text-zinc-800 hover:text-blue-600 transition-colors truncate">
-                              <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center shrink-0"><Icon size={14} className="text-zinc-400"/></div>
-                              <span className="truncate">{name}</span>
-                            </a>
-                          );
-                        })
-                      : gallery.social_links && Object.entries(gallery.social_links).map(([key, link]) => {
-                          if (!link || typeof link !== 'string') return null;
-                          const { icon: Icon, name } = getSocialLinkDetails(link);
-                          return (
-                            <a key={key} href={link} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm font-bold text-zinc-800 hover:text-blue-600 transition-colors truncate">
-                              <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center shrink-0"><Icon size={14} className="text-zinc-400"/></div>
-                              <span className="truncate">{name}</span>
-                            </a>
-                          );
-                        })
-                    }
+                    {(() => {
+                      let links: string[] = [];
+                      if (!gallery.social_links) return null;
+                      
+                      if (Array.isArray(gallery.social_links)) {
+                        links = gallery.social_links;
+                      } else if (typeof gallery.social_links === 'string') {
+                        try {
+                          const parsed = JSON.parse(gallery.social_links);
+                          if (Array.isArray(parsed)) {
+                            links = parsed;
+                          } else if (typeof parsed === 'object' && parsed !== null) {
+                            links = Object.values(parsed);
+                          } else {
+                            links = [parsed.toString()];
+                          }
+                        } catch (e) {
+                          links = (gallery.social_links as string).split(',').map((s: string) => s.trim()).filter(Boolean);
+                        }
+                      } else if (typeof gallery.social_links === 'object') {
+                        links = Object.values(gallery.social_links);
+                      }
+
+                      return links.filter(link => typeof link === 'string' && link.length > 5).map((link, idx) => {
+                        const { icon: Icon, name } = getSocialLinkDetails(link);
+                        return (
+                          <a key={idx} href={link} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm font-bold text-zinc-800 hover:text-blue-600 transition-colors truncate">
+                            <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center shrink-0"><Icon size={14} className="text-zinc-400"/></div>
+                            <span className="truncate">{name}</span>
+                          </a>
+                        );
+                      });
+                    })()}
                   </div>
                 </div>
 
