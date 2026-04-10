@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, MapPin, Mail, Phone, Globe, Instagram, Lock, Clock, Calendar, BadgeCheck, Ban, Heart, Info, Users, ExternalLink } from "lucide-react";
+import { ArrowLeft, MapPin, Mail, Phone, Globe, Instagram, Facebook, Twitter, Youtube, Linkedin, Lock, Clock, Calendar, BadgeCheck, Ban, Heart, Info, Users, ExternalLink } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
 import { useFavorites } from "../../context/FavoritesContext";
@@ -19,6 +19,19 @@ import {
   getGalleryArtists,
 } from "../../utils/gallery";
 import GalleryMap from "../../components/gallery/GalleryMap";
+
+const getSocialLinkDetails = (url: string) => {
+  if (!url) return { icon: Globe, name: 'Link' };
+  const lowerUrl = url.toLowerCase();
+  if (lowerUrl.includes('instagram.com')) return { icon: Instagram, name: 'Instagram' };
+  if (lowerUrl.includes('facebook.com')) return { icon: Facebook, name: 'Facebook' };
+  if (lowerUrl.includes('twitter.com') || lowerUrl.includes('x.com')) return { icon: Twitter, name: 'Twitter' };
+  if (lowerUrl.includes('youtube.com')) return { icon: Youtube, name: 'YouTube' };
+  if (lowerUrl.includes('linkedin.com')) return { icon: Linkedin, name: 'LinkedIn' };
+  if (lowerUrl.includes('t.me') || lowerUrl.includes('telegram.org')) return { icon: Globe, name: 'Telegram' };
+  if (lowerUrl.includes('tiktok.com')) return { icon: Globe, name: 'TikTok' };
+  return { icon: Globe, name: 'Мережа' };
+};
 
 const GalleryPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -100,10 +113,10 @@ const GalleryPage = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-16">
           
           {/* Main Content */}
-          <div className="lg:col-span-8 space-y-12">
+          <div className="lg:col-span-7 space-y-12">
             
             <div className="flex items-start justify-between gap-6">
               <div className="flex items-center gap-6">
@@ -115,7 +128,7 @@ const GalleryPage = () => {
                   )}
                 </div>
                 <div>
-                  <h1 className="text-4xl md:text-6xl font-black text-zinc-800 tracking-tighter uppercase leading-[0.9] mb-4">
+                  <h1 className="text-4xl md:text-5xl font-black text-zinc-800 tracking-tighter uppercase leading-[0.9] mb-4">
                     {name}
                   </h1>
                   <div className="flex items-center gap-2">
@@ -207,8 +220,8 @@ const GalleryPage = () => {
           </div>
 
           {/* Sidebar */}
-          <aside className="lg:col-span-4 space-y-8">
-            <div className="bg-white border border-zinc-100 rounded-[40px] p-10 space-y-8 shadow-sm lg:sticky top-28">
+          <aside className="lg:col-span-5 space-y-8">
+            <div className="bg-white border border-zinc-100 rounded-[40px] p-8 space-y-8 shadow-sm lg:sticky top-28">
               
               <div className="flex gap-3 justify-center">
                 <button
@@ -274,12 +287,39 @@ const GalleryPage = () => {
                         {t('gallery.website')}
                       </a>
                     )}
-                    {gallery.social_links?.instagram && (
-                      <a href={gallery.social_links.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm font-bold text-zinc-800 hover:text-blue-600 transition-colors">
-                        <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center shrink-0"><Instagram size={14} className="text-zinc-400"/></div>
-                        Instagram
-                      </a>
-                    )}
+                    {(() => {
+                      let links: string[] = [];
+                      if (!gallery.social_links) return null;
+                      
+                      if (Array.isArray(gallery.social_links)) {
+                        links = gallery.social_links;
+                      } else if (typeof gallery.social_links === 'string') {
+                        try {
+                          const parsed = JSON.parse(gallery.social_links);
+                          if (Array.isArray(parsed)) {
+                            links = parsed;
+                          } else if (typeof parsed === 'object' && parsed !== null) {
+                            links = Object.values(parsed);
+                          } else {
+                            links = [parsed.toString()];
+                          }
+                        } catch (e) {
+                          links = (gallery.social_links as string).split(',').map((s: string) => s.trim()).filter(Boolean);
+                        }
+                      } else if (typeof gallery.social_links === 'object') {
+                        links = Object.values(gallery.social_links);
+                      }
+
+                      return links.filter(link => typeof link === 'string' && link.length > 5).map((link, idx) => {
+                        const { icon: Icon, name } = getSocialLinkDetails(link);
+                        return (
+                          <a key={idx} href={link} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm font-bold text-zinc-800 hover:text-blue-600 transition-colors truncate">
+                            <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center shrink-0"><Icon size={14} className="text-zinc-400"/></div>
+                            <span className="truncate">{name}</span>
+                          </a>
+                        );
+                      });
+                    })()}
                   </div>
                 </div>
 
@@ -296,7 +336,7 @@ const GalleryPage = () => {
               </div>
 
               {/* Map */}
-              <div className="h-40 rounded-[24px] overflow-hidden border border-zinc-100">
+              <div className="mt-8 rounded-[24px] overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-xl">
                  <GalleryMap gallery={gallery} />
               </div>
 

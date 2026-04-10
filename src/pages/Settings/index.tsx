@@ -9,7 +9,7 @@ const SettingsLayout = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       <div className="container mx-auto px-6 py-16 max-w-6xl">
         <div className="flex flex-col md:flex-row items-start gap-16">
           

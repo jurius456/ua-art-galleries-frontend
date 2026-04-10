@@ -1,5 +1,5 @@
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -7,12 +7,14 @@ import { MapPin } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { GALLERY_COORDINATES, CITY_COORDINATES, seededRandom } from "../../utils/maps";
 import { getGalleryName, getGalleryCity, getGalleryAddress } from "../../utils/gallery";
+import { geocodeAddress, sanitizeAndBuildQueries } from "../../utils/geocode";
 import type { Gallery } from "../../api/galleries";
+import { useTheme } from "../../hooks/useTheme";
 
 // --- Icons ---
 const pinSvg = encodeURIComponent(`
 <svg width="30" height="42" viewBox="0 0 30 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M15 0C6.71573 0 0 6.71573 0 15C0 26.25 15 42 15 42C15 42 30 26.25 30 15C30 6.71573 23.2843 0 15 0Z" fill="#18181B"/>
+  <path d="M15 0C6.71573 0 0 6.71573 0 15C0 26.25 15 42 15 42C15 42 30 26.25 30 15C30 6.71573 23.2843 0 15 0Z" fill="#2563EB"/>
   <circle cx="15" cy="15" r="6" fill="white"/>
 </svg>
 `);
@@ -42,31 +44,52 @@ interface GalleryMapProps {
 
 const GalleryMap = ({ gallery }: GalleryMapProps) => {
     const { i18n } = useTranslation();
+    const { theme } = useTheme();
 
-    const coords = useMemo(() => {
-        let lat = gallery.latitude;
-        let lng = gallery.longitude;
+    const [coords, setCoords] = useState<[number, number] | null>(null);
 
-        // 1. Try Specific Lookup
-        if ((lat == null || lng == null) && gallery.slug && GALLERY_COORDINATES[gallery.slug]) {
-            [lat, lng] = GALLERY_COORDINATES[gallery.slug];
-        }
+    useEffect(() => {
+        let isMounted = true;
+        
+        const loadCoords = async () => {
+            let lat = gallery.latitude;
+            let lng = gallery.longitude;
 
-        // 2. Try City Lookup
-        if ((lat == null || lng == null)) {
-            const cityName = getGalleryCity(gallery, i18n.language);
-            if (cityName && CITY_COORDINATES[cityName]) {
-                const [cityLat, cityLng] = CITY_COORDINATES[cityName];
-                // Use deterministic jitter
-                const latJitter = (seededRandom(gallery.slug + 'lat') - 0.5) * 0.01;
-                const lngJitter = (seededRandom(gallery.slug + 'lng') - 0.5) * 0.01;
-
-                lat = cityLat + latJitter;
-                lng = cityLng + lngJitter;
+            if ((lat == null || lng == null) && gallery.slug && GALLERY_COORDINATES[gallery.slug]) {
+                [lat, lng] = GALLERY_COORDINATES[gallery.slug];
             }
-        }
 
-        return (lat != null && lng != null) ? [lat, lng] as [number, number] : null;
+            const address = getGalleryAddress(gallery, i18n.language) || '';
+            const cityName = getGalleryCity(gallery, i18n.language) || '';
+            
+            const queries = sanitizeAndBuildQueries(address, cityName);
+
+            if ((lat == null || lng == null) && queries.length > 0) {
+               const addressKey = `${cityName}-${address}`;
+               const geocoded = await geocodeAddress(addressKey, queries);
+               if (geocoded) {
+                  [lat, lng] = geocoded;
+               }
+            }
+
+            if (lat == null || lng == null) {
+                if (cityName && CITY_COORDINATES[cityName]) {
+                    const [cityLat, cityLng] = CITY_COORDINATES[cityName];
+                    const latJitter = (seededRandom(gallery.slug + 'lat') - 0.5) * 0.01;
+                    const lngJitter = (seededRandom(gallery.slug + 'lng') - 0.5) * 0.01;
+                    lat = cityLat + latJitter;
+                    lng = cityLng + lngJitter;
+                }
+            }
+
+            if (isMounted) {
+                setCoords(lat != null && lng != null ? [lat, lng] as [number, number] : null);
+            }
+        };
+
+        loadCoords();
+
+        return () => { isMounted = false; };
     }, [gallery, i18n.language]);
 
     if (!coords) return null;
@@ -76,7 +99,7 @@ const GalleryMap = ({ gallery }: GalleryMapProps) => {
     const address = getGalleryAddress(gallery, i18n.language);
 
     return (
-        <div className="h-[400px] w-full rounded-[32px] overflow-hidden border border-zinc-100 shadow-sm relative z-0">
+        <div className="h-[500px] md:h-[600px] lg:h-[700px] w-full relative z-0">
             <MapContainer
                 center={coords}
                 zoom={15}
@@ -84,7 +107,12 @@ const GalleryMap = ({ gallery }: GalleryMapProps) => {
                 zoomControl={false}
                 scrollWheelZoom={false}
             >
-                <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+                <TileLayer 
+                    key={theme}
+                    url={theme === 'dark' 
+                        ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" 
+                        : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"} 
+                />
                 <MapController center={coords} />
 
                 <Marker position={coords} icon={galleryIcon}>

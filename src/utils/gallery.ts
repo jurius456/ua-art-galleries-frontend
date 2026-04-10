@@ -18,7 +18,9 @@ export function getGalleryAddress(gallery: Gallery, language: string): string {
 }
 
 export function getGalleryShortDescription(gallery: Gallery, language: string): string {
-    return language === 'en' ? (gallery.short_description_en || gallery.short_description_ua || '') : (gallery.short_description_ua || gallery.short_description_en || '');
+    const descEn = gallery.description || gallery.description_en || gallery.short_description_en || '';
+    const descUa = gallery.description || gallery.description_ua || gallery.short_description_ua || '';
+    return language === 'en' ? (descEn || descUa) : (descUa || descEn);
 }
 
 export function getGallerySpecialization(gallery: Gallery, language: string): string | null {

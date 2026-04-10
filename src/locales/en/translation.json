@@ -16,18 +16,20 @@
         "login": "Log In"
     },
     "footer": {
-        "description": "Platform for uniting Ukrainian art in a single digital space.",
+        "description": "Platform for uniting Ukrainian art galleries in a single digital space.",
         "links": {
-            "about": "About",
+            "about": "About the Project",
             "team": "Team",
             "mission": "Mission",
-            "partnership": "Partnership",
+            "contacts": "Contacts",
+            "galleries": "For Galleries",
+            "joinGalleries": "Join / Register",
+            "partners": "For Partners",
+            "joinPartners": "Join",
             "support": "Support",
-            "faq": "FAQ",
-            "artists": "For Artists",
-            "join": "Join"
+            "faq": "FAQ"
         },
-        "rights": "UA Galleries Team. All rights reserved.",
+        "rights": "UA Galleries Database. All rights reserved.",
         "privacy": "Privacy Policy",
         "terms": "Terms of Service"
     },
@@ -46,20 +48,20 @@
                 "subtitle": "Find galleries in your city"
             }
         },
-        "featured": {
-            "badge": "Exclusive",
-            "title": "Popular Galleries",
-            "viewAll": "View all"
-        },
         "about": {
             "context": "Context",
             "title": "About the Project",
             "missionTitle": "Our Mission",
-            "missionText": "We are creating a digital ecosystem for Ukrainian art, where every gallery finds its voice and every art lover finds their picture.",
+            "missionText": "We are creating a digital ecosystem for Ukrainian art, where every gallery finds its voice, and every art lover finds their picture.",
             "team": "Team",
             "roadmap": "Roadmap",
             "contacts": "Contacts",
             "partners": "Partners"
+        },
+        "featured": {
+            "badge": "Exclusive",
+            "title": "Galleries You will Love",
+            "viewAll": "View all"
         },
         "map": {
             "badge": "Archive Map",
@@ -69,10 +71,23 @@
             "open": "Open"
         }
     },
-    "featured": {
-        "badge": "Exclusive",
-        "title": "Popular Galleries",
-        "viewAll": "View all"
+    "partners": {
+        "noStats": "Statistics not available yet",
+        "description": "Our partners and cooperation."
+    },
+    "faq": {
+        "subtitle": "Answers to frequently asked questions",
+        "q1": "How to add my gallery to the database?",
+        "a1": "To add a gallery, go to the 'For Galleries' or 'Join / Register' section and fill out the application form.",
+        "q2": "Can I save galleries to my archive?",
+        "a2": "Yes, after registering and logging into the system, you can click the 'heart' icon next to the gallery. It will be saved in your archive.",
+        "q3": "What are the benefits for registered users?",
+        "a3": "Authorized users see full information about galleries (exhibitions, artists) and can save their favorite objects.",
+        "q4": "Is the information on the site free?",
+        "a4": "Yes, using the Ukrainian Galleries database is absolutely free."
+    },
+    "support": {
+        "subtitle": "Having trouble or have suggestions? Contact our support team."
     },
     "common": {
         "more": "Learn more",
@@ -131,6 +146,7 @@
         "eventType": "Event type",
         "allTypes": "All types",
         "allCities": "All cities",
+        "allStatuses": "All statuses",
         "exhibition": "Exhibition",
         "workshop": "Workshop",
         "opening": "Opening",
@@ -155,6 +171,9 @@
         "password": "Password",
         "confirmPassword": "Confirm Password",
         "createAccount": "Create Account",
+        "registrationSuccessTitle": "Welcome!",
+        "registrationSuccessDesc": "Your account has been successfully created. You can use all platform features.",
+        "getStarted": "Get Started",
         "enterUsername": "Enter username.",
         "enterEmail": "Enter email.",
         "invalidEmail": "Invalid email format.",
@@ -169,14 +188,15 @@
         "subtitle": "The First Digital Art Gallery Database.",
         "description": "Ukrainian Galleries Database is the first digital database of art galleries in Ukraine, uniting galleries in Ukraine and Ukrainian galleries abroad in a single open digital space. The platform is created for convenient search, research, and promotion of Ukraine's gallery landscape, as well as to increase the visibility of Ukrainian art in the global cultural context.",
         "activeGalleries": "Active Galleries",
-        "artworks": "Artworks Uploaded",
+        "artworks": "Artworks",
+        "cities": "Cities",
         "students": "Students",
         "location": "Location",
         "ourTeam": "Our Team",
         "teamTitle": "Implementation Team",
-        "quote": "«From theory to real practice»",
+        "quote": "",
         "ourMission": "Our Mission",
-        "missionText": "We are learning to build complex systems to give Ukrainian art a tool for the future.",
+        "missionText": "Create an open digital space that unites Ukrainian art galleries in Ukraine and the world, ensuring their visibility, accessibility for research, and the popularization of Ukrainian art in the global cultural context.",
         "contact": "Contact",
         "teamMembers": {
             "dmytro": {
@@ -191,12 +211,12 @@
             },
             "nazar": {
                 "name": "Nazar Chyburovskyi",
-                "role": "Business Analyst (BA)",
+                "role": "Business Analyst",
                 "bio": ""
             },
             "rostyslav": {
                 "name": "Rostyslav Foots",
-                "role": "Project Manager (PM)",
+                "role": "Project Manager",
                 "bio": ""
             },
             "stanislav": {
@@ -211,7 +231,7 @@
             },
             "yulia": {
                 "name": "Yulia Melnyk",
-                "role": "Customer",
+                "role": "Project Idea Author",
                 "bio": ""
             },
             "mykhailo": {
@@ -245,5 +265,11 @@
         "currentPassword": "Current Password",
         "newPassword": "New Password",
         "confirmNewPassword": "Confirm New Password"
+    },
+    "favorites": {
+        "addedTitle": "Added to Favorites",
+        "goToFavorites": "Go to Favorites",
+        "loginRequiredTitle": "Authorization Required",
+        "loginRequiredDesc": "Log in to save galleries"
     }
 }

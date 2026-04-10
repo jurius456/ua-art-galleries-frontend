@@ -257,7 +257,7 @@ const GalleryCard = ({
   return (
     <Link
       to={`/galleries/${gallery.slug}`}
-      className="group block rounded-[28px] border border-zinc-200 bg-white p-8 hover:border-zinc-900 transition h-full flex flex-col justify-between"
+      className="group block rounded-[28px] border border-zinc-200 bg-white p-8 hover:border-zinc-900 transition-all duration-300 h-full flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 dark:shadow-none"
     >
       <div>
         <div className="flex items-start justify-between mb-6">

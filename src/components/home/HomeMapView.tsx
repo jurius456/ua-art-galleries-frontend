@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo, type MutableRefObject } from 'react';
+import { useRef, useEffect, useState, type MutableRefObject } from 'react';
 import { MapPin, ArrowRight, ZoomOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
@@ -14,7 +14,9 @@ import 'leaflet/dist/leaflet.css';
 import { useGalleriesQuery } from '../../hooks/useGalleriesQuery';
 import type { Gallery } from '../../api/galleries';
 import { useTranslation } from 'react-i18next';
-import { getGalleryName, getGalleryCity, getGalleryShortDescription } from '../../utils/gallery';
+import { getGalleryName, getGalleryCity, getGalleryShortDescription, getGalleryAddress } from '../../utils/gallery';
+import { geocodeAddress, sanitizeAndBuildQueries } from '../../utils/geocode';
+import { useTheme } from '../../hooks/useTheme';
 
 /* ===================== MAP CONSTANTS ===================== */
 
@@ -42,7 +44,7 @@ const MapRefController = ({
 // Custom SVG Pin Icon
 const pinSvg = encodeURIComponent(`
 <svg width="30" height="42" viewBox="0 0 30 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M15 0C6.71573 0 0 6.71573 0 15C0 26.25 15 42 15 42C15 42 30 26.25 30 15C30 6.71573 23.2843 0 15 0Z" fill="#18181B"/>
+  <path d="M15 0C6.71573 0 0 6.71573 0 15C0 26.25 15 42 15 42C15 42 30 26.25 30 15C30 6.71573 23.2843 0 15 0Z" fill="#2563EB"/>
   <circle cx="15" cy="15" r="6" fill="white"/>
 </svg>
 `);
@@ -96,54 +98,71 @@ const HomeMapView = () => {
   const mapRef = useRef<L.Map | null>(null);
   const { data: apiGalleries = [] } = useGalleriesQuery();
   const { i18n, t } = useTranslation();
+  const { theme } = useTheme();
 
   // 1. Try to use API galleries
   // 2. Determine coordinates (API or Lookup)
   // 3. If list empty, use MOCK
 
-  const points = useMemo(() => {
+  const [points, setPoints] = useState<(Gallery & { coords: [number, number] })[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
     let sourceData = apiGalleries.length > 0 ? apiGalleries : MOCK_GALLERIES;
 
-    console.log('Total source galleries:', sourceData.length);
+    const loadPoints = async () => {
+      // First pass: fast coordinates
+      const immediatePoints = sourceData.map((g) => {
+        let lat = g.latitude;
+        let lng = g.longitude;
 
-    const mapped = sourceData.map((g: Gallery) => {
-      let lat = g.latitude;
-      let lng = g.longitude;
+        if ((lat == null || lng == null) && g.slug && GALLERY_COORDINATES[g.slug]) {
+          [lat, lng] = GALLERY_COORDINATES[g.slug];
+        }
 
-      // 1. Try Specific Lookup (if API coords are missing)
-      if ((lat == null || lng == null) && g.slug && GALLERY_COORDINATES[g.slug]) {
-        [lat, lng] = GALLERY_COORDINATES[g.slug];
-        console.log(`Using specific coords for ${g.slug}:`, lat, lng);
+        const cityName = getGalleryCity(g, i18n.language) || '';
+        const hasExact = lat != null && lng != null;
+
+        if (!hasExact && cityName && CITY_COORDINATES[cityName]) {
+          const [cityLat, cityLng] = CITY_COORDINATES[cityName];
+          const latJitter = (seededRandom(g.slug + 'lat') - 0.5) * 0.01;
+          const lngJitter = (seededRandom(g.slug + 'lng') - 0.5) * 0.01;
+          lat = cityLat + latJitter;
+          lng = cityLng + lngJitter;
+        }
+
+        return { 
+          ...g, 
+          coords: (lat != null && lng != null) ? [Number(lat), Number(lng)] as [number, number] : null, 
+          _hasExact: hasExact 
+        };
+      }).filter(g => g.coords !== null) as (Gallery & { coords: [number, number], _hasExact: boolean })[];
+
+      if (isMounted) setPoints(immediatePoints);
+
+      // Async pass: fine geocoding
+      for (const g of immediatePoints) {
+        if (!isMounted) break;
+        if (g._hasExact) continue;
+
+        const address = getGalleryAddress(g, i18n.language) || '';
+        const cityName = getGalleryCity(g, i18n.language) || '';
+        
+        const queries = sanitizeAndBuildQueries(address, cityName);
+
+        if (queries.length > 0) {
+           const addressKey = `${cityName}-${address}`;
+           const geocoded = await geocodeAddress(addressKey, queries);
+           if (geocoded && isMounted) {
+              setPoints(prev => prev.map(p => p.id === g.id ? { ...p, coords: geocoded, _hasExact: true } : p));
+           }
+        }
       }
+    };
 
-      // 2. Try City Lookup with Jitter (fallback if API and specific lookup are missing)
-      const cityName = getGalleryCity(g, i18n.language);
-      if ((lat == null || lng == null) && cityName && CITY_COORDINATES[cityName]) {
-        const [cityLat, cityLng] = CITY_COORDINATES[cityName];
-        // Add deterministic jitter to avoid perfect stacking (approx 500m radius)
-        const latJitter = (seededRandom(g.slug + 'lat') - 0.5) * 0.01;
-        const lngJitter = (seededRandom(g.slug + 'lng') - 0.5) * 0.01;
+    loadPoints();
 
-        lat = cityLat + latJitter;
-        lng = cityLng + lngJitter;
-        console.log(`Using city coords for ${g.slug} (${cityName}):`, lat, lng);
-      }
-
-      const hasCoords = lat != null && lng != null;
-      if (!hasCoords) {
-        console.warn(`No coordinates found for gallery: ${g.slug} (${getGalleryName(g, i18n.language)})`);
-      }
-
-      return {
-        ...g,
-        coords: hasCoords ? [Number(lat), Number(lng)] as [number, number] : null,
-      };
-    });
-
-    const withCoords = mapped.filter((g): g is Gallery & { coords: [number, number] } => g.coords !== null);
-    console.log('Mapped with coords:', withCoords.length);
-
-    return withCoords;
+    return () => { isMounted = false; };
   }, [apiGalleries, i18n.language]);
 
   const zoomOut = () => {
@@ -173,14 +192,19 @@ const HomeMapView = () => {
 
       {/* MAP */}
       <div className="container mx-auto px-6 max-w-6xl">
-        <div className="h-[550px] rounded-[32px] overflow-hidden border border-zinc-100 shadow-sm">
+        <div className="h-[550px] rounded-[32px] overflow-hidden border border-zinc-100 dark:border-zinc-200 shadow-[0_8px_30px_rgb(0,0,0,0.06)] bg-white relative z-10 transition-all duration-300">
           <MapContainer
             center={INITIAL_CENTER}
             zoom={INITIAL_ZOOM}
             className="h-full w-full z-0"
             zoomControl={false}
           >
-            <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+            <TileLayer 
+              key={theme}
+              url={theme === 'dark' 
+                ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" 
+                : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"} 
+            />
 
             <MapRefController mapRef={mapRef} />
 
