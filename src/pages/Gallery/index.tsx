@@ -113,10 +113,10 @@ const GalleryPage = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-16">
           
           {/* Main Content */}
-          <div className="lg:col-span-8 space-y-12">
+          <div className="lg:col-span-7 space-y-12">
             
             <div className="flex items-start justify-between gap-6">
               <div className="flex items-center gap-6">
@@ -128,7 +128,7 @@ const GalleryPage = () => {
                   )}
                 </div>
                 <div>
-                  <h1 className="text-4xl md:text-6xl font-black text-zinc-800 tracking-tighter uppercase leading-[0.9] mb-4">
+                  <h1 className="text-4xl md:text-5xl font-black text-zinc-800 tracking-tighter uppercase leading-[0.9] mb-4">
                     {name}
                   </h1>
                   <div className="flex items-center gap-2">
@@ -220,8 +220,8 @@ const GalleryPage = () => {
           </div>
 
           {/* Sidebar */}
-          <aside className="lg:col-span-4 space-y-8">
-            <div className="bg-white border border-zinc-100 rounded-[40px] p-10 space-y-8 shadow-sm lg:sticky top-28">
+          <aside className="lg:col-span-5 space-y-8">
+            <div className="bg-white border border-zinc-100 rounded-[40px] p-8 space-y-8 shadow-sm lg:sticky top-28">
               
               <div className="flex gap-3 justify-center">
                 <button
@@ -335,21 +335,13 @@ const GalleryPage = () => {
                 </div>
               </div>
 
-
+              {/* Map */}
+              <div className="mt-8 rounded-[24px] overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-xl">
+                 <GalleryMap gallery={gallery} />
+              </div>
 
             </div>
           </aside>
-        </div>
-
-        {/* Global Wide Map */}
-        <div className="mt-16 w-full animate-in slide-in-from-bottom-8 duration-700 delay-300">
-             <h3 className="text-2xl font-black uppercase mb-8 flex items-center gap-3">
-               <MapPin size={24} className="text-zinc-400" />
-               {t('location', 'Локація')}
-             </h3>
-             <div className="rounded-[40px] overflow-hidden shadow-2xl border border-zinc-100 dark:border-zinc-800">
-                <GalleryMap gallery={gallery} />
-             </div>
         </div>
 
       </div>
