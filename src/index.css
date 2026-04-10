@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --color-app-bg: 250 250 250; /* Off-white for body */
+    --color-app-bg: 244 244 245; /* zinc-100 for clear contrast with white cards */
     --color-bg: 255 255 255; /* Pure white for cards */
     --color-text: 0 0 0;
     --color-zinc-50: 250 250 250;
