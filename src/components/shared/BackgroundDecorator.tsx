@@ -1,6 +1,6 @@
 const BackgroundDecorator = () => {
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-white pointer-events-none">
+    <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
       
       {/* 1. ГЕОМЕТРИЧНА ОСНОВА (Тінь від стіни/вікна) */}
       {/* Використовуємо Skew для створення динаміки */}
