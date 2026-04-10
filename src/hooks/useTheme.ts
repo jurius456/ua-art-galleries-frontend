@@ -23,6 +23,17 @@ export const useTheme = () => {
       root.classList.remove("dark");
     }
     localStorage.setItem("app-theme", theme);
+    window.dispatchEvent(new CustomEvent('theme-change', { detail: theme }));
+  }, [theme]);
+
+  useEffect(() => {
+    const handleThemeSync = (e: any) => {
+      if (e.detail !== theme) {
+        setTheme(e.detail);
+      }
+    };
+    window.addEventListener('theme-change', handleThemeSync);
+    return () => window.removeEventListener('theme-change', handleThemeSync);
   }, [theme]);
 
   const toggleTheme = () => {
