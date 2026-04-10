@@ -9,6 +9,7 @@ import { GALLERY_COORDINATES, CITY_COORDINATES, seededRandom } from "../../utils
 import { getGalleryName, getGalleryCity, getGalleryAddress } from "../../utils/gallery";
 import { geocodeAddress, sanitizeAndBuildQueries } from "../../utils/geocode";
 import type { Gallery } from "../../api/galleries";
+import { useTheme } from "../../hooks/useTheme";
 
 // --- Icons ---
 const pinSvg = encodeURIComponent(`
@@ -43,6 +44,7 @@ interface GalleryMapProps {
 
 const GalleryMap = ({ gallery }: GalleryMapProps) => {
     const { i18n } = useTranslation();
+    const { theme } = useTheme();
 
     const [coords, setCoords] = useState<[number, number] | null>(null);
 
@@ -97,7 +99,7 @@ const GalleryMap = ({ gallery }: GalleryMapProps) => {
     const address = getGalleryAddress(gallery, i18n.language);
 
     return (
-        <div className="h-[400px] w-full rounded-[32px] overflow-hidden border border-zinc-100 shadow-sm relative z-0">
+        <div className="h-[500px] md:h-[600px] w-full rounded-[32px] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.06)] bg-white relative z-0 border border-zinc-100 dark:border-zinc-200">
             <MapContainer
                 center={coords}
                 zoom={15}
@@ -105,7 +107,12 @@ const GalleryMap = ({ gallery }: GalleryMapProps) => {
                 zoomControl={false}
                 scrollWheelZoom={false}
             >
-                <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+                <TileLayer 
+                    key={theme}
+                    url={theme === 'dark' 
+                        ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" 
+                        : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"} 
+                />
                 <MapController center={coords} />
 
                 <Marker position={coords} icon={galleryIcon}>
