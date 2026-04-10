@@ -47,7 +47,7 @@ const HomeFeaturedGalleries = () => {
             <Link
               key={gallery.id}
               to={`/galleries/${gallery.slug}`}
-              className="group cursor-pointer relative overflow-hidden rounded-[32px] bg-white dark:bg-zinc-950 shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-2 transition-all duration-500 animate-fade-in-up opacity-0 block h-[280px] p-8 flex flex-col justify-between border border-zinc-100 dark:border-zinc-800 dark:shadow-none"
+              className="group cursor-pointer relative overflow-hidden rounded-[32px] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-2 transition-all duration-500 animate-fade-in-up opacity-0 block h-[280px] p-8 flex flex-col justify-between border border-zinc-100 dark:border-zinc-200"
               style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'forwards' }}
             >
               {/* Decorative Background Letter */}
