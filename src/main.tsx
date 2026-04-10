@@ -10,18 +10,22 @@ import './i18n'; // Import i18n config
 import { AuthProvider } from "./context/AuthProvider";
 import { FavoritesProvider } from "./context/FavoritesContext";
 
+import { ThemeProvider } from "./context/ThemeContext";
+
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <FavoritesProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </FavoritesProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <FavoritesProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </FavoritesProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   </React.StrictMode>
 );
