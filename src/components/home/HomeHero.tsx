@@ -64,7 +64,7 @@ const HomeHero = () => {
           {/* Animated Badge */}
           <div
             key={`badge-${currentSlideIndex}`}
-            className="animate-fade-in-up px-4 py-1.5 bg-white/20 backdrop-blur-xl border border-white/10 rounded-full text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-white shadow-lg"
+            className="animate-fade-in-up px-4 py-1.5 bg-[#ffffff]/20 backdrop-blur-xl border border-[#ffffff]/10 rounded-full text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-[#ffffff] shadow-lg"
           >
             UA Galleries
           </div>
@@ -72,7 +72,7 @@ const HomeHero = () => {
           {/* Animated Title */}
           <h1
             key={`title-${currentSlideIndex}`}
-            className="animate-fade-in-up delay-200 text-4xl md:text-7xl font-black text-white tracking-tighter leading-[1.1] max-w-4xl drop-shadow-xl"
+            className="animate-fade-in-up delay-200 text-4xl md:text-7xl font-black text-[#ffffff] tracking-tighter leading-[1.1] max-w-4xl drop-shadow-xl"
           >
             {t(currentSlide.titleKey)}
           </h1>
@@ -80,7 +80,7 @@ const HomeHero = () => {
           {/* Animated Subtitle */}
           <p
             key={`sub-${currentSlideIndex}`}
-            className="animate-fade-in-up delay-400 text-base md:text-xl text-white/80 font-medium max-w-lg leading-relaxed drop-shadow-md"
+            className="animate-fade-in-up delay-400 text-base md:text-xl text-[#ffffff]/80 font-medium max-w-lg leading-relaxed drop-shadow-md"
           >
             {t(currentSlide.subtitleKey)}
           </p>
@@ -100,7 +100,7 @@ const HomeHero = () => {
             <button
               key={i}
               onClick={() => setCurrentSlideIndex(i)}
-              className={`h-1.5 rounded-full transition-all duration-500 ${i === currentSlideIndex ? 'w-10 bg-white' : 'w-2 bg-white/40 hover:bg-white/70'}`}
+              className={`h-1.5 rounded-full transition-all duration-500 ${i === currentSlideIndex ? 'w-10 bg-[#ffffff]' : 'w-2 bg-[#ffffff]/40 hover:bg-[#ffffff]/70'}`}
             />
           ))}
         </div>
@@ -110,7 +110,7 @@ const HomeHero = () => {
 };
 
 const NavButton = ({ icon, onClick }: { icon: React.ReactNode, onClick: () => void }) => (
-  <button onClick={onClick} className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center bg-black/20 backdrop-blur-md border border-white/10 rounded-full text-white hover:bg-white hover:text-black hover:scale-110 transition-all duration-300 shadow-xl">
+  <button onClick={onClick} className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center bg-black/20 backdrop-blur-md border border-[#ffffff]/10 rounded-full text-[#ffffff] hover:bg-[#ffffff] hover:text-black hover:scale-110 transition-all duration-300 shadow-xl">
     {icon}
   </button>
 );
