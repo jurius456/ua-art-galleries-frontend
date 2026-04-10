@@ -53,16 +53,23 @@ const GeneralSettingsPage = () => {
 
 /* Рядок налаштування з вибором */
 const SettingItem = ({ icon, label, value, onClick }: { icon: React.ReactNode, label: string, value: string, onClick?: () => void }) => (
-  <button onClick={onClick} className="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors group">
+  <div className="w-full flex items-center justify-between p-4 rounded-2xl group">
     <div className="flex items-center gap-4">
       <div className="text-zinc-400 group-hover:text-black transition-colors">{icon}</div>
       <span className="text-sm font-bold text-black">{label}</span>
     </div>
-    <div className="flex items-center gap-2">
-      <span className="text-xs font-semibold text-zinc-400">{value}</span>
-      <ChevronRight size={14} className="text-zinc-300" />
-    </div>
-  </button>
+    {onClick ? (
+      <button onClick={onClick} className="flex items-center gap-2 hover:bg-gray-100 p-2 -mr-2 rounded-xl transition-colors">
+        <span className="text-xs font-semibold text-zinc-600">{value}</span>
+        <ChevronRight size={14} className="text-zinc-400" />
+      </button>
+    ) : (
+      <div className="flex items-center gap-2 p-2 -mr-2">
+        <span className="text-xs font-semibold text-zinc-400">{value}</span>
+        <ChevronRight size={14} className="text-zinc-300" />
+      </div>
+    )}
+  </div>
 );
 
 

@@ -21,7 +21,7 @@ const SupportPage = () => {
             </div>
             <h3 className="font-bold text-lg mb-2">Email</h3>
             <p className="text-zinc-500 text-sm mb-4">Для загальних запитань та співпраці</p>
-            <a href="mailto:support@uagalleries.com" className="font-black text-zinc-900 border-b border-black">support@uagalleries.com</a>
+            <a href="mailto:uadbgallery@gmail.com" className="font-black text-zinc-900 border-b border-black">uadbgallery@gmail.com</a>
           </div>
 
           <div className="bg-white border border-zinc-100 p-8 rounded-[32px] text-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-lg transition-shadow">

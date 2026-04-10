@@ -21,7 +21,7 @@ const ContactsPage = () => {
                 </div>
 
                 <div className="space-y-6">
-                    <ContactItem label="Email" value="hello@uagalleries.com" />
+                    <ContactItem label="Email" value="uadbgallery@gmail.com" />
                     <ContactItem label="Instagram" value="@uagalleries" />
                     <ContactItem label="Telegram" value="@uagalleries_bot" />
                     <ContactItem label="Address" value="Lviv, Ukraine" />

@@ -19,8 +19,8 @@ const PartnersPage = () => {
                     {t('partners.description') || "Ми відкриті до співпраці! Якщо ви хочете стати нашим партнером, напишіть нам."}
                 </p>
                 <div className="pt-8">
-                    <a href="mailto:contact@uagalleries.com" className="px-8 py-4 bg-black text-white rounded-full font-bold uppercase tracking-widest text-xs hover:scale-105 transition-transform inline-block">
-                        contact@uagalleries.com
+                    <a href="mailto:uadbgallery@gmail.com" className="px-8 py-4 bg-black text-white rounded-full font-bold uppercase tracking-widest text-xs hover:scale-105 transition-transform inline-block">
+                        uadbgallery@gmail.com
                     </a>
                 </div>
             </div>
