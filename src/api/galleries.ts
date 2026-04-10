@@ -9,8 +9,11 @@ export type Gallery = {
   name_en: string;
   image: string | null;
   cover_image: string | null;
-  short_description_ua: string;
-  short_description_en: string;
+  short_description_ua?: string;
+  short_description_en?: string;
+  description_ua?: string;
+  description_en?: string;
+  description?: string;
   specialization_ua: string | null;
   specialization_en: string | null;
   city_ua: string;

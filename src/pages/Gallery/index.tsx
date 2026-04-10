@@ -336,7 +336,7 @@ const GalleryPage = () => {
               </div>
 
               {/* Map */}
-              <div className="h-40 rounded-[24px] overflow-hidden border border-zinc-100">
+              <div className="h-80 rounded-[24px] overflow-hidden border border-zinc-100">
                  <GalleryMap gallery={gallery} />
               </div>
 
