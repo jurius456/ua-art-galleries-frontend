@@ -45,8 +45,8 @@ const HomeAbout = () => {
 };
 
 const BentoTile = ({ icon, label }: any) => (
-  <div className="bg-white border border-zinc-100 rounded-[32px] p-6 flex flex-col justify-between hover:border-zinc-300 hover:shadow-xl hover:shadow-zinc-100 transition-all cursor-pointer group h-full">
-    <div className="w-12 h-12 bg-zinc-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+  <div className="bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded-[32px] p-6 flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-2 transition-all duration-300 cursor-pointer group h-full dark:shadow-none">
+    <div className="w-12 h-12 bg-zinc-50 dark:bg-zinc-900 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
       {icon}
     </div>
     <span className="text-sm font-black uppercase tracking-widest text-zinc-900">{label}</span>
