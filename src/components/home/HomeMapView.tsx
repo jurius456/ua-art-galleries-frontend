@@ -44,7 +44,7 @@ const MapRefController = ({
 // Custom SVG Pin Icon
 const pinSvg = encodeURIComponent(`
 <svg width="30" height="42" viewBox="0 0 30 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M15 0C6.71573 0 0 6.71573 0 15C0 26.25 15 42 15 42C15 42 30 26.25 30 15C30 6.71573 23.2843 0 15 0Z" fill="#18181B"/>
+  <path d="M15 0C6.71573 0 0 6.71573 0 15C0 26.25 15 42 15 42C15 42 30 26.25 30 15C30 6.71573 23.2843 0 15 0Z" fill="#2563EB"/>
   <circle cx="15" cy="15" r="6" fill="white"/>
 </svg>
 `);

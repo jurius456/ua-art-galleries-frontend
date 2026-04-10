@@ -14,7 +14,7 @@ import { useTheme } from "../../hooks/useTheme";
 // --- Icons ---
 const pinSvg = encodeURIComponent(`
 <svg width="30" height="42" viewBox="0 0 30 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M15 0C6.71573 0 0 6.71573 0 15C0 26.25 15 42 15 42C15 42 30 26.25 30 15C30 6.71573 23.2843 0 15 0Z" fill="#18181B"/>
+  <path d="M15 0C6.71573 0 0 6.71573 0 15C0 26.25 15 42 15 42C15 42 30 26.25 30 15C30 6.71573 23.2843 0 15 0Z" fill="#2563EB"/>
   <circle cx="15" cy="15" r="6" fill="white"/>
 </svg>
 `);
@@ -99,7 +99,7 @@ const GalleryMap = ({ gallery }: GalleryMapProps) => {
     const address = getGalleryAddress(gallery, i18n.language);
 
     return (
-        <div className="h-[500px] md:h-[600px] w-full rounded-[32px] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.06)] bg-white relative z-0 border border-zinc-100 dark:border-zinc-200">
+        <div className="h-[500px] md:h-[600px] lg:h-[700px] w-full relative z-0">
             <MapContainer
                 center={coords}
                 zoom={15}

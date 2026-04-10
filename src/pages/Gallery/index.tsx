@@ -335,13 +335,21 @@ const GalleryPage = () => {
                 </div>
               </div>
 
-              {/* Map */}
-              <div className="h-80 rounded-[24px] overflow-hidden border border-zinc-100">
-                 <GalleryMap gallery={gallery} />
-              </div>
+
 
             </div>
           </aside>
+        </div>
+
+        {/* Global Wide Map */}
+        <div className="mt-16 w-full animate-in slide-in-from-bottom-8 duration-700 delay-300">
+             <h3 className="text-2xl font-black uppercase mb-8 flex items-center gap-3">
+               <MapPin size={24} className="text-zinc-400" />
+               {t('location', 'Локація')}
+             </h3>
+             <div className="rounded-[40px] overflow-hidden shadow-2xl border border-zinc-100 dark:border-zinc-800">
+                <GalleryMap gallery={gallery} />
+             </div>
         </div>
 
       </div>
