@@ -50,7 +50,7 @@ const HomeHero = () => {
             key={slide.id}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlideIndex ? 'opacity-100' : 'opacity-0'}`}
           >
-            <div className={`absolute inset-0 bg-black/40 z-10`} /> {/* Overlay for text readability */}
+            <div className={`absolute inset-0 bg-[#000000]/40 z-10`} /> {/* Overlay for text readability */}
             <img
               src={slide.image}
               alt=""
@@ -110,7 +110,7 @@ const HomeHero = () => {
 };
 
 const NavButton = ({ icon, onClick }: { icon: React.ReactNode, onClick: () => void }) => (
-  <button onClick={onClick} className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center bg-black/20 backdrop-blur-md border border-[#ffffff]/10 rounded-full text-[#ffffff] hover:bg-[#ffffff] hover:text-black hover:scale-110 transition-all duration-300 shadow-xl">
+  <button onClick={onClick} className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center bg-[#000000]/20 backdrop-blur-md border border-[#ffffff]/10 rounded-full text-[#ffffff] hover:bg-[#ffffff] hover:text-[#000000] hover:scale-110 transition-all duration-300 shadow-xl">
     {icon}
   </button>
 );
