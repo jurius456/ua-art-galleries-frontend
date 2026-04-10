@@ -16,6 +16,7 @@ import type { Gallery } from '../../api/galleries';
 import { useTranslation } from 'react-i18next';
 import { getGalleryName, getGalleryCity, getGalleryShortDescription, getGalleryAddress } from '../../utils/gallery';
 import { geocodeAddress, sanitizeAndBuildQueries } from '../../utils/geocode';
+import { useTheme } from '../../hooks/useTheme';
 
 /* ===================== MAP CONSTANTS ===================== */
 
@@ -97,6 +98,7 @@ const HomeMapView = () => {
   const mapRef = useRef<L.Map | null>(null);
   const { data: apiGalleries = [] } = useGalleriesQuery();
   const { i18n, t } = useTranslation();
+  const { theme } = useTheme();
 
   // 1. Try to use API galleries
   // 2. Determine coordinates (API or Lookup)
@@ -197,7 +199,11 @@ const HomeMapView = () => {
             className="h-full w-full z-0"
             zoomControl={false}
           >
-            <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+            <TileLayer 
+              url={theme === 'dark' 
+                ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" 
+                : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"} 
+            />
 
             <MapRefController mapRef={mapRef} />
 

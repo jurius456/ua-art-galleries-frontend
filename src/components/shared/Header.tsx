@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useRef, useState } from "react";
-import { User, Settings, LogOut, ChevronDown, Bookmark } from "lucide-react";
+import { User, Settings, LogOut, ChevronDown, Bookmark, Sun, Moon } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
+import { useTheme } from '../../hooks/useTheme';
 
 const Header = () => {
   const { t } = useTranslation();
   const { user, isLoading, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -121,8 +123,17 @@ const Header = () => {
             )}
           </div>
 
-          {/* Перемикач мови в кінці */}
-          <LanguageSwitcher />
+          {/* Кнопка теми та перемикач мови */}
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={toggleTheme} 
+              className="p-2 text-zinc-400 hover:text-black hover:bg-zinc-100 rounded-lg transition-all"
+              aria-label="Toggle Theme"
+            >
+              {theme === 'dark' ? <Sun size={18} strokeWidth={2} /> : <Moon size={18} strokeWidth={2} />}
+            </button>
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
     </header >
