@@ -1,6 +1,8 @@
 const BackgroundDecorator = () => {
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none bg-zinc-50 dark:bg-[#070709]">
+    <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none dark:bg-[#070709]"
+      style={{ background: 'var(--bg-gradient)' }}>
+      {/* Змінна залежно від теми – задається в index.css */}
       
       {/* 1. ФЛЮЇДНІ ХВИЛІ (Рідкі форми води) */}
       {/* М'які органічні форми, що повільно "перетікають" через обертання */}
