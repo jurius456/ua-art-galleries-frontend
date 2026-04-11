@@ -19,8 +19,8 @@ const BackgroundDecorator = () => {
       {/* 2. GLASS PANEL (refraction) */}
       <div className="absolute top-[-10%] left-[20%] w-[40vw] h-[150vh] bg-white/10 dark:bg-black/10 rotate-12 backdrop-blur-md border-l border-white/50 dark:border-zinc-800/30 z-0" />
 
-      {/* 3. FROSTED GLASS — transparent in light mode so gradient shows, dark gets the smoke */}
-      <div className="absolute inset-0 bg-transparent dark:bg-[#070709]/60 backdrop-blur-3xl" />
+      {/* 3. FROSTED GLASS — only in dark mode; light mode keeps body gradient clean */}
+      <div className="absolute inset-0 bg-transparent dark:bg-[#070709]/60 dark:backdrop-blur-3xl" />
 
       {/* 4. NOISE texture */}
       <div
