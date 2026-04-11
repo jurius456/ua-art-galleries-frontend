@@ -50,9 +50,14 @@
 
   /* Transition for smooth language and theme swaps on body text */
   body {
-    background-color: rgb(var(--color-app-bg));
+    /* Light theme: white centre → subtle grey edges (mirrors the dark glow) */
+    background: radial-gradient(ellipse at 55% 35%, #ffffff 0%, #f0f0f3 45%, #e4e4e9 100%);
     color: rgb(var(--color-text));
-    @apply transition-all duration-300 ease-in-out;
+    @apply transition-colors duration-300 ease-in-out;
+  }
+
+  .dark body {
+    background: #070709;
   }
 }
 
