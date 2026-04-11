@@ -2,6 +2,7 @@ import React, { useState, type FormEvent, type ChangeEvent } from "react";
 import { Mail, Lock, User, AlertTriangle, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { useTranslation } from "react-i18next";
 import RegistrationSuccessModal from "../../components/Auth/RegistrationSuccessModal";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
@@ -18,6 +19,7 @@ interface FormErrors {
 const AuthPage = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { t } = useTranslation();
 
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
