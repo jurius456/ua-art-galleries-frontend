@@ -30,8 +30,6 @@ const AuthPage = () => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
-    first_name: "",
-    last_name: "",
     password: "",
     passwordConfirm: "",
   });
@@ -43,8 +41,6 @@ const AuthPage = () => {
     setFormData({
       username: "",
       email: "",
-      first_name: "",
-      last_name: "",
       password: "",
       passwordConfirm: "",
     });
@@ -109,8 +105,6 @@ const AuthPage = () => {
         email: formData.email,
         password: formData.password,
         password2: formData.passwordConfirm,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
       };
 
     try {
@@ -197,25 +191,7 @@ const AuthPage = () => {
             />
           )}
 
-          {!isLogin && (
-            <Input
-              icon={<User size={20} />}
-              name="first_name"
-              placeholder={t('auth.firstName', "Ім'я")}
-              value={formData.first_name}
-              onChange={handleChange}
-            />
-          )}
 
-          {!isLogin && (
-            <Input
-              icon={<User size={20} />}
-              name="last_name"
-              placeholder={t('auth.lastName', "Прізвище")}
-              value={formData.last_name}
-              onChange={handleChange}
-            />
-          )}
 
           <Input
             icon={<Lock size={20} />}
