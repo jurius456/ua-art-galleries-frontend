@@ -50,8 +50,9 @@
 
   /* Transition for smooth language and theme swaps on body text */
   body {
-    /* Light theme: white centre → subtle grey edges (mirrors the dark glow) */
-    background: radial-gradient(ellipse at 55% 35%, #ffffff 0%, #f0f0f3 45%, #e4e4e9 100%);
+    /* Light theme: bright white centre → noticeably grey edges */
+    background: radial-gradient(ellipse at 50% 30%, #ffffff 0%, #ebebef 40%, #d8d8e0 100%);
+    background-attachment: fixed;
     color: rgb(var(--color-text));
     @apply transition-colors duration-300 ease-in-out;
   }
