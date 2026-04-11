@@ -153,17 +153,17 @@ const AuthPage = () => {
 
       <div className="w-full max-w-md p-6 sm:p-10 space-y-8 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-[32px] border border-zinc-100 animate-in fade-in zoom-in-95 duration-500">
         <h2 className="text-3xl font-black tracking-tight text-center text-zinc-900">
-          {isLogin ? "Вхід до системи" : "Реєстрація"}
+          {isLogin ? t('auth.login', 'Вхід до системи') : t('auth.register', 'Реєстрація')}
         </h2>
 
         <p className="text-center text-sm font-bold text-zinc-400">
-          {isLogin ? t('auth.noAccount', 'Немає облікового запису?') : t('auth.hasAccount', 'Вже є обліковий запис?')}
+          {isLogin ? t('auth.noAccount', 'Немає облікового запису?') : t('auth.haveAccount', 'Вже є обліковий запис?')}
           <button
             type="button"
             onClick={toggleView}
             className="ml-2 font-black tracking-widest uppercase text-[10px] text-zinc-900 hover:text-blue-600 transition-colors border-b border-zinc-200 hover:border-blue-600 pb-0.5"
           >
-            {isLogin ? t('auth.registerLink', 'Зареєструватися') : t('auth.loginLink', 'Увійти')}
+            {isLogin ? t('auth.signUp', 'Зареєструватися') : t('auth.signIn', 'Увійти')}
           </button>
         </p>
 
@@ -178,7 +178,7 @@ const AuthPage = () => {
           <Input
             icon={<User size={20} />}
             name="username"
-            placeholder="Ім'я користувача"
+            placeholder={t('auth.username', "Ім'я користувача")}
             value={formData.username}
             onChange={handleChange}
             error={errors.username}
@@ -189,7 +189,7 @@ const AuthPage = () => {
               icon={<Mail size={20} />}
               name="email"
               type="email"
-              placeholder="Електронна пошта"
+              placeholder={t('auth.email', 'Електронна пошта')}
               value={formData.email}
               onChange={handleChange}
               error={errors.email}
@@ -201,7 +201,7 @@ const AuthPage = () => {
             <Input
               icon={<User size={20} />}
               name="first_name"
-              placeholder="Імʼя"
+              placeholder={t('auth.firstName', "Ім'я")}
               value={formData.first_name}
               onChange={handleChange}
             />
@@ -211,7 +211,7 @@ const AuthPage = () => {
             <Input
               icon={<User size={20} />}
               name="last_name"
-              placeholder="Прізвище"
+              placeholder={t('auth.lastName', "Прізвище")}
               value={formData.last_name}
               onChange={handleChange}
             />
@@ -221,7 +221,7 @@ const AuthPage = () => {
             icon={<Lock size={20} />}
             name="password"
             type="password"
-            placeholder="Пароль"
+            placeholder={t('auth.password', 'Пароль')}
             value={formData.password}
             onChange={handleChange}
             error={errors.password}
@@ -232,7 +232,7 @@ const AuthPage = () => {
               icon={<Lock size={20} />}
               name="passwordConfirm"
               type="password"
-              placeholder="Підтвердіть пароль"
+              placeholder={t('auth.confirmPassword', 'Підтвердіть пароль')}
               value={formData.passwordConfirm}
               onChange={handleChange}
               error={errors.passwordConfirm}
@@ -247,9 +247,9 @@ const AuthPage = () => {
             {loading ? (
               <Loader2 className="animate-spin mx-auto w-4 h-4" />
             ) : isLogin ? (
-              t('auth.loginBtn', 'Увійти')
+              t('auth.signIn', 'Увійти')
             ) : (
-              t('auth.registerBtn', 'Створити акаунт')
+              t('auth.createAccount', 'Створити акаунт')
             )}
           </button>
         </form>
