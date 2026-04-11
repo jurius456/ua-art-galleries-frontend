@@ -5,8 +5,9 @@ type Theme = "light" | "dark";
 export const useTheme = () => {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
-      const savedTheme = localStorage.getItem("app-theme") as Theme;
-      if (savedTheme) return savedTheme;
+      // Use same key as ThemeContext to avoid conflicts
+      const savedTheme = localStorage.getItem("vite-ui-theme") as Theme;
+      if (savedTheme === "dark" || savedTheme === "light") return savedTheme;
       if (document.documentElement.classList.contains("dark")) return "dark";
       return window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
@@ -22,7 +23,7 @@ export const useTheme = () => {
     } else {
       root.classList.remove("dark");
     }
-    localStorage.setItem("app-theme", theme);
+    localStorage.setItem("vite-ui-theme", theme);
     window.dispatchEvent(new CustomEvent('theme-change', { detail: theme }));
   }, [theme]);
 

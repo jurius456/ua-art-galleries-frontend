@@ -192,7 +192,7 @@ const HomeMapView = () => {
 
       {/* MAP */}
       <div className="container mx-auto px-6 max-w-6xl">
-        <div className="h-[550px] rounded-[32px] overflow-hidden border border-zinc-100 dark:border-zinc-200 shadow-[0_8px_30px_rgb(0,0,0,0.06)] bg-white relative z-10 transition-all duration-300">
+        <div className="h-[400px] md:h-[550px] rounded-[24px] md:rounded-[32px] overflow-hidden border border-zinc-100 dark:border-zinc-200 shadow-[0_8px_30px_rgb(0,0,0,0.06)] bg-white relative z-10 transition-all duration-300">
           <MapContainer
             center={INITIAL_CENTER}
             zoom={INITIAL_ZOOM}

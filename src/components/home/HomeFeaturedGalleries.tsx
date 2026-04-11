@@ -23,7 +23,7 @@ const HomeFeaturedGalleries = () => {
   return (
     <section className="space-y-12">
       {/* Заголовок у нашому фірмовому стилі */}
-      <div className="flex justify-between items-end border-b border-zinc-100 pb-8">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4 border-b border-zinc-100 pb-8">
         <div className="space-y-2">
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">{t('home.featured.badge')}</p>
           <h2 className="text-3xl font-bold text-zinc-900 tracking-tight">{t('home.featured.title')}</h2>
@@ -47,7 +47,7 @@ const HomeFeaturedGalleries = () => {
             <Link
               key={gallery.id}
               to={`/galleries/${gallery.slug}`}
-              className="group cursor-pointer relative overflow-hidden rounded-[32px] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-2 transition-all duration-500 animate-fade-in-up opacity-0 block h-[280px] p-8 flex flex-col justify-between border border-zinc-100 dark:border-zinc-200"
+              className="group cursor-pointer relative overflow-hidden rounded-[24px] md:rounded-[32px] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-2 transition-all duration-500 animate-fade-in-up opacity-0 block h-[240px] md:h-[280px] p-6 md:p-8 flex flex-col justify-between border border-zinc-100 dark:border-zinc-200"
               style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'forwards' }}
             >
               {/* Decorative Background Letter */}
@@ -75,7 +75,7 @@ const HomeFeaturedGalleries = () => {
               {/* Bottom: Info */}
               <div className="relative z-10">
                 <div>
-                  <h3 className="text-3xl font-black text-zinc-900 tracking-tighter leading-[0.9] mb-4 group-hover:translate-x-1 transition-transform duration-300">
+                  <h3 className="text-2xl md:text-3xl font-black text-zinc-900 tracking-tighter leading-[0.9] mb-3 md:mb-4 group-hover:translate-x-1 transition-transform duration-300">
                     {name}
                   </h3>
                   <div className="flex items-center gap-2 text-zinc-500 group-hover:text-zinc-900 transition-colors">

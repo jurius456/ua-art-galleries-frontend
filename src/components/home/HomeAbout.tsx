@@ -11,13 +11,13 @@ const HomeAbout = () => {
         <h2 className="text-3xl font-bold text-zinc-900 tracking-tight">{t('home.about.title')}</h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-auto md:h-[500px]">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 h-auto md:h-[500px]">
 
         {/* Головна картка - Місія (6 колонок) */}
-        <div className="md:col-span-6 bg-zinc-900 rounded-[32px] p-10 flex flex-col justify-between text-white relative overflow-hidden group shadow-xl">
-          <Target className="text-blue-500 mb-8" size={40} strokeWidth={1.5} />
+        <div className="md:col-span-6 bg-zinc-900 rounded-[24px] md:rounded-[32px] p-8 md:p-10 flex flex-col justify-between text-white relative overflow-hidden group shadow-xl">
+          <Target className="text-blue-500 mb-6 md:mb-8" size={40} strokeWidth={1.5} />
           <div className="space-y-4 relative z-10">
-            <h3 className="text-3xl font-black uppercase tracking-tight">{t('home.about.missionTitle')}</h3>
+            <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight">{t('home.about.missionTitle')}</h3>
             <p className="text-zinc-400 font-medium leading-relaxed">
               {t('home.about.missionText')}
             </p>
@@ -28,7 +28,7 @@ const HomeAbout = () => {
         </div>
 
         {/* Права сітка (6 колонок) */}
-        <div className="md:col-span-6 grid grid-cols-2 gap-6">
+        <div className="md:col-span-6 grid grid-cols-2 gap-4 md:gap-6">
           <Link to="/about#team" className="block w-full h-full">
             <BentoTile icon={<Users className="text-orange-500" />} label={t('home.about.team')} />
           </Link>
@@ -45,7 +45,7 @@ const HomeAbout = () => {
 };
 
 const BentoTile = ({ icon, label }: any) => (
-  <div className="bg-white border border-zinc-100 dark:border-zinc-200 rounded-[32px] p-6 flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-2 transition-all duration-300 cursor-pointer group h-full">
+  <div className="bg-white border border-zinc-100 dark:border-zinc-200 rounded-[24px] md:rounded-[32px] p-5 md:p-6 flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-2 transition-all duration-300 cursor-pointer group h-full">
     <div className="w-12 h-12 bg-zinc-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
       {icon}
     </div>

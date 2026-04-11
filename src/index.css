@@ -18,13 +18,18 @@
     --color-zinc-800: 39 39 42;
     --color-zinc-900: 24 24 27;
     --color-zinc-950: 9 9 11;
+
+    /* Light theme background — white centre, subtle grey glow towards edges (mirrors dark theme) */
+    --bg-gradient: radial-gradient(ellipse at 60% 30%, #ffffff 0%, #f0f0f2 40%, #e4e4e8 100%);
   }
 
   .dark {
     --color-app-bg: 0 0 0; /* Pure black for body */
     --color-bg: 9 9 11; /* Off-black for elevated cards (zinc-950) */
     --color-text: 255 255 255; /* white */
-    
+
+    /* Dark theme background — already handled by bg-[#070709] + shapes, just match the variable too */
+    --bg-gradient: #070709;
     /* Backgrounds & Borders Map to Dark (100 -> 800) */
     --color-zinc-50: 24 24 27; /* zinc-900 */
     --color-zinc-100: 39 39 42; /* zinc-800 */
@@ -45,9 +50,15 @@
 
   /* Transition for smooth language and theme swaps on body text */
   body {
-    background-color: rgb(var(--color-app-bg));
+    /* Light theme: bright white centre → noticeably grey edges */
+    background: radial-gradient(ellipse at 50% 30%, #ffffff 0%, #ebebef 40%, #d8d8e0 100%);
+    background-attachment: fixed;
     color: rgb(var(--color-text));
-    @apply transition-all duration-300 ease-in-out;
+    @apply transition-colors duration-300 ease-in-out;
+  }
+
+  .dark body {
+    background: #070709;
   }
 }
 

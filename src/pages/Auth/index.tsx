@@ -2,6 +2,7 @@ import React, { useState, type FormEvent, type ChangeEvent } from "react";
 import { Mail, Lock, User, AlertTriangle, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { useTranslation } from "react-i18next";
 import RegistrationSuccessModal from "../../components/Auth/RegistrationSuccessModal";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
@@ -18,6 +19,7 @@ interface FormErrors {
 const AuthPage = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { t } = useTranslation();
 
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -28,8 +30,6 @@ const AuthPage = () => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
-    first_name: "",
-    last_name: "",
     password: "",
     passwordConfirm: "",
   });
@@ -41,8 +41,6 @@ const AuthPage = () => {
     setFormData({
       username: "",
       email: "",
-      first_name: "",
-      last_name: "",
       password: "",
       passwordConfirm: "",
     });
@@ -76,6 +74,8 @@ const AuthPage = () => {
 
     if (!formData.password) {
       newErrors.password = "Введіть пароль.";
+    } else if (!isLogin && formData.password.length < 8) {
+      newErrors.password = "Мінімум 8 символів.";
     }
 
     if (!isLogin && formData.password !== formData.passwordConfirm) {
@@ -107,8 +107,6 @@ const AuthPage = () => {
         email: formData.email,
         password: formData.password,
         password2: formData.passwordConfirm,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
       };
 
     try {
@@ -144,24 +142,24 @@ const AuthPage = () => {
   /* ---------------- UI ---------------- */
 
   return (
-    <div className="flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-50">
+    <div className="flex justify-center items-center px-4 min-h-[calc(100vh-80px)]">
       {showSuccessModal && (
         <RegistrationSuccessModal onClose={() => setShowSuccessModal(false)} />
       )}
 
-      <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-xl rounded-xl border">
-        <h2 className="text-3xl font-extrabold text-center">
-          {isLogin ? "Вхід до системи" : "Реєстрація"}
+      <div className="w-full max-w-md p-6 sm:p-10 space-y-8 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-[32px] border border-zinc-100 animate-in fade-in zoom-in-95 duration-500">
+        <h2 className="text-3xl font-black tracking-tight text-center text-zinc-900">
+          {isLogin ? t('auth.login', 'Вхід до системи') : t('auth.register', 'Реєстрація')}
         </h2>
 
-        <p className="text-center text-sm text-gray-500">
-          {isLogin ? "Немає облікового запису?" : "Вже є обліковий запис?"}
+        <p className="text-center text-sm font-bold text-zinc-400">
+          {isLogin ? t('auth.noAccount', 'Немає облікового запису?') : t('auth.haveAccount', 'Вже є обліковий запис?')}
           <button
             type="button"
             onClick={toggleView}
-            className="ml-1 font-medium text-neutral-700 hover:text-neutral-500"
+            className="ml-2 font-black tracking-widest uppercase text-[10px] text-zinc-900 hover:text-blue-600 transition-colors border-b border-zinc-200 hover:border-blue-600 pb-0.5"
           >
-            {isLogin ? "Зареєструватися" : "Увійти"}
+            {isLogin ? t('auth.signUp', 'Зареєструватися') : t('auth.signIn', 'Увійти')}
           </button>
         </p>
 
@@ -176,7 +174,7 @@ const AuthPage = () => {
           <Input
             icon={<User size={20} />}
             name="username"
-            placeholder="Ім'я користувача"
+            placeholder={t('auth.username', "Ім'я користувача")}
             value={formData.username}
             onChange={handleChange}
             error={errors.username}
@@ -187,7 +185,7 @@ const AuthPage = () => {
               icon={<Mail size={20} />}
               name="email"
               type="email"
-              placeholder="Електронна пошта"
+              placeholder={t('auth.email', 'Електронна пошта')}
               value={formData.email}
               onChange={handleChange}
               error={errors.email}
@@ -195,31 +193,13 @@ const AuthPage = () => {
             />
           )}
 
-          {!isLogin && (
-            <Input
-              icon={<User size={20} />}
-              name="first_name"
-              placeholder="Імʼя"
-              value={formData.first_name}
-              onChange={handleChange}
-            />
-          )}
 
-          {!isLogin && (
-            <Input
-              icon={<User size={20} />}
-              name="last_name"
-              placeholder="Прізвище"
-              value={formData.last_name}
-              onChange={handleChange}
-            />
-          )}
 
           <Input
             icon={<Lock size={20} />}
             name="password"
             type="password"
-            placeholder="Пароль"
+            placeholder={t('auth.password', 'Пароль')}
             value={formData.password}
             onChange={handleChange}
             error={errors.password}
@@ -230,7 +210,7 @@ const AuthPage = () => {
               icon={<Lock size={20} />}
               name="passwordConfirm"
               type="password"
-              placeholder="Підтвердіть пароль"
+              placeholder={t('auth.confirmPassword', 'Підтвердіть пароль')}
               value={formData.passwordConfirm}
               onChange={handleChange}
               error={errors.passwordConfirm}
@@ -240,14 +220,14 @@ const AuthPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-lg text-white bg-neutral-800 hover:bg-neutral-600 disabled:bg-gray-400"
+            className="w-full py-4 rounded-2xl text-white bg-zinc-900 hover:bg-zinc-800 disabled:bg-zinc-300 transition-all font-black uppercase tracking-widest text-[10px] shadow-lg hover:shadow-xl hover:-translate-y-0.5"
           >
             {loading ? (
-              <Loader2 className="animate-spin mx-auto" />
+              <Loader2 className="animate-spin mx-auto w-4 h-4" />
             ) : isLogin ? (
-              "Увійти"
+              t('auth.signIn', 'Увійти')
             ) : (
-              "Створити акаунт"
+              t('auth.createAccount', 'Створити акаунт')
             )}
           </button>
         </form>
@@ -272,7 +252,7 @@ const Input = ({ icon, error, ...props }: InputProps) => (
     </div>
     <input
       {...props}
-      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-neutral-500 focus:border-neutral-500 ${error ? "border-red-500" : "border-gray-300"
+      className={`w-full pl-11 pr-4 py-3.5 bg-zinc-50 border rounded-2xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 text-sm font-bold text-zinc-900 placeholder:text-zinc-400 transition-all outline-none ${error ? "border-red-500 bg-red-50" : "border-zinc-200"
         }`}
     />
     {error && <p className="text-sm text-red-600 mt-1">{error}</p>}

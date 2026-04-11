@@ -25,7 +25,7 @@ const AboutPage = () => {
         <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-zinc-200 shadow-sm rounded-full text-zinc-500 text-[10px] font-black uppercase tracking-widest">
           <GraduationCap size={14} className="text-zinc-900" /> {t('about.badge')}
         </div>
-        <h1 className="text-5xl md:text-6xl font-black text-zinc-900 tracking-tighter leading-tight">
+        <h1 className="text-4xl md:text-6xl font-black text-zinc-900 tracking-tighter leading-tight">
           {t('about.title')} <br />
           <span className="text-zinc-400">{t('about.subtitle')}</span>
         </h1>
@@ -38,7 +38,7 @@ const AboutPage = () => {
 
       {/* 2. STATS — "Скляний" блок, який виділяється на текстурному фоні */}
       <section className="container mx-auto px-4 md:px-6 mb-20 flex justify-center">
-        <div className="inline-flex flex-col md:flex-row items-center gap-12 md:gap-32 bg-white/70 backdrop-blur-md border border-white shadow-[0_8px_40px_rgba(0,0,0,0.04)] rounded-[40px] py-8 px-16">
+        <div className="inline-flex flex-col md:flex-row items-center gap-8 md:gap-32 bg-white/70 backdrop-blur-md border border-white shadow-[0_8px_40px_rgba(0,0,0,0.04)] rounded-[24px] md:rounded-[40px] py-6 px-10 md:py-8 md:px-16">
             <StatItem label={t('about.activeGalleries')} value="100+" />
             <div className="w-px h-16 bg-zinc-200 hidden md:block"></div>
             <StatItem label={t('about.cities', 'Міст')} value="11" />
@@ -70,11 +70,11 @@ const AboutPage = () => {
       </section>
 
       {/* 4. MISSION — Акцентний блок */}
-      <section className="container mx-auto px-6 pb-24">
-        <div className="bg-zinc-900 rounded-[40px] p-12 md:p-16 text-white shadow-2xl relative overflow-hidden">
-          <div className="max-w-xl space-y-6 relative z-10">
-            <h2 className="text-3xl font-black uppercase">{t('about.ourMission')}</h2>
-            <p className="text-zinc-400 text-base font-medium leading-relaxed">
+      <section className="container mx-auto px-4 md:px-6 pb-24">
+        <div className="bg-zinc-900 rounded-[24px] md:rounded-[40px] p-8 md:p-16 text-white shadow-2xl relative overflow-hidden">
+          <div className="max-w-xl space-y-4 md:space-y-6 relative z-10">
+            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight">{t('about.ourMission')}</h2>
+            <p className="text-zinc-400 text-sm md:text-base font-medium leading-relaxed">
               {t('about.missionText')}
             </p>
           </div>
@@ -94,12 +94,12 @@ const StatItem = ({ label, value }: any) => (
 );
 
 const TeamMember = ({ name, role, initial }: any) => (
-  <div className="w-[180px] flex flex-col items-center text-center group">
-    <div className="w-20 h-20 bg-zinc-200 rounded-2xl mb-4 flex items-center justify-center font-bold text-xl text-zinc-900 group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all duration-300 shadow-sm">
+  <div className="w-[140px] md:w-[180px] flex flex-col items-center text-center group">
+    <div className="w-16 h-16 md:w-20 md:h-20 bg-zinc-200 rounded-2xl mb-4 flex items-center justify-center font-bold text-xl text-zinc-900 group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all duration-300 shadow-sm">
       {initial}
     </div>
-    <h3 className="font-black text-zinc-900 text-sm leading-tight mb-1.5">{name}</h3>
-    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest group-hover:text-black transition-colors">{role}</p>
+    <h3 className="font-black text-zinc-900 text-xs md:text-sm leading-tight mb-1">{name}</h3>
+    <p className="text-[9px] md:text-[10px] font-bold text-zinc-400 uppercase tracking-widest group-hover:text-black transition-colors">{role}</p>
   </div>
 );
 

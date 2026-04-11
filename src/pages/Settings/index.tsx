@@ -11,7 +11,7 @@ const SettingsLayout = () => {
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-6 py-16 max-w-6xl">
-        <div className="flex flex-col md:flex-row items-start gap-16">
+        <div className="flex flex-col md:flex-row items-start gap-8 md:gap-16">
           
           {/* Ліва частина: Тепер без великого заголовка над сайдбаром */}
           <div className="w-full md:w-64 sticky top-24 pt-2">

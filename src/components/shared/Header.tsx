@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useRef, useState } from "react";
-import { User, Settings, LogOut, ChevronDown, Bookmark, Sun, Moon } from "lucide-react";
+import { createPortal } from "react-dom";
+import { User, Settings, LogOut, ChevronDown, Bookmark, Sun, Moon, Menu, X } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTheme } from '../../hooks/useTheme';
@@ -11,6 +12,7 @@ const Header = () => {
   const { user, isLoading, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [open, setOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -124,7 +126,7 @@ const Header = () => {
           </div>
 
           {/* Кнопка теми та перемикач мови */}
-          <div className="flex items-center gap-2">
+          <div className="hidden lg:flex items-center gap-2">
             <button 
               onClick={toggleTheme} 
               className="p-2 text-zinc-400 hover:text-black hover:bg-zinc-100 rounded-lg transition-all"
@@ -134,8 +136,68 @@ const Header = () => {
             </button>
             <LanguageSwitcher />
           </div>
+
+          {/* Гамбургер для мобільних */}
+          <button
+            className="lg:hidden p-2 text-zinc-800 ml-2"
+            onClick={() => setMobileMenuOpen(true)}
+          >
+            <Menu size={24} />
+          </button>
         </div>
       </div>
+
+      {/* Мобільне меню (Шторка) */}
+      {/* Мобільне меню (Шторка) - Через Portal */}
+      {mobileMenuOpen && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[9999] flex justify-end animate-in fade-in duration-300">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+          <div className="relative w-[85%] max-w-sm h-[100dvh] bg-white dark:bg-zinc-950 shadow-[0_0_40px_rgba(0,0,0,0.2)] flex flex-col animate-in slide-in-from-right duration-300 rounded-l-[24px] md:rounded-l-[32px] border-l border-zinc-100 dark:border-zinc-800">
+            <div className="flex items-center justify-between p-5 md:p-6 border-b border-zinc-100 dark:border-zinc-800">
+              <span className="font-bold text-lg text-zinc-900 dark:text-zinc-100 tracking-tight">Меню</span>
+              <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-full bg-zinc-50 dark:bg-zinc-900 transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <nav className="flex-1 overflow-y-auto p-5 md:p-6 space-y-6">
+              <div className="flex flex-col space-y-5 text-xl font-black text-zinc-600 dark:text-zinc-400">
+                <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">{t('nav.about')}</Link>
+                <Link to="/galleries" onClick={() => setMobileMenuOpen(false)} className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">{t('nav.galleries')}</Link>
+                <Link to="/events" onClick={() => setMobileMenuOpen(false)} className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">{t('nav.events')}</Link>
+                <Link to="/partners" onClick={() => setMobileMenuOpen(false)} className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">{t('home.about.partners')}</Link>
+              </div>
+
+              <div className="border-t border-zinc-100 dark:border-zinc-800 pt-6 space-y-6">
+                <div className="flex items-center justify-between">
+                   <span className="font-bold text-sm text-zinc-400 uppercase tracking-widest">Тема</span>
+                   <button 
+                     onClick={toggleTheme} 
+                     className="w-12 h-12 bg-zinc-50 dark:bg-zinc-900 rounded-full flex items-center justify-center text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                   >
+                     {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                   </button>
+                </div>
+                <div className="flex items-center justify-between">
+                   <span className="font-bold text-sm text-zinc-400 uppercase tracking-widest">Мова</span>
+                   <LanguageSwitcher />
+                </div>
+              </div>
+            </nav>
+            {!user && (
+              <div className="p-5 md:p-6 border-t border-zinc-100 dark:border-zinc-800">
+                 <Link
+                   to="/login"
+                   onClick={() => setMobileMenuOpen(false)}
+                   className="w-full py-4 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-2xl font-black uppercase tracking-widest text-[10px] text-center block shadow-lg hover:-translate-y-0.5 transition-transform"
+                 >
+                   {t('header.login')}
+                 </Link>
+              </div>
+            )}
+          </div>
+        </div>,
+        document.body
+      )}
     </header >
   );
 };
