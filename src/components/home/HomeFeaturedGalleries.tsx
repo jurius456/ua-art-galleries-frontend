@@ -23,7 +23,7 @@ const HomeFeaturedGalleries = () => {
   return (
     <section className="space-y-12">
       {/* Заголовок у нашому фірмовому стилі */}
-      <div className="flex justify-between items-end border-b border-zinc-100 pb-8">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4 border-b border-zinc-100 pb-8">
         <div className="space-y-2">
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">{t('home.featured.badge')}</p>
           <h2 className="text-3xl font-bold text-zinc-900 tracking-tight">{t('home.featured.title')}</h2>

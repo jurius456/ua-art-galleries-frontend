@@ -144,24 +144,24 @@ const AuthPage = () => {
   /* ---------------- UI ---------------- */
 
   return (
-    <div className="flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-50">
+    <div className="flex justify-center items-center px-4 min-h-[calc(100vh-80px)]">
       {showSuccessModal && (
         <RegistrationSuccessModal onClose={() => setShowSuccessModal(false)} />
       )}
 
-      <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-xl rounded-xl border">
-        <h2 className="text-3xl font-extrabold text-center">
+      <div className="w-full max-w-md p-6 sm:p-10 space-y-8 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-[32px] border border-zinc-100 animate-in fade-in zoom-in-95 duration-500">
+        <h2 className="text-3xl font-black tracking-tight text-center text-zinc-900">
           {isLogin ? "Вхід до системи" : "Реєстрація"}
         </h2>
 
-        <p className="text-center text-sm text-gray-500">
-          {isLogin ? "Немає облікового запису?" : "Вже є обліковий запис?"}
+        <p className="text-center text-sm font-bold text-zinc-400">
+          {isLogin ? t('auth.noAccount', 'Немає облікового запису?') : t('auth.hasAccount', 'Вже є обліковий запис?')}
           <button
             type="button"
             onClick={toggleView}
-            className="ml-1 font-medium text-neutral-700 hover:text-neutral-500"
+            className="ml-2 font-black tracking-widest uppercase text-[10px] text-zinc-900 hover:text-blue-600 transition-colors border-b border-zinc-200 hover:border-blue-600 pb-0.5"
           >
-            {isLogin ? "Зареєструватися" : "Увійти"}
+            {isLogin ? t('auth.registerLink', 'Зареєструватися') : t('auth.loginLink', 'Увійти')}
           </button>
         </p>
 
@@ -240,14 +240,14 @@ const AuthPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-lg text-white bg-neutral-800 hover:bg-neutral-600 disabled:bg-gray-400"
+            className="w-full py-4 rounded-2xl text-white bg-zinc-900 hover:bg-zinc-800 disabled:bg-zinc-300 transition-all font-black uppercase tracking-widest text-[10px] shadow-lg hover:shadow-xl hover:-translate-y-0.5"
           >
             {loading ? (
-              <Loader2 className="animate-spin mx-auto" />
+              <Loader2 className="animate-spin mx-auto w-4 h-4" />
             ) : isLogin ? (
-              "Увійти"
+              t('auth.loginBtn', 'Увійти')
             ) : (
-              "Створити акаунт"
+              t('auth.registerBtn', 'Створити акаунт')
             )}
           </button>
         </form>
@@ -272,7 +272,7 @@ const Input = ({ icon, error, ...props }: InputProps) => (
     </div>
     <input
       {...props}
-      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-neutral-500 focus:border-neutral-500 ${error ? "border-red-500" : "border-gray-300"
+      className={`w-full pl-11 pr-4 py-3.5 bg-zinc-50 border rounded-2xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 text-sm font-bold text-zinc-900 placeholder:text-zinc-400 transition-all outline-none ${error ? "border-red-500 bg-red-50" : "border-zinc-200"
         }`}
     />
     {error && <p className="text-sm text-red-600 mt-1">{error}</p>}
