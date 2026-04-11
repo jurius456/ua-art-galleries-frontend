@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { User, Settings, LogOut, ChevronDown, Bookmark, Sun, Moon, Menu, X } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -147,17 +148,18 @@ const Header = () => {
       </div>
 
       {/* Мобільне меню (Шторка) */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-[100] flex justify-end animate-in fade-in duration-300">
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
-          <div className="relative w-[85%] max-w-sm h-full bg-white dark:bg-zinc-950 shadow-[0_0_40px_rgba(0,0,0,0.2)] flex flex-col animate-in slide-in-from-right duration-300 rounded-l-[32px] border-l border-zinc-100 dark:border-zinc-800">
-            <div className="flex items-center justify-between p-6 border-b border-zinc-100 dark:border-zinc-800">
+      {/* Мобільне меню (Шторка) - Через Portal */}
+      {mobileMenuOpen && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[9999] flex justify-end animate-in fade-in duration-300">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+          <div className="relative w-[85%] max-w-sm h-[100dvh] bg-white dark:bg-zinc-950 shadow-[0_0_40px_rgba(0,0,0,0.2)] flex flex-col animate-in slide-in-from-right duration-300 rounded-l-[24px] md:rounded-l-[32px] border-l border-zinc-100 dark:border-zinc-800">
+            <div className="flex items-center justify-between p-5 md:p-6 border-b border-zinc-100 dark:border-zinc-800">
               <span className="font-bold text-lg text-zinc-900 dark:text-zinc-100 tracking-tight">Меню</span>
               <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-full bg-zinc-50 dark:bg-zinc-900 transition-colors">
                 <X size={20} />
               </button>
             </div>
-            <nav className="flex-1 overflow-y-auto py-6 px-6 space-y-6">
+            <nav className="flex-1 overflow-y-auto p-5 md:p-6 space-y-6">
               <div className="flex flex-col space-y-5 text-xl font-black text-zinc-600 dark:text-zinc-400">
                 <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">{t('nav.about')}</Link>
                 <Link to="/galleries" onClick={() => setMobileMenuOpen(false)} className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">{t('nav.galleries')}</Link>
@@ -182,7 +184,7 @@ const Header = () => {
               </div>
             </nav>
             {!user && (
-              <div className="p-6 border-t border-zinc-100 dark:border-zinc-800">
+              <div className="p-5 md:p-6 border-t border-zinc-100 dark:border-zinc-800">
                  <Link
                    to="/login"
                    onClick={() => setMobileMenuOpen(false)}
@@ -193,7 +195,8 @@ const Header = () => {
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </header >
   );
