@@ -32,14 +32,7 @@ const ProfilePage = () => {
 
         <section className="grid md:grid-cols-2 gap-x-12 gap-y-10">
           <InfoField label="Ім'я користувача (Нікнейм)" value={`@${user.username}`} icon={<AtSign size={14} />} />
-          <InfoField label="Доступ до архіву" value="Базовий рівень" icon={<User size={14} />} />
           <InfoField label="Електронна пошта" value={user.email} icon={<Mail size={14} />} />
-          <InfoField 
-            label="Статус акаунта" 
-            value={user.is_active ? "Активний" : "Неактивний"} 
-            icon={<ShieldCheck size={14} />} 
-            isStatus 
-          />
         </section>
 
         <div className="pt-8 border-t border-gray-50 flex justify-between items-center">
