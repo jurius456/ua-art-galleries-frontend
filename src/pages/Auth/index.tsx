@@ -74,6 +74,8 @@ const AuthPage = () => {
 
     if (!formData.password) {
       newErrors.password = "Введіть пароль.";
+    } else if (!isLogin && formData.password.length < 8) {
+      newErrors.password = "Мінімум 8 символів.";
     }
 
     if (!isLogin && formData.password !== formData.passwordConfirm) {
