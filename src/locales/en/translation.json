@@ -99,7 +99,8 @@
         "edit": "Edit",
         "error": "Error",
         "back": "Back",
-        "country": "Ukraine"
+        "country": "Ukraine",
+        "linkCopied": "Link copied!"
     },
     "galleries": {
         "title": "Catalog",
@@ -133,9 +134,17 @@
         "workingHours": "Working Hours",
         "exhibitions": "Exhibitions",
         "publications": "Publications",
+        "about": "About Gallery",
+        "save": "Save",
+        "saved": "Saved",
+        "workingDays": "Monday — Sunday",
         "loginToView": "Log in to view full information",
         "loginDesc": "Details about exhibitions, artists, and publications are available only for registered users",
-        "loginBtn": "Log In or Sign Up"
+        "loginBtn": "Log In or Sign Up",
+        "noExhibitions": "No active exhibitions",
+        "noArtists": "No artists info",
+        "socialNetwork": "Social Network",
+        "shareText": "Check out this gallery!"
     },
     "events": {
         "title": "Exhibitions",
