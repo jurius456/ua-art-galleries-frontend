@@ -32,8 +32,7 @@ const EventsPage = () => {
   const [search, setSearch] = useState("");
   const [selectedCity, setSelectedCity] = useState(t('events.allCities'));
   const [selectedCategory, setSelectedCategory] = useState<string>(t('events.allTypes'));
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  // isFilterOpen kept for future use
+
 
   const filtered = useMemo(() => {
     return MOCK_EVENTS.filter(e => {
