@@ -43,7 +43,7 @@ const HomeHero = () => {
   return (
     <section className="container mx-auto px-4 md:px-6 pt-6 md:pt-10">
       <div className="relative h-[400px] md:h-[500px] rounded-[32px] md:rounded-[48px] overflow-hidden group"
-        style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.28), 0 6px 16px rgba(0,0,0,0.16)' }}>
+        style={{ boxShadow: '0 20px 72px rgba(0,0,0,0.24), 0 6px 20px rgba(0,0,0,0.13)' }}>
 
         {/* Background Image with Ken Burns Effect */}
         {SLIDES.map((slide, index) => (
