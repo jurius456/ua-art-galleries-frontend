@@ -65,18 +65,18 @@
 @layer utilities {
   /* Premium card shadow */
   .card-shadow {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.16), 0 2px 6px rgba(0, 0, 0, 0.10);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.10);
   }
   .card-shadow:hover {
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24), 0 4px 10px rgba(0, 0, 0, 0.14);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.26), 0 4px 12px rgba(0, 0, 0, 0.14);
   }
 
   /* Globally upgrade Tailwind shadow classes */
   .shadow-\[0_8px_30px_rgb\(0\,0\,0\,0\.06\)\] {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.10) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.10) !important;
   }
   .shadow-\[0_8px_30px_rgb\(0\,0\,0\,0\.12\)\] {
-    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.26), 0 4px 10px rgba(0, 0, 0, 0.14) !important;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28), 0 5px 14px rgba(0, 0, 0, 0.14) !important;
   }
 
   .animate-fade-in-up {
