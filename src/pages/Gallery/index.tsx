@@ -20,8 +20,8 @@ import {
 } from "../../utils/gallery";
 import GalleryMap from "../../components/gallery/GalleryMap";
 
-const getSocialLinkDetails = (url: string) => {
-  if (!url) return { icon: Globe, name: 'Link' };
+const getSocialLinkDetails = (url: string, t: any) => {
+  if (!url) return { icon: Globe, name: t('gallery.socialNetwork') };
   const lowerUrl = url.toLowerCase();
   if (lowerUrl.includes('instagram.com')) return { icon: Instagram, name: 'Instagram' };
   if (lowerUrl.includes('facebook.com')) return { icon: Facebook, name: 'Facebook' };
@@ -30,7 +30,7 @@ const getSocialLinkDetails = (url: string) => {
   if (lowerUrl.includes('linkedin.com')) return { icon: Linkedin, name: 'LinkedIn' };
   if (lowerUrl.includes('t.me') || lowerUrl.includes('telegram.org')) return { icon: Globe, name: 'Telegram' };
   if (lowerUrl.includes('tiktok.com')) return { icon: Globe, name: 'TikTok' };
-  return { icon: Globe, name: 'Мережа' };
+  return { icon: Globe, name: t('gallery.socialNetwork') };
 };
 
 const GalleryPage = () => {
@@ -142,7 +142,7 @@ const GalleryPage = () => {
             {(shortDesc || fullDesc) && (
               <div className="prose prose-zinc max-w-none">
                 <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-6 flex items-center gap-2">
-                  <Info size={14} /> Про галерею
+                  <Info size={14} /> {t('gallery.about')}
                 </h2>
                 {shortDesc && <p className="text-xl text-zinc-600 leading-relaxed font-medium mb-6">{shortDesc}</p>}
                 {fullDesc && (
@@ -164,7 +164,7 @@ const GalleryPage = () => {
               </div>
               <div className="p-8 bg-white border border-zinc-100 rounded-[40px]">
                 {gallery.status ? <BadgeCheck size={20} className="text-green-500 mb-4" /> : <Ban size={20} className="text-red-500 mb-4" />}
-                <h4 className="text-[10px] font-black uppercase text-zinc-400 mb-2 tracking-widest">Статус</h4>
+                <h4 className="text-[10px] font-black uppercase text-zinc-400 mb-2 tracking-widest">{t('gallery.status')}</h4>
                 <p className={`text-lg font-black ${gallery.status ? 'text-green-600' : 'text-red-600'}`}>{gallery.status ? t('gallery.active') : t('gallery.inactive')}</p>
               </div>
             </div>
@@ -195,7 +195,7 @@ const GalleryPage = () => {
                     {t('gallery.exhibitions')}
                   </h3>
                   <div className="p-12 bg-zinc-50 rounded-[32px] text-center border border-dashed border-zinc-200">
-                    <p className="text-zinc-400 font-medium">No active exhibitions</p>
+                    <p className="text-zinc-400 font-medium">{t('gallery.noExhibitions')}</p>
                   </div>
                 </section>
 
@@ -210,7 +210,7 @@ const GalleryPage = () => {
                     </div>
                   ) : (
                     <div className="p-12 bg-zinc-50 rounded-[32px] text-center border border-dashed border-zinc-200">
-                      <p className="text-zinc-400 font-medium">No artists info</p>
+                      <p className="text-zinc-400 font-medium">{t('gallery.noArtists')}</p>
                     </div>
                   )}
                 </section>
@@ -229,12 +229,12 @@ const GalleryPage = () => {
                     if (navigator.share) {
                       navigator.share({
                         title: name,
-                        text: shortDesc || 'Check out this gallery!',
+                        text: shortDesc || t('gallery.shareText'),
                         url: window.location.href,
                       }).catch(console.error);
                     } else {
                       navigator.clipboard.writeText(window.location.href);
-                      alert("Лінк скопійовано!");
+                      alert(t('common.linkCopied'));
                     }
                   }}
                   className="w-14 h-14 rounded-full border-2 border-zinc-100 flex items-center justify-center shrink-0 text-zinc-400 hover:bg-zinc-50 hover:text-zinc-900 transition-colors"
@@ -256,7 +256,7 @@ const GalleryPage = () => {
                     }`}
                 >
                   <Heart size={20} fill={isFavorite(gallery.slug) ? "currentColor" : "none"} />
-                  {isFavorite(gallery.slug) ? 'В архіві' : 'Зберегти'}
+                  {isFavorite(gallery.slug) ? t('gallery.saved') : t('gallery.save')}
                 </button>
               </div>
 
@@ -311,7 +311,7 @@ const GalleryPage = () => {
                       }
 
                       return links.filter(link => typeof link === 'string' && link.length > 5).map((link, idx) => {
-                        const { icon: Icon, name } = getSocialLinkDetails(link);
+                        const { icon: Icon, name } = getSocialLinkDetails(link, t);
                         return (
                           <a key={idx} href={link} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm font-bold text-zinc-800 hover:text-blue-600 transition-colors truncate">
                             <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center shrink-0"><Icon size={14} className="text-zinc-400"/></div>
@@ -329,7 +329,7 @@ const GalleryPage = () => {
                       <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center shrink-0"><Clock size={14} className="text-zinc-400"/></div>
                       <div>
                         <p className="font-bold text-sm text-zinc-800">11:00 — 19:00</p>
-                        <p className="text-[10px] text-zinc-400 uppercase tracking-widest">Понеділок — Неділя</p>
+                        <p className="text-[10px] text-zinc-400 uppercase tracking-widest">{t('gallery.workingDays')}</p>
                       </div>
                    </div>
                 </div>
