@@ -109,7 +109,7 @@ const GalleriesPage = () => {
                   setPage(1);
                 }}
                 placeholder={t('galleries.search')}
-                className="w-full h-[56px] rounded-2xl border border-zinc-200 pl-[52px] pr-6 text-[15px] outline-none focus:border-zinc-900"
+                className="w-full h-[56px] rounded-2xl border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-500 pl-[52px] pr-6 text-[15px] outline-none focus:border-zinc-900 dark:focus:border-zinc-400 bg-white text-zinc-900"
               />
             </div>
 

@@ -74,8 +74,16 @@ const AuthPage = () => {
 
     if (!formData.password) {
       newErrors.password = "Введіть пароль.";
-    } else if (!isLogin && formData.password.length < 8) {
-      newErrors.password = "Мінімум 8 символів.";
+    } else if (!isLogin) {
+      if (formData.password.length < 8) {
+        newErrors.password = "Мінімум 8 символів.";
+      } else if (!/[A-Z]/.test(formData.password)) {
+        newErrors.password = "Повинна бути хоч б одна велика літера.";
+      } else if (!/[0-9]/.test(formData.password)) {
+        newErrors.password = "Повинна бути хоч б одна цифра.";
+      } else if (!/[^A-Za-z0-9]/.test(formData.password)) {
+        newErrors.password = "Повинна бути хоч б один спецсимвол (!@#$ тощо).";
+      }
     }
 
     if (!isLogin && formData.password !== formData.passwordConfirm) {
@@ -195,15 +203,22 @@ const AuthPage = () => {
 
 
 
-          <Input
-            icon={<Lock size={20} />}
-            name="password"
-            type="password"
-            placeholder={t('auth.password', 'Пароль')}
-            value={formData.password}
-            onChange={handleChange}
-            error={errors.password}
-          />
+          <div>
+            <Input
+              icon={<Lock size={20} />}
+              name="password"
+              type="password"
+              placeholder={t('auth.password', 'Пароль')}
+              value={formData.password}
+              onChange={handleChange}
+              error={errors.password}
+            />
+            {!isLogin && (
+              <p className="mt-2 text-[11px] text-zinc-400 font-medium px-1">
+                Мін. 8 символів, велика літера, цифра, спецсимвол (!@#$...)
+              </p>
+            )}
+          </div>
 
           {!isLogin && (
             <Input

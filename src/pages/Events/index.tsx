@@ -1,10 +1,11 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
-  Search, Filter, Calendar, LayoutGrid,
+  Search, Calendar, LayoutGrid,
   ArrowRight, Sparkles
 } from "lucide-react";
 import { useTranslation } from 'react-i18next';
+import { CustomSelect } from "../../components/shared/CustomSelect";
 
 export type EventCategory = "Виставка" | "Воркшоп" | "Відкриття" | "Лекція";
 
@@ -31,7 +32,7 @@ const EventsPage = () => {
   const [search, setSearch] = useState("");
   const [selectedCity, setSelectedCity] = useState(t('events.allCities'));
   const [selectedCategory, setSelectedCategory] = useState<string>(t('events.allTypes'));
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
 
   const filtered = useMemo(() => {
     return MOCK_EVENTS.filter(e => {
@@ -51,39 +52,44 @@ const EventsPage = () => {
             <h1 className="text-4xl md:text-5xl font-black text-zinc-800 tracking-tighter uppercase leading-none">{t('events.title')}</h1>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-400" />
+          <div className="flex flex-col gap-4">
+            {/* SEARCH */}
+            <div className="relative">
+              <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
               <input
                 type="text"
                 placeholder={t('events.search')}
-                className="w-full bg-white border border-zinc-200 rounded-2xl py-4 pl-14 pr-6 outline-none focus:border-zinc-800 transition-all text-base shadow-sm font-medium"
+                className="w-full h-[56px] rounded-2xl border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-500 pl-[52px] pr-6 text-[15px] outline-none focus:border-zinc-900 dark:focus:border-zinc-400 bg-white text-zinc-900"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            <button
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className={`flex items-center gap-3 px-8 py-4 rounded-2xl text-xs font-bold uppercase border transition-all ${isFilterOpen ? "bg-zinc-800 text-white border-zinc-800 shadow-xl" : "bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50"
-                }`}
-            >
-              <Filter size={16} /> {t('events.filters')}
-            </button>
-          </div>
 
-          {isFilterOpen && (
-            <div className="p-8 bg-white border border-zinc-100 rounded-[32px] shadow-2xl grid grid-cols-1 md:grid-cols-2 gap-10 animate-in slide-in-from-top-2">
-              <FilterSelect label={t('events.city')} value={selectedCity} onChange={setSelectedCity} options={[t('events.allCities'), "Київ", "Львів", "Одеса"]} />
-              <div className="space-y-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">{t('events.eventType')}</p>
-                <div className="flex flex-wrap gap-2">
-                  {["Усі типи", "Виставка", "Воркшоп", "Відкриття", "Лекція"].map(cat => (
-                    <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all ${selectedCategory === cat ? "bg-zinc-800 text-white shadow-lg" : "bg-zinc-100 text-zinc-400 hover:bg-zinc-200"}`}>{cat}</button>
-                  ))}
-                </div>
-              </div>
+            {/* FILTERS GRID */}
+            <div className="grid grid-cols-2 gap-4">
+              <CustomSelect
+                value={selectedCity}
+                onChange={setSelectedCity}
+                options={[
+                  { value: t('events.allCities'), label: t('events.allCities') },
+                  { value: "Київ", label: "Київ" },
+                  { value: "Львів", label: "Львів" },
+                  { value: "Одеса", label: "Одеса" },
+                ]}
+              />
+              <CustomSelect
+                value={selectedCategory}
+                onChange={setSelectedCategory}
+                options={[
+                  { value: t('events.allTypes'), label: t('events.allTypes') },
+                  { value: "Виставка", label: "Виставка" },
+                  { value: "Воркшоп", label: "Воркшоп" },
+                  { value: "Відкриття", label: "Відкриття" },
+                  { value: "Лекція", label: "Лекція" },
+                ]}
+              />
             </div>
-          )}
+          </div>
         </div>
       </section>
 
@@ -116,15 +122,6 @@ const EventsPage = () => {
     </div>
   );
 };
-
-const FilterSelect = ({ label, value, onChange, options }: any) => (
-  <div className="space-y-4">
-    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">{label}</p>
-    <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full bg-zinc-50 rounded-xl p-3 text-sm font-bold outline-none cursor-pointer">
-      {options.map((o: string) => <option key={o} value={o}>{o}</option>)}
-    </select>
-  </div>
-);
 
 const EventCard = ({ event }: { event: ArtEvent }) => (
   <Link

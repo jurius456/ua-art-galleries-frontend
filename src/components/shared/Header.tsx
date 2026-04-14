@@ -46,8 +46,22 @@ const Header = () => {
           <Link to="/partners" className="hover:text-black transition">{t('home.about.partners')}</Link>
         </nav>
 
-        {/* 3. ПРАВА ЧАСТИНА: Авторизація + Мова */}
+        {/* 3. ПРАВА ЧАСТИНА: Мова + Тема + Авторизація */}
         <div className="flex-1 flex items-center gap-4 justify-end">
+
+          {/* Кнопка теми та перемикач мови */}
+          <div className="hidden lg:flex items-center gap-2">
+            <button 
+              onClick={toggleTheme} 
+              className="p-2 text-zinc-400 hover:text-black hover:bg-zinc-100 rounded-lg transition-all"
+              aria-label="Toggle Theme"
+            >
+              {theme === 'dark' ? <Sun size={18} strokeWidth={2} /> : <Moon size={18} strokeWidth={2} />}
+            </button>
+            <LanguageSwitcher />
+          </div>
+
+          {/* Профіль / Вхід */}
           <div className="relative" ref={menuRef}>
             {isLoading ? null : user ? (
               <>
@@ -74,7 +88,7 @@ const Header = () => {
                       <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-400 mb-1">{t('header.account')}</p>
                       <div className="flex flex-col">
                         <span className="text-sm font-bold text-black truncate leading-tight">
-                          {user.first_name} {user.last_name}
+                          {user.username}
                         </span>
                         <span className="text-[11px] text-gray-500 truncate">{user.email}</span>
                       </div>
@@ -123,18 +137,6 @@ const Header = () => {
                 {t('header.login')}
               </Link>
             )}
-          </div>
-
-          {/* Кнопка теми та перемикач мови */}
-          <div className="hidden lg:flex items-center gap-2">
-            <button 
-              onClick={toggleTheme} 
-              className="p-2 text-zinc-400 hover:text-black hover:bg-zinc-100 rounded-lg transition-all"
-              aria-label="Toggle Theme"
-            >
-              {theme === 'dark' ? <Sun size={18} strokeWidth={2} /> : <Moon size={18} strokeWidth={2} />}
-            </button>
-            <LanguageSwitcher />
           </div>
 
           {/* Гамбургер для мобільних */}
