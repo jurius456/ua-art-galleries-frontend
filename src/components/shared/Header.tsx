@@ -162,33 +162,27 @@ const Header = () => {
       {/* ===== MOBILE MENU ===== */}
       {mobileMenuOpen && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[9999] flex justify-end">
-          {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-md animate-in fade-in duration-300"
             onClick={() => setMobileMenuOpen(false)}
           />
-
-          {/* Drawer */}
-          <div className="relative w-[85%] max-w-[320px] h-[100dvh] bg-white dark:bg-zinc-950 flex flex-col animate-in slide-in-from-right duration-300 rounded-l-[32px] border-l border-zinc-100 dark:border-zinc-800 shadow-[0_0_80px_rgba(0,0,0,0.3)] overflow-hidden">
-
-            {/* Header row */}
+          <div className="relative w-[85%] max-w-[320px] h-[100dvh] bg-white flex flex-col animate-in slide-in-from-right duration-300 rounded-l-[32px] border-l border-zinc-100 shadow-[0_0_80px_rgba(0,0,0,0.3)] overflow-hidden">
             <div className="flex items-center justify-between px-7 pt-8 pb-2">
               <Link
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500"
+                className="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-400"
               >
                 UA Galleries
               </Link>
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-9 h-9 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                className="w-9 h-9 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 hover:text-zinc-900 transition-colors"
               >
                 <X size={16} strokeWidth={2.5} />
               </button>
             </div>
 
-            {/* Nav links — vertically centered in remaining space */}
             <nav className="flex-1 flex flex-col justify-center px-7 gap-0">
               {[
                 { to: '/about', label: t('nav.about'), num: '01' },
@@ -200,23 +194,21 @@ const Header = () => {
                   key={to}
                   to={to}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="group flex items-baseline gap-4 py-[18px] border-b border-zinc-100 dark:border-zinc-800/70 last:border-none"
+                  className="group flex items-baseline gap-4 py-[18px] border-b border-zinc-100 last:border-none"
                 >
-                  <span className="text-[9px] font-black text-zinc-300 dark:text-zinc-700 tracking-widest shrink-0 mt-1">{num}</span>
-                  <span className="text-[26px] font-black uppercase tracking-tight leading-none text-zinc-800 dark:text-zinc-100 group-hover:text-zinc-400 dark:group-hover:text-zinc-500 transition-colors">
+                  <span className="text-[9px] font-black text-zinc-300 tracking-widest shrink-0 mt-1">{num}</span>
+                  <span className="text-[26px] font-black uppercase tracking-tight leading-none text-zinc-800 group-hover:text-zinc-400 transition-colors">
                     {label}
                   </span>
                 </Link>
               ))}
             </nav>
 
-            {/* Bottom controls */}
-            <div className="px-7 pt-5 pb-8 border-t border-zinc-100 dark:border-zinc-800 space-y-4">
-              {/* Theme + Language */}
+            <div className="px-7 pt-5 pb-8 border-t border-zinc-100 space-y-4">
               <div className="flex items-center justify-between">
                 <button
                   onClick={toggleTheme}
-                  className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors text-[11px] font-black uppercase tracking-wider"
+                  className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-100 text-zinc-600 hover:text-zinc-900 transition-colors text-[11px] font-black uppercase tracking-wider"
                 >
                   {theme === 'dark' ? <Sun size={14} strokeWidth={2.5} /> : <Moon size={14} strokeWidth={2.5} />}
                   {theme === 'dark' ? 'Light' : 'Dark'}
@@ -224,26 +216,25 @@ const Header = () => {
                 <LanguageSwitcher />
               </div>
 
-              {/* Profile / Login */}
               {!isLoading && (
                 user ? (
-                  <div className="flex items-center justify-between bg-zinc-50 dark:bg-zinc-900 rounded-2xl px-4 py-3">
+                  <div className="flex items-center justify-between bg-zinc-50 rounded-2xl px-4 py-3">
                     <Link
                       to="/settings/profile"
                       onClick={() => setMobileMenuOpen(false)}
                       className="flex items-center gap-3 min-w-0"
                     >
-                      <div className="w-8 h-8 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-full flex items-center justify-center text-[11px] font-black shrink-0">
+                      <div className="w-8 h-8 bg-zinc-900 text-white rounded-full flex items-center justify-center text-[11px] font-black shrink-0">
                         {(user.first_name || user.username)[0].toUpperCase()}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs font-black text-zinc-900 dark:text-zinc-100 leading-tight truncate">{user.first_name || user.username}</p>
+                        <p className="text-xs font-black text-zinc-900 leading-tight truncate">{user.first_name || user.username}</p>
                         <p className="text-[10px] text-zinc-400 truncate">{user.email}</p>
                       </div>
                     </Link>
                     <button
                       onClick={() => { logout(); setMobileMenuOpen(false); }}
-                      className="w-8 h-8 rounded-xl bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 hover:text-red-500 transition-colors shrink-0 ml-3"
+                      className="w-8 h-8 rounded-xl bg-zinc-200 flex items-center justify-center text-zinc-500 hover:text-red-500 transition-colors shrink-0 ml-3"
                     >
                       <LogOut size={14} />
                     </button>
@@ -252,7 +243,7 @@ const Header = () => {
                   <Link
                     to="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-2xl font-black uppercase tracking-[0.15em] text-[11px] text-center block transition-opacity hover:opacity-80"
+                    className="w-full py-4 bg-zinc-900 text-white rounded-2xl font-black uppercase tracking-[0.15em] text-[11px] text-center block transition-opacity hover:opacity-80"
                   >
                     {t('header.login')}
                   </Link>
