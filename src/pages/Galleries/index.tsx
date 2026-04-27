@@ -5,7 +5,7 @@ import { useGalleriesQuery } from "../../hooks/useGalleriesQuery";
 import { useFavorites } from "../../context/FavoritesContext";
 import type { Gallery } from "../../api/galleries";
 import { useTranslation } from 'react-i18next';
-import { getGalleryName, getGalleryCity } from "../../utils/gallery";
+import { getGalleryName, getGalleryCity, getGalleryAddress } from "../../utils/gallery";
 import { CustomSelect } from "../../components/shared/CustomSelect";
 
 const PER_PAGE = 18;
@@ -204,32 +204,49 @@ const GalleriesPage = () => {
 
       {/* PAGINATION */}
       {totalPages > 1 && (
-        <div className="mt-20 flex justify-center items-center gap-4">
+        <div className="mt-20 flex flex-wrap justify-center items-center gap-2 md:gap-4 px-6">
           <button
             disabled={page === 1}
-            onClick={() => setPage((p) => p - 1)}
-            className="p-2 rounded-full border disabled:opacity-30"
+            onClick={() => { setPage((p) => p - 1); window.scrollTo(0, 0); }}
+            className="p-2 rounded-full border border-zinc-200 disabled:opacity-30 hover:bg-zinc-50 transition-colors"
           >
             <ChevronLeft size={18} />
           </button>
 
-          {Array.from({ length: totalPages }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setPage(i + 1)}
-              className={`px-4 py-2 rounded-xl font-bold ${page === i + 1
-                ? "bg-zinc-900 text-white"
-                : "border border-zinc-200"
-                }`}
-            >
-              {i + 1}
-            </button>
-          ))}
+          <div className="flex items-center gap-1 md:gap-2">
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const pageNum = i + 1;
+              const isCurrent = page === pageNum;
+              
+              // Smart pagination for mobile: only show current, first, last, and neighbors
+              const isNear = Math.abs(page - pageNum) <= 1;
+              const isFirstOrLast = pageNum === 1 || pageNum === totalPages;
+              
+              if (!isNear && !isFirstOrLast && totalPages > 7) {
+                if (pageNum === 2 && page > 4) return <span key="dots-1" className="px-1 text-zinc-400">...</span>;
+                if (pageNum === totalPages - 1 && page < totalPages - 3) return <span key="dots-2" className="px-1 text-zinc-400">...</span>;
+                return null;
+              }
+
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => { setPage(pageNum); window.scrollTo(0, 0); }}
+                  className={`min-w-[36px] md:min-w-[44px] h-9 md:h-11 rounded-xl font-bold transition-all text-xs md:text-sm ${isCurrent
+                    ? "bg-zinc-900 text-white shadow-lg"
+                    : "border border-zinc-200 hover:border-zinc-900 text-zinc-600 hover:text-zinc-900"
+                    }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+          </div>
 
           <button
             disabled={page === totalPages}
-            onClick={() => setPage((p) => p + 1)}
-            className="p-2 rounded-full border disabled:opacity-30"
+            onClick={() => { setPage((p) => p + 1); window.scrollTo(0, 0); }}
+            className="p-2 rounded-full border border-zinc-200 disabled:opacity-30 hover:bg-zinc-50 transition-colors"
           >
             <ChevronRight size={18} />
           </button>
@@ -253,6 +270,7 @@ const GalleryCard = ({
   const { t, i18n } = useTranslation();
   const name = getGalleryName(gallery, i18n.language);
   const city = getGalleryCity(gallery, i18n.language);
+  const address = getGalleryAddress(gallery, i18n.language);
 
   return (
     <Link
@@ -289,9 +307,14 @@ const GalleryCard = ({
           {name}
         </h3>
 
-        <p className="text-xs uppercase tracking-widest text-zinc-400 mb-4">
-          {city}
-        </p>
+        <div className="space-y-1 mb-4">
+          <p className="text-[10px] font-black uppercase tracking-widest text-zinc-900">
+            {city}
+          </p>
+          <p className="text-[11px] text-zinc-400 font-medium leading-tight">
+            {address}
+          </p>
+        </div>
       </div>
 
       <div className="pt-4 border-t border-zinc-100 flex items-center justify-between">

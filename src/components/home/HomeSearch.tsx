@@ -11,6 +11,43 @@ const HomeSearch = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement | null>(null);
 
+  // Typewriter effect
+  const placeholders = [
+    "PinchukArtCentre",
+    "Nationale Art Museum",
+    "The Naked Room",
+    "Voloshyn Gallery",
+    "Ya Gallery",
+    "M17 Art Center",
+    "Gudimov Art Project"
+  ];
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [currentText, setCurrentText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const word = placeholders[placeholderIndex];
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        if (currentText.length < word.length) {
+          setCurrentText(word.substring(0, currentText.length + 1));
+        } else {
+          // Pause at the end of word
+          setTimeout(() => setIsDeleting(true), 1500);
+        }
+      } else {
+        if (currentText.length > 0) {
+          setCurrentText(word.substring(0, currentText.length - 1));
+        } else {
+          setIsDeleting(false);
+          setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+        }
+      }
+    }, isDeleting ? 50 : 100);
+
+    return () => clearTimeout(timeout);
+  }, [currentText, isDeleting, placeholderIndex, placeholders]);
+
   const { galleries, events, hasResults } = useGlobalSearch(searchQuery);
 
   useEffect(() => {
@@ -34,7 +71,7 @@ const HomeSearch = () => {
           </div>
           <input
             type="text"
-            placeholder={t('header.search')}
+            placeholder={searchQuery ? "" : `${t('header.search')} ${currentText}`}
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
