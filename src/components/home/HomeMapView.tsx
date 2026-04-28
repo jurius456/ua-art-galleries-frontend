@@ -20,7 +20,7 @@ import { useTheme } from '../../hooks/useTheme';
 
 /* ===================== MAP CONSTANTS ===================== */
 
-const INITIAL_CENTER: [number, number] = [48.3794, 31.1656]; // Geometric center of Ukraine
+const INITIAL_CENTER: [number, number] = [49.1, 31.1656]; // Slightly north of geometric center
 const INITIAL_ZOOM = 6;
 
 /* ===================== MAP REF CONTROLLER ===================== */
@@ -198,6 +198,7 @@ const HomeMapView = () => {
             zoom={INITIAL_ZOOM}
             className="h-full w-full z-0"
             zoomControl={false}
+            attributionControl={false}
           >
             <TileLayer 
               key={theme}
