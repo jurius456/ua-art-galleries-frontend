@@ -236,23 +236,24 @@ const HomeMapView = () => {
                     }}
                   >
                     <Popup closeButton={false} className="custom-popup">
-                      <div className="p-4 space-y-3 min-w-[220px]">
+                      <div className="p-5 space-y-3" style={{ minWidth: 240 }}>
                         <div>
-                          <h4 className="font-black text-zinc-800 text-lg leading-tight">{name}</h4>
-                          <p className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-400 uppercase mt-1">
+                          <h4 className="font-black text-base leading-tight" style={{ color: 'rgb(var(--color-text))' }}>{name}</h4>
+                          <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase mt-1.5" style={{ color: 'rgb(var(--color-zinc-400))' }}>
                             <MapPin size={10} /> {city}
                           </p>
                         </div>
 
                         {shortDesc && (
-                          <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
+                          <p className="text-xs line-clamp-2 leading-relaxed" style={{ color: 'rgb(var(--color-zinc-500))' }}>
                             {shortDesc}
                           </p>
                         )}
 
                         <Link
                           to={`/galleries/${g.slug}`}
-                          className="flex items-center justify-center gap-2 py-2.5 bg-zinc-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-600 transition-colors"
+                          className="flex items-center justify-center gap-2 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors"
+                          style={{ background: '#2563EB', color: '#ffffff' }}
                         >
                           {t('home.map.open')} <ArrowRight size={12} />
                         </Link>
