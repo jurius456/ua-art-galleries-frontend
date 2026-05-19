@@ -31,6 +31,17 @@ export type Gallery = {
   updated_at: string;
 };
 
+export type Exhibition = {
+  id: number;
+  title: string;
+  description: string;
+  start_date: string;
+  end_date: string | null;
+  source_url: string;
+  is_active: boolean;
+  artists: string;
+};
+
 export type GalleryDetail = Gallery & {
   full_description_ua: Document | string;
   full_description_en: Document | string;
@@ -40,6 +51,7 @@ export type GalleryDetail = Gallery & {
   curators_en: string | null;
   artists_ua: string | null;
   artists_en: string | null;
+  exhibitions?: Exhibition[];
 };
 
 // GET /api/galleries/
