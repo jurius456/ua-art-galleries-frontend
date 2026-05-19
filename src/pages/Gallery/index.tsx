@@ -194,9 +194,35 @@ const GalleryPage = () => {
                     <Calendar size={24} className="text-zinc-400" />
                     {t('gallery.exhibitions')}
                   </h3>
-                  <div className="p-12 bg-zinc-50 rounded-[32px] text-center border border-dashed border-zinc-200">
-                    <p className="text-zinc-400 font-medium">{t('gallery.noExhibitions')}</p>
-                  </div>
+                  {gallery.exhibitions && gallery.exhibitions.length > 0 ? (
+                    <div className="grid grid-cols-1 gap-6">
+                      {gallery.exhibitions.map((exhibition) => (
+                        <div key={exhibition.id} className="p-8 bg-zinc-50 rounded-[32px] border border-zinc-100 hover:border-zinc-300 transition-colors">
+                          <h4 className="text-xl font-black text-zinc-900 mb-2 uppercase">{exhibition.title}</h4>
+                          <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
+                            <span>{new Date(exhibition.start_date).toLocaleDateString()} — {exhibition.end_date ? new Date(exhibition.end_date).toLocaleDateString() : '...'}</span>
+                          </div>
+                          {exhibition.artists && (
+                            <p className="text-sm font-bold text-zinc-600 mb-4 uppercase">{exhibition.artists}</p>
+                          )}
+                          <p className="text-zinc-600 font-medium leading-relaxed mb-6">{exhibition.description}</p>
+                          <a 
+                            href={exhibition.source_url} 
+                            target="_blank" 
+                            rel="noreferrer" 
+                            className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-900 hover:text-blue-600 transition-colors border-b border-zinc-900 hover:border-blue-600 pb-1"
+                          >
+                            <ExternalLink size={12} />
+                            {t('gallery.sourceLink') || 'Джерело'}
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-12 bg-zinc-50 rounded-[32px] text-center border border-dashed border-zinc-200">
+                      <p className="text-zinc-400 font-medium">{t('gallery.noExhibitions')}</p>
+                    </div>
+                  )}
                 </section>
 
                 <section>
