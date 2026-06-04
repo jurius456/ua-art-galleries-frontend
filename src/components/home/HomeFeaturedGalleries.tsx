@@ -1,4 +1,4 @@
-import { ArrowRight, MapPin } from 'lucide-react';
+import { ArrowRight, MapPin, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useGalleriesQuery } from '../../hooks/useGalleriesQuery';
@@ -57,7 +57,7 @@ const HomeFeaturedGalleries = () => {
 
               {/* Top: Specialization & Badge */}
               <div className="relative z-10 flex justify-between items-start">
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 items-center">
                   {specialization && (
                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 border border-zinc-200 px-3 py-1.5 rounded-full bg-white">
                       {/* Temporary Frontend Translation Fix */}
@@ -66,6 +66,16 @@ const HomeFeaturedGalleries = () => {
                           specialization}
                     </span>
                   )}
+                  {(() => {
+                    const avgRating = gallery.average_rating ?? gallery.rating_avg ?? gallery.avg_rating ?? gallery.rating;
+                    if (avgRating === undefined || avgRating === null || Number(avgRating) <= 0) return null;
+                    return (
+                      <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-amber-700 border border-amber-200 px-3 py-1.5 rounded-full bg-amber-50/50">
+                        <Star size={10} className="text-amber-500 fill-amber-500" />
+                        {Number(avgRating).toFixed(1)}
+                      </span>
+                    );
+                  })()}
                 </div>
                 <div className="w-8 h-8 rounded-full bg-white border border-zinc-100 flex items-center justify-center group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300">
                   <ArrowRight size={14} />

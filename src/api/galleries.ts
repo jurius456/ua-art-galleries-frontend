@@ -29,6 +29,12 @@ export type Gallery = {
   longitude?: number;
   created_at: string;
   updated_at: string;
+  average_rating?: number;
+  rating_avg?: number;
+  avg_rating?: number;
+  rating?: number;
+  reviews_count?: number;
+  review_count?: number;
 };
 
 export type Exhibition = {

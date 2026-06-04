@@ -361,38 +361,26 @@ const GalleryPage = () => {
               })()}
 
               {/* Leave Review Form */}
-              <div className="bg-white border border-zinc-100 rounded-[32px] p-8 shadow-sm space-y-6">
-                <h4 className="text-lg font-black uppercase text-zinc-800 tracking-tight flex items-center gap-2 border-b border-zinc-50 pb-4">
-                  {t('gallery.leaveReview')}
-                </h4>
+              {(!isAuth || !reviews.some(r => r.username === user?.username)) && (
+                <div className="bg-white border border-zinc-100 rounded-[32px] p-8 shadow-sm space-y-6">
+                  <h4 className="text-lg font-black uppercase text-zinc-800 tracking-tight flex items-center gap-2 border-b border-zinc-50 pb-4">
+                    {t('gallery.leaveReview')}
+                  </h4>
 
-                {!isAuth ? (
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 bg-zinc-50 rounded-2xl border border-zinc-100">
-                    <div className="flex items-center gap-3">
-                      <Lock size={18} className="text-zinc-400" />
-                      <p className="text-sm font-semibold text-zinc-500">{t('gallery.loginToLeaveReview')}</p>
-                    </div>
-                    <button
-                      onClick={() => navigate('/login')}
-                      className="px-6 py-3 bg-zinc-950 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-zinc-800 transition-colors shadow-md text-center"
-                    >
-                      {t('gallery.loginBtnShort')}
-                    </button>
-                  </div>
-                ) : (() => {
-                  const hasReviewed = reviews.some(r => r.username === user?.username);
-
-                  if (hasReviewed) {
-                    return (
-                      <div className="p-6 bg-zinc-50 rounded-2xl border border-zinc-100 text-center">
-                        <p className="text-sm font-semibold text-zinc-500">
-                          {t('gallery.alreadyReviewed')}
-                        </p>
+                  {!isAuth ? (
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 bg-zinc-50 rounded-2xl border border-zinc-100">
+                      <div className="flex items-center gap-3">
+                        <Lock size={18} className="text-zinc-400" />
+                        <p className="text-sm font-semibold text-zinc-500">{t('gallery.loginToLeaveReview')}</p>
                       </div>
-                    );
-                  }
-
-                  return (
+                      <button
+                        onClick={() => navigate('/login')}
+                        className="px-6 py-3 bg-zinc-950 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-zinc-800 transition-colors shadow-md text-center"
+                      >
+                        {t('gallery.loginBtnShort')}
+                      </button>
+                    </div>
+                  ) : (
                     <form onSubmit={handleSubmitReview} className="space-y-6">
                       <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase text-zinc-400 tracking-widest block">
@@ -462,9 +450,9 @@ const GalleryPage = () => {
                         )}
                       </button>
                     </form>
-                  );
-                })()}
-              </div>
+                  )}
+                </div>
+              )}
 
               {/* Reviews List */}
               <div className="space-y-6">

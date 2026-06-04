@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Search, MapPin, Calendar } from "lucide-react";
+import { Search, MapPin, Calendar, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useGlobalSearch } from "../../hooks/useGlobalSearch";
 import { getGalleryName, getGalleryCity } from "../../utils/gallery";
@@ -111,7 +111,19 @@ const HomeSearch = () => {
                               {name && name.length > 0 ? name[0].toUpperCase() : '?'}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-base font-bold text-zinc-900 truncate">{name}</p>
+                              <div className="flex items-center justify-between gap-2">
+                                <p className="text-base font-bold text-zinc-900 truncate">{name}</p>
+                                {(() => {
+                                  const avgRating = g.average_rating ?? g.rating_avg ?? g.avg_rating ?? g.rating;
+                                  if (avgRating === undefined || avgRating === null || Number(avgRating) <= 0) return null;
+                                  return (
+                                    <span className="flex items-center gap-1 text-[10px] font-black text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full shrink-0">
+                                      <Star size={10} className="fill-amber-400 text-amber-400" />
+                                      {Number(avgRating).toFixed(1)}
+                                    </span>
+                                  );
+                                })()}
+                              </div>
                               <p className="flex items-center gap-1.5 text-xs text-zinc-500 mt-1">
                                 <MapPin size={12} /> {city}
                               </p>
