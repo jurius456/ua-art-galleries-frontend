@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, MapPin, Mail, Phone, Globe, Instagram, Facebook, Twitter, Youtube, Linkedin, Lock, Clock, Calendar, BadgeCheck, Ban, Heart, Info, Users, ExternalLink } from "lucide-react";
+import { ArrowLeft, MapPin, Mail, Phone, Globe, Instagram, Facebook, Twitter, Youtube, Linkedin, Lock, Clock, Calendar, BadgeCheck, Ban, Heart, Info, Users, ExternalLink, Star, MessageSquare } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
 import { useFavorites } from "../../context/FavoritesContext";
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import type { Document } from '@contentful/rich-text-types';
 
-import { fetchGalleryBySlug } from "../../api/galleries";
-import type { GalleryDetail } from "../../api/galleries";
+import { fetchGalleryBySlug, fetchGalleryReviews, createGalleryReview } from "../../api/galleries";
+import type { GalleryDetail, Review } from "../../api/galleries";
 import {
   getGalleryName,
   getGalleryCity,
@@ -20,7 +20,7 @@ import {
 } from "../../utils/gallery";
 import GalleryMap from "../../components/gallery/GalleryMap";
 
-const getSocialLinkDetails = (url: string, t: any) => {
+const getSocialLinkDetails = (url: string, t: (key: string) => string) => {
   if (!url) return { icon: Globe, name: t('gallery.socialNetwork') };
   const lowerUrl = url.toLowerCase();
   if (lowerUrl.includes('instagram.com')) return { icon: Instagram, name: 'Instagram' };
@@ -36,13 +36,22 @@ const getSocialLinkDetails = (url: string, t: any) => {
 const GalleryPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { t, i18n } = useTranslation();
-  const { isAuth } = useAuth();
+  const { isAuth, user } = useAuth();
   const { isFavorite, toggleFavorite } = useFavorites();
   const navigate = useNavigate();
 
   const [gallery, setGallery] = useState<GalleryDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [newRating, setNewRating] = useState(5);
+  const [hoveredRating, setHoveredRating] = useState(0);
+  const [newText, setNewText] = useState("");
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -53,12 +62,49 @@ const GalleryPage = () => {
 
     setLoading(true);
     setError(false);
+    setLoadingReviews(true);
+    setSubmitSuccess(false);
+    setSubmitError(null);
 
     fetchGalleryBySlug(slug)
       .then(setGallery)
       .catch(() => setError(true))
       .finally(() => setLoading(false));
+
+    fetchGalleryReviews(slug)
+      .then(setReviews)
+      .catch((err) => console.error("Error fetching reviews:", err))
+      .finally(() => setLoadingReviews(false));
   }, [slug]);
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!slug) return;
+    if (newRating < 1 || newRating > 5) {
+      setSubmitError(t("gallery.reviewError"));
+      return;
+    }
+
+    setSubmittingReview(true);
+    setSubmitError(null);
+    setSubmitSuccess(false);
+
+    try {
+      const data = await createGalleryReview(slug, {
+        rating: newRating,
+        text: newText,
+      });
+      setReviews((prev) => [data, ...prev]);
+      setNewText("");
+      setNewRating(5);
+      setSubmitSuccess(true);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setSubmitError(message || t("gallery.reviewError"));
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -243,6 +289,240 @@ const GalleryPage = () => {
               </div>
             </div>
 
+            {/* Reviews Section */}
+            <div className="pt-16 border-t border-zinc-200 mt-16 space-y-12">
+              <div className="flex items-center justify-between border-b border-zinc-100 pb-6">
+                <h3 className="text-2xl font-black uppercase flex items-center gap-3">
+                  <MessageSquare size={24} className="text-zinc-400" />
+                  {t('gallery.reviews')}
+                </h3>
+                {reviews.length > 0 && (
+                  <span className="text-[11px] font-black uppercase tracking-widest text-zinc-400 bg-zinc-50 px-4 py-2 rounded-full border border-zinc-100">
+                    {t('gallery.basedOnReviews', { count: reviews.length })}
+                  </span>
+                )}
+              </div>
+
+              {/* Reviews Summary Stats */}
+              {reviews.length > 0 && (() => {
+                const totalRating = reviews.reduce((sum, r) => sum + r.rating, 0);
+                const avgRating = (totalRating / reviews.length).toFixed(1);
+                
+                // Count stars distribution (1 to 5)
+                const distribution = [0, 0, 0, 0, 0];
+                reviews.forEach(r => {
+                  if (r.rating >= 1 && r.rating <= 5) {
+                    distribution[r.rating - 1]++;
+                  }
+                });
+
+                return (
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-8 bg-zinc-50 p-8 rounded-[32px] border border-zinc-100">
+                    <div className="md:col-span-4 flex flex-col items-center justify-center text-center md:border-r md:border-zinc-200/60 pr-0 md:pr-8 py-2">
+                      <span className="text-6xl font-black text-zinc-800 tracking-tight">{avgRating}</span>
+                      <div className="flex items-center gap-1 mt-2">
+                        {[1, 2, 3, 4, 5].map((star) => {
+                          const filled = star <= Math.round(Number(avgRating));
+                          return (
+                            <Star
+                              key={star}
+                              size={18}
+                              className={filled ? "text-amber-400 fill-amber-400" : "text-zinc-200"}
+                            />
+                          );
+                        })}
+                      </div>
+                      <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-4">
+                        {reviews.length} {t('gallery.reviews').toLowerCase()}
+                      </span>
+                    </div>
+
+                    <div className="md:col-span-8 space-y-2 flex flex-col justify-center">
+                      {[5, 4, 3, 2, 1].map((stars) => {
+                        const count = distribution[stars - 1];
+                        const percentage = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+                        return (
+                          <div key={stars} className="flex items-center gap-3 text-xs font-bold text-zinc-500">
+                            <span className="w-3 text-right">{stars}</span>
+                            <Star size={12} className="text-amber-400 fill-amber-400 shrink-0" />
+                            <div className="flex-grow h-2 bg-zinc-200/55 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-amber-400 rounded-full transition-all duration-500"
+                                style={{ width: `${percentage}%` }}
+                              />
+                            </div>
+                            <span className="w-8 text-right text-[10px] font-bold text-zinc-400">{count}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Leave Review Form */}
+              <div className="bg-white border border-zinc-100 rounded-[32px] p-8 shadow-sm space-y-6">
+                <h4 className="text-lg font-black uppercase text-zinc-800 tracking-tight flex items-center gap-2 border-b border-zinc-50 pb-4">
+                  {t('gallery.leaveReview')}
+                </h4>
+
+                {!isAuth ? (
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 bg-zinc-50 rounded-2xl border border-zinc-100">
+                    <div className="flex items-center gap-3">
+                      <Lock size={18} className="text-zinc-400" />
+                      <p className="text-sm font-semibold text-zinc-500">{t('gallery.loginToLeaveReview')}</p>
+                    </div>
+                    <button
+                      onClick={() => navigate('/login')}
+                      className="px-6 py-3 bg-zinc-950 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-zinc-800 transition-colors shadow-md text-center"
+                    >
+                      {t('gallery.loginBtnShort')}
+                    </button>
+                  </div>
+                ) : (() => {
+                  const hasReviewed = reviews.some(r => r.username === user?.username);
+
+                  if (hasReviewed) {
+                    return (
+                      <div className="p-6 bg-zinc-50 rounded-2xl border border-zinc-100 text-center">
+                        <p className="text-sm font-semibold text-zinc-500">
+                          {t('gallery.alreadyReviewed')}
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <form onSubmit={handleSubmitReview} className="space-y-6">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase text-zinc-400 tracking-widest block">
+                          {t('gallery.rating')}
+                        </label>
+                        <div className="flex items-center gap-2">
+                          {[1, 2, 3, 4, 5].map((star) => {
+                            const isHighlighted = star <= (hoveredRating || newRating);
+                            return (
+                              <button
+                                type="button"
+                                key={star}
+                                onClick={() => setNewRating(star)}
+                                onMouseEnter={() => setHoveredRating(star)}
+                                onMouseLeave={() => setHoveredRating(0)}
+                                className="focus:outline-none transition-transform hover:scale-110 active:scale-95 duration-100"
+                              >
+                                <Star
+                                  size={32}
+                                  className={`transition-colors duration-150 ${
+                                    isHighlighted
+                                      ? "text-amber-400 fill-amber-400"
+                                      : "text-zinc-200 fill-transparent hover:text-amber-300"
+                                  }`}
+                                />
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <textarea
+                          rows={4}
+                          value={newText}
+                          onChange={(e) => setNewText(e.target.value)}
+                          placeholder={t('gallery.reviewPlaceholder')}
+                          required
+                          className="w-full px-5 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-sm font-medium text-zinc-800 placeholder-zinc-400 focus:outline-none focus:border-zinc-300 focus:bg-white transition-all resize-none"
+                        />
+                      </div>
+
+                      {submitError && (
+                        <div className="p-4 bg-red-50 text-red-600 rounded-xl text-xs font-semibold border border-red-100 animate-in fade-in">
+                          {submitError}
+                        </div>
+                      )}
+
+                      {submitSuccess && (
+                        <div className="p-4 bg-green-50 text-green-600 rounded-xl text-xs font-semibold border border-green-100 animate-in fade-in">
+                          {t('gallery.reviewSuccess')}
+                        </div>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={submittingReview}
+                        className="w-full py-4 bg-zinc-950 text-white rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-zinc-800 disabled:opacity-50 transition-colors shadow-lg flex items-center justify-center gap-2"
+                      >
+                        {submittingReview ? (
+                          <>
+                            <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            {t('gallery.submitting')}
+                          </>
+                        ) : (
+                          t('gallery.submitReview')
+                        )}
+                      </button>
+                    </form>
+                  );
+                })()}
+              </div>
+
+              {/* Reviews List */}
+              <div className="space-y-6">
+                {loadingReviews ? (
+                  <div className="flex justify-center py-12">
+                    <div className="w-6 h-6 border-2 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
+                  </div>
+                ) : reviews.length === 0 ? (
+                  <div className="p-12 bg-zinc-50 rounded-[32px] text-center border border-dashed border-zinc-200">
+                    <p className="text-zinc-400 font-medium text-sm">{t('gallery.noReviews')}</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {reviews.map((review) => (
+                      <div
+                        key={review.id}
+                        className="p-6 bg-white border border-zinc-100 rounded-[28px] shadow-sm space-y-4 hover:border-zinc-200 transition-all duration-300 animate-in fade-in slide-in-from-bottom-2"
+                      >
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center font-bold text-zinc-700 text-sm border border-zinc-200/50 uppercase select-none">
+                              {review.username ? review.username[0] : "?"}
+                            </div>
+                            <div>
+                              <p className="font-bold text-zinc-800 text-sm leading-none">{review.username}</p>
+                              <span className="text-[10px] text-zinc-400 font-medium">
+                                {new Date(review.created_at).toLocaleDateString(
+                                  i18n.language === "uk" ? "uk-UA" : "en-US",
+                                  { year: "numeric", month: "long", day: "numeric" }
+                                )}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-0.5">
+                            {[1, 2, 3, 4, 5].map((star) => {
+                              const filled = star <= review.rating;
+                              return (
+                                <Star
+                                  key={star}
+                                  size={14}
+                                  className={filled ? "text-amber-400 fill-amber-400" : "text-zinc-100"}
+                                />
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        <p className="text-zinc-600 text-sm font-medium leading-relaxed whitespace-pre-wrap pl-1">
+                          {review.text}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
           </div>
 
           {/* Sidebar */}
@@ -329,7 +609,7 @@ const GalleryPage = () => {
                           } else {
                             links = [parsed.toString()];
                           }
-                        } catch (e) {
+                        } catch {
                           links = (gallery.social_links as string).split(',').map((s: string) => s.trim()).filter(Boolean);
                         }
                       } else if (typeof gallery.social_links === 'object') {

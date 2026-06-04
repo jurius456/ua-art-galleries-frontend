@@ -65,3 +65,29 @@ export async function fetchGalleries(): Promise<Gallery[]> {
 export function fetchGalleryBySlug(slug: string) {
   return http<GalleryDetail>(`/api/galleries/${slug}/`);
 }
+
+export type Review = {
+  id: number;
+  user: number;
+  username: string;
+  rating: number;
+  text: string;
+  created_at: string;
+};
+
+// GET /api/galleries/:slug/reviews/
+export function fetchGalleryReviews(slug: string): Promise<Review[]> {
+  return http<Review[]>(`/api/galleries/${slug}/reviews/`);
+}
+
+// POST /api/galleries/:slug/reviews/
+export function createGalleryReview(
+  slug: string,
+  payload: { rating: number; text: string }
+): Promise<Review> {
+  return http<Review>(`/api/galleries/${slug}/reviews/`, {
+    method: "POST",
+    auth: true,
+    body: payload,
+  });
+}
