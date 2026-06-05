@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import { SlidersHorizontal, X, Star, ChevronDown } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { SlidersHorizontal, X, Star, ChevronDown, ArrowUpDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+
+interface Option { value: string; label: string; }
 
 interface MultiFilterPanelProps {
   cities: string[];
@@ -9,10 +11,13 @@ interface MultiFilterPanelProps {
   selectedYears: string[];
   selectedStatuses: string[];
   minRating: number;
+  sortValue: string;
+  sortOptions: Option[];
   onCitiesChange: (v: string[]) => void;
   onYearsChange: (v: string[]) => void;
   onStatusesChange: (v: string[]) => void;
   onMinRatingChange: (v: number) => void;
+  onSortChange: (v: string) => void;
   onReset: () => void;
 }
 
@@ -20,22 +25,16 @@ function toggle(arr: string[], item: string): string[] {
   return arr.includes(item) ? arr.filter(i => i !== item) : [...arr, item];
 }
 
-const Chip = ({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) => (
+/* ── Sub-components ── */
+
+const Chip = ({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) => (
   <button
     type="button"
     onClick={onClick}
     className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider border transition-all duration-150 whitespace-nowrap select-none
       ${active
-        ? 'bg-zinc-900 border-zinc-900 text-white shadow-sm scale-[1.02]'
-        : 'bg-white border-zinc-200 text-zinc-500 hover:border-zinc-500 hover:text-zinc-900 hover:scale-[1.01]'
+        ? 'bg-zinc-900 dark:bg-white border-zinc-900 dark:border-white text-white dark:text-zinc-900 shadow-sm'
+        : 'bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:border-zinc-500 dark:hover:border-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100'
       }`}
   >
     {label}
@@ -43,13 +42,10 @@ const Chip = ({
 );
 
 const ActiveChip = ({ label, onRemove }: { label: string; onRemove: () => void }) => (
-  <span className="flex items-center gap-1.5 pl-3 pr-2 py-1 rounded-full bg-zinc-100 border border-zinc-200 text-[11px] font-bold text-zinc-700">
+  <span className="flex items-center gap-1 pl-2.5 pr-1.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[11px] font-bold text-zinc-700 dark:text-zinc-300 whitespace-nowrap">
     {label}
-    <button
-      type="button"
-      onClick={onRemove}
-      className="w-4 h-4 rounded-full flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:bg-zinc-200 transition-colors"
-    >
+    <button type="button" onClick={onRemove}
+      className="w-4 h-4 rounded-full flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
       <X size={9} />
     </button>
   </span>
@@ -57,119 +53,169 @@ const ActiveChip = ({ label, onRemove }: { label: string; onRemove: () => void }
 
 const FilterSection = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div className="space-y-3">
-    <p className="text-[9px] font-black uppercase tracking-[0.25em] text-zinc-400">{label}</p>
+    <p className="text-[9px] font-black uppercase tracking-[0.25em] text-zinc-400 dark:text-zinc-500">{label}</p>
     {children}
   </div>
 );
 
+/* ── Main component ── */
+
 export const MultiFilterPanel = ({
-  cities,
-  years,
-  selectedCities,
-  selectedYears,
-  selectedStatuses,
-  minRating,
-  onCitiesChange,
-  onYearsChange,
-  onStatusesChange,
-  onMinRatingChange,
+  cities, years,
+  selectedCities, selectedYears, selectedStatuses, minRating,
+  sortValue, sortOptions,
+  onCitiesChange, onYearsChange, onStatusesChange, onMinRatingChange, onSortChange,
   onReset,
 }: MultiFilterPanelProps) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const [sortOpen, setSortOpen] = useState(false);
   const [hoveredStar, setHoveredStar] = useState(0);
+  const sortRef = useRef<HTMLDivElement>(null);
+
+  // Close sort dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
+        setSortOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   const activeCount =
-    selectedCities.length +
-    selectedYears.length +
-    selectedStatuses.length +
-    (minRating > 0 ? 1 : 0);
-
+    selectedCities.length + selectedYears.length + selectedStatuses.length + (minRating > 0 ? 1 : 0);
   const hasActive = activeCount > 0;
+  const currentSortLabel = sortOptions.find(o => o.value === sortValue)?.label ?? '';
 
   return (
     <div className="space-y-3 w-full">
-      {/* ── Trigger row ── */}
-      <div className="flex flex-wrap items-center gap-2">
-        {/* Filter toggle button */}
+
+      {/* ══ Unified trigger bar ══ */}
+      <div className={`flex items-center gap-0 w-full h-[56px] rounded-2xl border bg-white dark:bg-zinc-900 transition-all duration-200 overflow-hidden
+        ${open
+          ? 'border-zinc-900 dark:border-zinc-500 shadow-md'
+          : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
+        }`}
+      >
+        {/* Filter toggle */}
         <button
           type="button"
           onClick={() => setOpen(o => !o)}
-          className={`flex items-center gap-2 h-[56px] px-5 rounded-2xl border font-bold text-sm transition-all duration-200 shrink-0
+          className={`flex items-center gap-2 h-full pl-5 pr-4 shrink-0 font-bold text-sm transition-colors
             ${open
-              ? 'border-zinc-900 bg-zinc-900 text-white shadow-md'
-              : hasActive
-                ? 'border-zinc-900 bg-white text-zinc-900'
-                : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-400 hover:text-zinc-900'
+              ? 'text-zinc-900 dark:text-zinc-100'
+              : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
             }`}
         >
           <SlidersHorizontal size={15} />
-          <span>{t('galleries.filters')}</span>
+          <span className="hidden sm:inline">{t('galleries.filters')}</span>
           {activeCount > 0 && (
-            <span className={`min-w-[20px] h-5 rounded-full text-[10px] font-black flex items-center justify-center px-1.5
-              ${open ? 'bg-white text-zinc-900' : 'bg-zinc-900 text-white'}`}>
+            <span className="min-w-[20px] h-5 rounded-full text-[10px] font-black flex items-center justify-center px-1.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900">
               {activeCount}
             </span>
           )}
-          <ChevronDown
-            size={14}
-            className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
-          />
+          <ChevronDown size={14} className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
         </button>
 
-        {/* Active filter chips inline */}
-        {hasActive && (
-          <>
-            {selectedCities.map(c => (
-              <ActiveChip key={`city-${c}`} label={c} onRemove={() => onCitiesChange(toggle(selectedCities, c))} />
-            ))}
-            {selectedStatuses.map(s => (
-              <ActiveChip
-                key={`status-${s}`}
-                label={s === 'active' ? t('gallery.active') : t('gallery.inactive')}
-                onRemove={() => onStatusesChange(toggle(selectedStatuses, s))}
-              />
-            ))}
-            {selectedYears.map(y => (
-              <ActiveChip key={`year-${y}`} label={y} onRemove={() => onYearsChange(toggle(selectedYears, y))} />
-            ))}
-            {minRating > 0 && (
-              <ActiveChip label={`★ ${minRating}+`} onRemove={() => onMinRatingChange(0)} />
-            )}
-            <button
-              type="button"
-              onClick={onReset}
-              className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-900 transition-colors border-b border-dashed border-zinc-300 hover:border-zinc-900 pb-px ml-1"
-            >
-              {t('galleries.clearAll')}
-            </button>
-          </>
-        )}
+        {/* Divider */}
+        <div className="w-px h-6 bg-zinc-200 dark:bg-zinc-700 shrink-0" />
+
+        {/* Active chips — horizontally scrollable */}
+        <div className="flex-1 flex items-center gap-2 px-3 overflow-x-auto
+          [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          {hasActive ? (
+            <>
+              {selectedCities.map(c => (
+                <ActiveChip key={`c-${c}`} label={c} onRemove={() => onCitiesChange(toggle(selectedCities, c))} />
+              ))}
+              {selectedStatuses.map(s => (
+                <ActiveChip
+                  key={`s-${s}`}
+                  label={s === 'active' ? t('gallery.active') : t('gallery.inactive')}
+                  onRemove={() => onStatusesChange(toggle(selectedStatuses, s))}
+                />
+              ))}
+              {selectedYears.map(y => (
+                <ActiveChip key={`y-${y}`} label={y} onRemove={() => onYearsChange(toggle(selectedYears, y))} />
+              ))}
+              {minRating > 0 && (
+                <ActiveChip label={`★ ${minRating}+`} onRemove={() => onMinRatingChange(0)} />
+              )}
+              <button
+                type="button"
+                onClick={onReset}
+                className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors whitespace-nowrap border-b border-dashed border-zinc-300 dark:border-zinc-600 hover:border-zinc-900 dark:hover:border-zinc-300 pb-px ml-1 shrink-0"
+              >
+                {t('galleries.clearAll')}
+              </button>
+            </>
+          ) : (
+            <span className="text-[12px] text-zinc-300 dark:text-zinc-600 select-none">
+              {t('galleries.noActiveFilters', 'Фільтри не застосовано')}
+            </span>
+          )}
+        </div>
+
+        {/* Divider */}
+        <div className="w-px h-6 bg-zinc-200 dark:bg-zinc-700 shrink-0" />
+
+        {/* Inline sort */}
+        <div className="relative shrink-0" ref={sortRef}>
+          <button
+            type="button"
+            onClick={() => setSortOpen(o => !o)}
+            className="flex items-center gap-2 h-full px-5 text-[12px] font-bold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors whitespace-nowrap"
+          >
+            <ArrowUpDown size={13} className="text-zinc-400 dark:text-zinc-500" />
+            <span className="hidden sm:inline">{currentSortLabel}</span>
+            <ChevronDown size={12} className={`transition-transform duration-200 ${sortOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {sortOpen && (
+            <div className="absolute top-full right-0 mt-2 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-2xl shadow-xl py-2 z-50 w-52 animate-in fade-in zoom-in-95 duration-150">
+              {sortOptions.map(opt => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => { onSortChange(opt.value); setSortOpen(false); }}
+                  className={`w-full text-left px-5 py-2.5 text-[12px] font-bold transition-colors flex items-center justify-between
+                    ${opt.value === sortValue
+                      ? 'text-zinc-900 dark:text-zinc-100 bg-zinc-50 dark:bg-zinc-800'
+                      : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+                    }`}
+                >
+                  {opt.label}
+                  {opt.value === sortValue && <div className="w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-white" />}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* ── Expandable filter panel ── */}
+      {/* ══ Expandable filter panel ══ */}
       {open && (
-        <div className="rounded-[28px] border border-zinc-100 bg-white shadow-[0_12px_48px_rgb(0,0,0,0.07)] p-7 space-y-7 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="rounded-[28px] border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-[0_12px_48px_rgb(0,0,0,0.07)] dark:shadow-[0_12px_48px_rgb(0,0,0,0.3)] p-6 space-y-6 animate-in fade-in slide-in-from-top-2 duration-200">
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
+          {/* Cities */}
+          {cities.length > 0 && (
+            <FilterSection label={t('galleries.cityFilter')}>
+              <div className="flex flex-wrap gap-2">
+                {cities.map(c => (
+                  <Chip
+                    key={c} label={c}
+                    active={selectedCities.includes(c)}
+                    onClick={() => onCitiesChange(toggle(selectedCities, c))}
+                  />
+                ))}
+              </div>
+            </FilterSection>
+          )}
 
-            {/* Cities */}
-            {cities.length > 0 && (
-              <FilterSection label={t('galleries.cityFilter')}>
-                <div className="flex flex-wrap gap-2">
-                  {cities.map(c => (
-                    <Chip
-                      key={c}
-                      label={c}
-                      active={selectedCities.includes(c)}
-                      onClick={() => onCitiesChange(toggle(selectedCities, c))}
-                    />
-                  ))}
-                </div>
-              </FilterSection>
-            )}
-
-            {/* Status */}
+          {/* Status + Rating in one row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6 border-t border-zinc-50 dark:border-zinc-800">
             <FilterSection label={t('galleries.statusFilter')}>
               <div className="flex flex-wrap gap-2">
                 {(['active', 'inactive'] as const).map(s => (
@@ -183,15 +229,10 @@ export const MultiFilterPanel = ({
               </div>
             </FilterSection>
 
-          </div>
-
-          {/* Rating */}
-          <div className="border-t border-zinc-50 pt-6">
             <FilterSection label={t('galleries.minRating')}>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map(star => {
                   const active = star <= (hoveredStar || minRating);
-                  const selected = star <= minRating;
                   return (
                     <button
                       key={star}
@@ -200,43 +241,32 @@ export const MultiFilterPanel = ({
                       onMouseEnter={() => setHoveredStar(star)}
                       onMouseLeave={() => setHoveredStar(0)}
                       className="focus:outline-none transition-transform hover:scale-110 active:scale-95 duration-100"
-                      aria-label={`${star} stars minimum`}
                     >
                       <Star
-                        size={30}
+                        size={26}
                         className={`transition-colors duration-100 ${
-                          active
-                            ? 'text-amber-400 fill-amber-400'
-                            : 'text-zinc-200 fill-zinc-100'
-                        } ${selected ? 'drop-shadow-sm' : ''}`}
+                          active ? 'text-amber-400 fill-amber-400' : 'text-zinc-200 dark:text-zinc-700 fill-zinc-100 dark:fill-zinc-800'
+                        }`}
                       />
                     </button>
                   );
                 })}
-                {minRating > 0 && (
-                  <span className="ml-3 text-[11px] font-black text-zinc-400 uppercase tracking-widest">
-                    {minRating}+ ★
-                  </span>
-                )}
-                {minRating === 0 && (
-                  <span className="ml-3 text-[11px] font-medium text-zinc-300 uppercase tracking-widest">
-                    {t('galleries.anyRating')}
-                  </span>
-                )}
+                <span className="ml-2 text-[11px] font-bold text-zinc-400 dark:text-zinc-500">
+                  {minRating > 0 ? `${minRating}+` : t('galleries.anyRating')}
+                </span>
               </div>
             </FilterSection>
           </div>
 
           {/* Years */}
           {years.length > 0 && (
-            <div className="border-t border-zinc-50 pt-6">
+            <div className="pt-6 border-t border-zinc-50 dark:border-zinc-800">
               <FilterSection label={t('galleries.yearFilter')}>
-                <div className="flex flex-wrap gap-2 max-h-[88px] overflow-y-auto pr-1
-                  [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-200 [&::-webkit-scrollbar-thumb]:rounded-full">
+                <div className="flex flex-wrap gap-2 max-h-[80px] overflow-y-auto pr-1
+                  [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-200 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700 [&::-webkit-scrollbar-thumb]:rounded-full">
                   {years.map(y => (
                     <Chip
-                      key={y}
-                      label={y}
+                      key={y} label={y}
                       active={selectedYears.includes(y)}
                       onClick={() => onYearsChange(toggle(selectedYears, y))}
                     />

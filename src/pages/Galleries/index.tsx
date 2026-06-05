@@ -8,7 +8,6 @@ import type { Gallery } from "../../api/galleries";
 import { fetchGalleryReviews } from "../../api/galleries";
 import { useTranslation } from 'react-i18next';
 import { getGalleryName, getGalleryCity, getGalleryAddress } from "../../utils/gallery";
-import { CustomSelect } from "../../components/shared/CustomSelect";
 import { useGalleryRating } from "../../hooks/useGalleryRating";
 import { MultiFilterPanel } from "../../components/shared/MultiFilterPanel";
 
@@ -161,39 +160,28 @@ const GalleriesPage = () => {
             />
           </div>
 
-          {/* FILTER BAR: MultiFilter + Sort */}
-          <div className="flex items-start gap-3">
-            {/* Multi-filter panel takes remaining space */}
-            <div className="flex-1 min-w-0">
-              <MultiFilterPanel
-                cities={cities}
-                years={years}
-                selectedCities={selectedCities}
-                selectedYears={selectedYears}
-                selectedStatuses={selectedStatuses}
-                minRating={minRating}
-                onCitiesChange={(v) => { setSelectedCities(v); setPage(1); }}
-                onYearsChange={(v) => { setSelectedYears(v); setPage(1); }}
-                onStatusesChange={(v) => { setSelectedStatuses(v); setPage(1); }}
-                onMinRatingChange={(v) => { setMinRating(v); setPage(1); }}
-                onReset={resetFilters}
-              />
-            </div>
-
-            {/* Sort — fixed width, same height as filter button */}
-            <div className="shrink-0 w-[210px]">
-              <CustomSelect
-                value={sort}
-                onChange={(val) => { setSort(val); setPage(1); }}
-                options={[
-                  { value: "alphabetical", label: t('galleries.sortAlpha') },
-                  { value: "rating", label: t('galleries.sortByRating') },
-                  { value: "newest", label: t('galleries.sortNewest') },
-                  { value: "oldest", label: t('galleries.sortOldest') },
-                ]}
-              />
-            </div>
-          </div>
+          {/* FILTER & SORT BAR — all in one unified component */}
+          <MultiFilterPanel
+            cities={cities}
+            years={years}
+            selectedCities={selectedCities}
+            selectedYears={selectedYears}
+            selectedStatuses={selectedStatuses}
+            minRating={minRating}
+            sortValue={sort}
+            sortOptions={[
+              { value: "alphabetical", label: t('galleries.sortAlpha') },
+              { value: "rating", label: t('galleries.sortByRating') },
+              { value: "newest", label: t('galleries.sortNewest') },
+              { value: "oldest", label: t('galleries.sortOldest') },
+            ]}
+            onCitiesChange={(v) => { setSelectedCities(v); setPage(1); }}
+            onYearsChange={(v) => { setSelectedYears(v); setPage(1); }}
+            onStatusesChange={(v) => { setSelectedStatuses(v); setPage(1); }}
+            onMinRatingChange={(v) => { setMinRating(v); setPage(1); }}
+            onSortChange={(v) => { setSort(v); setPage(1); }}
+            onReset={resetFilters}
+          />
         </div>
       </div>
 
