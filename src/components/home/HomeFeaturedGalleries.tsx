@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useGalleriesQuery } from '../../hooks/useGalleriesQuery';
 import { useState, useEffect } from 'react';
 import { getGalleryName, getGalleryCity, getGallerySpecialization } from '../../utils/gallery';
+import { useGalleryRating } from '../../hooks/useGalleryRating';
+import type { Gallery } from '../../api/galleries';
 
 const HomeFeaturedGalleries = () => {
   const { t, i18n } = useTranslation();
@@ -38,67 +40,74 @@ const HomeFeaturedGalleries = () => {
 
       {/* Сітка карток */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {randomGalleries.map((gallery, index) => {
-          const name = getGalleryName(gallery, i18n.language);
-          const city = getGalleryCity(gallery, i18n.language);
-          const specialization = getGallerySpecialization(gallery, i18n.language);
-
-          return (
-            <Link
-              key={gallery.id}
-              to={`/galleries/${gallery.slug}`}
-              className="group cursor-pointer relative overflow-hidden rounded-[24px] md:rounded-[32px] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-2 transition-all duration-500 animate-fade-in-up opacity-0 block h-[240px] md:h-[280px] p-6 md:p-8 flex flex-col justify-between border border-zinc-100 dark:border-zinc-200"
-              style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'forwards' }}
-            >
-              {/* Decorative Background Letter */}
-              <div className="absolute -bottom-10 -right-10 text-[180px] font-black text-zinc-200/50 group-hover:text-zinc-200/80 group-hover:scale-110 transition-all duration-700 select-none z-0 leading-none">
-                {name[0]}
-              </div>
-
-              {/* Top: Specialization & Badge */}
-              <div className="relative z-10 flex justify-between items-start">
-                <div className="flex flex-wrap gap-2 items-center">
-                  {specialization && (
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 border border-zinc-200 px-3 py-1.5 rounded-full bg-white">
-                      {/* Temporary Frontend Translation Fix */}
-                      {i18n.language === 'en' && specialization === 'Сучасне українське мистецтво' ? 'Contemporary Ukrainian Art' :
-                        i18n.language === 'en' && specialization === 'Сучасна українська фотографія' ? 'Contemporary Ukrainian Photography' :
-                          specialization}
-                    </span>
-                  )}
-                  {(() => {
-                    const avgRating = gallery.average_rating ?? gallery.rating_avg ?? gallery.avg_rating ?? gallery.rating;
-                    if (avgRating === undefined || avgRating === null || Number(avgRating) <= 0) return null;
-                    return (
-                      <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-amber-700 border border-amber-200 px-3 py-1.5 rounded-full bg-amber-50/50">
-                        <Star size={10} className="text-amber-500 fill-amber-500" />
-                        {Number(avgRating).toFixed(1)}
-                      </span>
-                    );
-                  })()}
-                </div>
-                <div className="w-8 h-8 rounded-full bg-white border border-zinc-100 flex items-center justify-center group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300">
-                  <ArrowRight size={14} />
-                </div>
-              </div>
-
-              {/* Bottom: Info */}
-              <div className="relative z-10">
-                <div>
-                  <h3 className="text-2xl md:text-3xl font-black text-zinc-900 tracking-tighter leading-[0.9] mb-3 md:mb-4 group-hover:translate-x-1 transition-transform duration-300">
-                    {name}
-                  </h3>
-                  <div className="flex items-center gap-2 text-zinc-500 group-hover:text-zinc-900 transition-colors">
-                    <MapPin size={14} />
-                    <span className="text-xs font-bold uppercase tracking-wide">{city}, {t('common.country')}</span>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          );
-        })}
+        {randomGalleries.map((gallery, index) => (
+          <FeaturedGalleryCard
+            key={gallery.id}
+            gallery={gallery}
+            index={index}
+          />
+        ))}
       </div>
     </section>
+  );
+};
+
+/* ---------- FEATURED CARD ---------- */
+
+const FeaturedGalleryCard = ({ gallery, index }: { gallery: Gallery; index: number }) => {
+  const { t, i18n } = useTranslation();
+  const name = getGalleryName(gallery, i18n.language);
+  const city = getGalleryCity(gallery, i18n.language);
+  const specialization = getGallerySpecialization(gallery, i18n.language);
+  const { data: ratingData } = useGalleryRating(gallery.slug);
+
+  return (
+    <Link
+      to={`/galleries/${gallery.slug}`}
+      className="group cursor-pointer relative overflow-hidden rounded-[24px] md:rounded-[32px] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-2 transition-all duration-500 animate-fade-in-up opacity-0 block h-[240px] md:h-[280px] p-6 md:p-8 flex flex-col justify-between border border-zinc-100 dark:border-zinc-200"
+      style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'forwards' }}
+    >
+      {/* Decorative Background Letter */}
+      <div className="absolute -bottom-10 -right-10 text-[180px] font-black text-zinc-200/50 group-hover:text-zinc-200/80 group-hover:scale-110 transition-all duration-700 select-none z-0 leading-none">
+        {name[0]}
+      </div>
+
+      {/* Top: Specialization & Badge */}
+      <div className="relative z-10 flex justify-between items-start">
+        <div className="flex flex-wrap gap-2 items-center">
+          {specialization && (
+            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 border border-zinc-200 px-3 py-1.5 rounded-full bg-white">
+              {/* Temporary Frontend Translation Fix */}
+              {i18n.language === 'en' && specialization === 'Сучасне українське мистецтво' ? 'Contemporary Ukrainian Art' :
+                i18n.language === 'en' && specialization === 'Сучасна українська фотографія' ? 'Contemporary Ukrainian Photography' :
+                  specialization}
+            </span>
+          )}
+          {ratingData && ratingData.avgRating > 0 && (
+            <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-amber-700 border border-amber-200 px-3 py-1.5 rounded-full bg-amber-50/50">
+              <Star size={10} className="text-amber-500 fill-amber-500" />
+              {ratingData.avgRating.toFixed(1)}
+            </span>
+          )}
+        </div>
+        <div className="w-8 h-8 rounded-full bg-white border border-zinc-100 flex items-center justify-center group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300">
+          <ArrowRight size={14} />
+        </div>
+      </div>
+
+      {/* Bottom: Info */}
+      <div className="relative z-10">
+        <div>
+          <h3 className="text-2xl md:text-3xl font-black text-zinc-900 tracking-tighter leading-[0.9] mb-3 md:mb-4 group-hover:translate-x-1 transition-transform duration-300">
+            {name}
+          </h3>
+          <div className="flex items-center gap-2 text-zinc-500 group-hover:text-zinc-900 transition-colors">
+            <MapPin size={14} />
+            <span className="text-xs font-bold uppercase tracking-wide">{city}, {t('common.country')}</span>
+          </div>
+        </div>
+      </div>
+    </Link>
   );
 };
 

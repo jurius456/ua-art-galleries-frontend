@@ -7,6 +7,7 @@ import type { Gallery } from "../../api/galleries";
 import { useTranslation } from 'react-i18next';
 import { getGalleryName, getGalleryCity, getGalleryAddress } from "../../utils/gallery";
 import { CustomSelect } from "../../components/shared/CustomSelect";
+import { useGalleryRating } from "../../hooks/useGalleryRating";
 
 const PER_PAGE = 18;
 
@@ -271,6 +272,7 @@ const GalleryCard = ({
   const name = getGalleryName(gallery, i18n.language);
   const city = getGalleryCity(gallery, i18n.language);
   const address = getGalleryAddress(gallery, i18n.language);
+  const { data: ratingData } = useGalleryRating(gallery.slug);
 
   return (
     <Link
@@ -316,32 +318,26 @@ const GalleryCard = ({
           </p>
         </div>
 
-        {(() => {
-          const avgRating = gallery.average_rating ?? gallery.rating_avg ?? gallery.avg_rating ?? gallery.rating;
-          const reviewsCount = gallery.reviews_count ?? gallery.review_count;
-          if (avgRating === undefined || avgRating === null || Number(avgRating) <= 0) return null;
-
-          return (
-            <div className="flex items-center gap-1.5 mb-4 animate-in fade-in duration-350">
-              <div className="flex items-center gap-0.5">
-                {[1, 2, 3, 4, 5].map((star) => {
-                  const filled = star <= Math.round(Number(avgRating));
-                  return (
-                    <Star
-                      key={star}
-                      size={12}
-                      className={filled ? "text-amber-400 fill-amber-400" : "text-zinc-200"}
-                    />
-                  );
-                })}
-              </div>
-              <span className="text-[10px] font-bold text-zinc-500">
-                {Number(avgRating).toFixed(1)}
-                {reviewsCount !== undefined && reviewsCount !== null && reviewsCount > 0 && ` (${reviewsCount})`}
-              </span>
+        {ratingData && ratingData.avgRating > 0 && (
+          <div className="flex items-center gap-1.5 mb-4 animate-in fade-in duration-350">
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map((star) => {
+                const filled = star <= Math.round(ratingData.avgRating);
+                return (
+                  <Star
+                    key={star}
+                    size={12}
+                    className={filled ? "text-amber-400 fill-amber-400" : "text-zinc-200"}
+                  />
+                );
+              })}
             </div>
-          );
-        })()}
+            <span className="text-[10px] font-bold text-zinc-500">
+              {ratingData.avgRating.toFixed(1)}
+              {ratingData.reviewsCount > 0 && ` (${ratingData.reviewsCount})`}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="pt-4 border-t border-zinc-100 flex items-center justify-between">
