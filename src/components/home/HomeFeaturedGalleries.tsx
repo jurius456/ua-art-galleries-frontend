@@ -8,7 +8,7 @@ import { useGalleryRating } from '../../hooks/useGalleryRating';
 import type { Gallery } from '../../api/galleries';
 
 const HomeFeaturedGalleries = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { data: galleries = [] } = useGalleriesQuery();
   const [randomGalleries, setRandomGalleries] = useState<typeof galleries>([]);
 
