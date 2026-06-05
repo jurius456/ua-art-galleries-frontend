@@ -58,20 +58,18 @@ const GalleriesPage = () => {
     })),
   });
 
-  const ratingsMap = useMemo(() => {
-    const map = new Map<string, number>();
-    if (!needsRatings) return map;
-    ratingResults.forEach((result, i) => {
-      if (result.data && galleries[i]) {
-        map.set(galleries[i].slug, result.data.avgRating);
-      }
-    });
-    return map;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ratingResults.map(r => r.dataUpdatedAt).join(','), galleries, needsRatings]);
-
   /* ---------- FILTERING & SORTING ---------- */
   const sortedAndFiltered = useMemo(() => {
+    // Build ratings map inline from cached query results
+    const rMap = new Map<string, number>();
+    if (needsRatings) {
+      ratingResults.forEach((result, i) => {
+        if (result.data && galleries[i]) {
+          rMap.set(galleries[i].slug, result.data.avgRating);
+        }
+      });
+    }
+
     const q = search.trim().toLowerCase();
 
     const filtered = galleries.filter((g) => {
@@ -90,16 +88,17 @@ const GalleriesPage = () => {
       const matchYear =
         selectedYears.length === 0 || selectedYears.includes(g.founding_year ?? "");
       const matchRating =
-        minRating === 0 || (ratingsMap.get(g.slug) ?? 0) >= minRating;
+        minRating === 0 || (rMap.get(g.slug) ?? 0) >= minRating;
 
       return matchSearch && matchCity && matchStatus && matchYear && matchRating;
     });
 
     return filtered.sort((a, b) => {
       if (sort === "alphabetical") {
-        return getGalleryName(a, i18n.language).localeCompare(getGalleryName(b, i18n.language));
+        const locale = i18n.language === 'uk' ? 'uk' : 'en';
+        return getGalleryName(a, i18n.language).localeCompare(getGalleryName(b, i18n.language), locale);
       } else if (sort === "rating") {
-        return (ratingsMap.get(b.slug) ?? 0) - (ratingsMap.get(a.slug) ?? 0);
+        return (rMap.get(b.slug) ?? 0) - (rMap.get(a.slug) ?? 0);
       } else if (sort === "newest") {
         return Number(b.founding_year || 0) - Number(a.founding_year || 0);
       } else if (sort === "oldest") {
@@ -107,7 +106,11 @@ const GalleriesPage = () => {
       }
       return 0;
     });
-  }, [galleries, search, selectedCities, selectedStatuses, selectedYears, minRating, sort, i18n.language, ratingsMap]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [galleries, search, selectedCities, selectedStatuses, selectedYears, minRating, sort, i18n.language, needsRatings,
+    // Stable signature derived from rating results — only re-runs when actual data changes
+    ratingResults.map(r => r.dataUpdatedAt).join(','),
+  ]);
 
   const resetFilters = () => {
     setSearch("");

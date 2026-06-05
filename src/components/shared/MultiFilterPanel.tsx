@@ -33,8 +33,8 @@ const Chip = ({ label, active, onClick }: { label: string; active: boolean; onCl
     onClick={onClick}
     className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider border transition-all duration-150 whitespace-nowrap select-none
       ${active
-        ? 'bg-zinc-900 dark:bg-white border-zinc-900 dark:border-white text-white dark:text-zinc-900 shadow-sm'
-        : 'bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:border-zinc-500 dark:hover:border-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100'
+        ? 'bg-zinc-900 border-zinc-900 text-white shadow-sm'
+        : 'bg-zinc-50 border-zinc-200 text-zinc-500 hover:border-zinc-500 hover:text-zinc-900'
       }`}
   >
     {label}
@@ -42,10 +42,13 @@ const Chip = ({ label, active, onClick }: { label: string; active: boolean; onCl
 );
 
 const ActiveChip = ({ label, onRemove }: { label: string; onRemove: () => void }) => (
-  <span className="flex items-center gap-1 pl-2.5 pr-1.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[11px] font-bold text-zinc-700 dark:text-zinc-300 whitespace-nowrap">
+  <span className="flex items-center gap-1 pl-2.5 pr-1.5 py-1 rounded-full bg-zinc-100 border border-zinc-200 text-[11px] font-bold text-zinc-700 whitespace-nowrap">
     {label}
-    <button type="button" onClick={onRemove}
-      className="w-4 h-4 rounded-full flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+    <button
+      type="button"
+      onClick={onRemove}
+      className="w-4 h-4 rounded-full flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:bg-zinc-200 transition-colors"
+    >
       <X size={9} />
     </button>
   </span>
@@ -53,7 +56,7 @@ const ActiveChip = ({ label, onRemove }: { label: string; onRemove: () => void }
 
 const FilterSection = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div className="space-y-3">
-    <p className="text-[9px] font-black uppercase tracking-[0.25em] text-zinc-400 dark:text-zinc-500">{label}</p>
+    <p className="text-[9px] font-black uppercase tracking-[0.25em] text-zinc-400">{label}</p>
     {children}
   </div>
 );
@@ -73,7 +76,6 @@ export const MultiFilterPanel = ({
   const [hoveredStar, setHoveredStar] = useState(0);
   const sortRef = useRef<HTMLDivElement>(null);
 
-  // Close sort dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
@@ -93,10 +95,10 @@ export const MultiFilterPanel = ({
     <div className="space-y-3 w-full">
 
       {/* ══ Unified trigger bar ══ */}
-      <div className={`flex items-center gap-0 w-full h-[56px] rounded-2xl border bg-white dark:bg-zinc-900 transition-all duration-200 overflow-hidden
+      <div className={`flex items-center w-full h-[56px] rounded-2xl border bg-white transition-all duration-200 overflow-hidden
         ${open
-          ? 'border-zinc-900 dark:border-zinc-500 shadow-md'
-          : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
+          ? 'border-zinc-900 shadow-md'
+          : 'border-zinc-200 hover:border-zinc-300'
         }`}
       >
         {/* Filter toggle */}
@@ -104,15 +106,12 @@ export const MultiFilterPanel = ({
           type="button"
           onClick={() => setOpen(o => !o)}
           className={`flex items-center gap-2 h-full pl-5 pr-4 shrink-0 font-bold text-sm transition-colors
-            ${open
-              ? 'text-zinc-900 dark:text-zinc-100'
-              : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
-            }`}
+            ${open ? 'text-zinc-900' : 'text-zinc-500 hover:text-zinc-900'}`}
         >
           <SlidersHorizontal size={15} />
-          <span className="hidden sm:inline">{t('galleries.filters')}</span>
+          <span>{t('galleries.filters')}</span>
           {activeCount > 0 && (
-            <span className="min-w-[20px] h-5 rounded-full text-[10px] font-black flex items-center justify-center px-1.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900">
+            <span className="min-w-[20px] h-5 rounded-full text-[10px] font-black flex items-center justify-center px-1.5 bg-zinc-900 text-white">
               {activeCount}
             </span>
           )}
@@ -120,7 +119,7 @@ export const MultiFilterPanel = ({
         </button>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-zinc-200 dark:bg-zinc-700 shrink-0" />
+        <div className="w-px h-6 bg-zinc-200 shrink-0" />
 
         {/* Active chips — horizontally scrollable */}
         <div className="flex-1 flex items-center gap-2 px-3 overflow-x-auto
@@ -146,35 +145,35 @@ export const MultiFilterPanel = ({
               <button
                 type="button"
                 onClick={onReset}
-                className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors whitespace-nowrap border-b border-dashed border-zinc-300 dark:border-zinc-600 hover:border-zinc-900 dark:hover:border-zinc-300 pb-px ml-1 shrink-0"
+                className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-900 transition-colors whitespace-nowrap border-b border-dashed border-zinc-300 hover:border-zinc-900 pb-px ml-1 shrink-0"
               >
                 {t('galleries.clearAll')}
               </button>
             </>
           ) : (
-            <span className="text-[12px] text-zinc-300 dark:text-zinc-600 select-none">
+            <span className="text-[12px] text-zinc-300 select-none">
               {t('galleries.noActiveFilters', 'Фільтри не застосовано')}
             </span>
           )}
         </div>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-zinc-200 dark:bg-zinc-700 shrink-0" />
+        <div className="w-px h-6 bg-zinc-200 shrink-0" />
 
         {/* Inline sort */}
         <div className="relative shrink-0" ref={sortRef}>
           <button
             type="button"
             onClick={() => setSortOpen(o => !o)}
-            className="flex items-center gap-2 h-full px-5 text-[12px] font-bold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors whitespace-nowrap"
+            className="flex items-center gap-2 h-full px-5 text-[12px] font-bold text-zinc-600 hover:text-zinc-900 transition-colors whitespace-nowrap"
           >
-            <ArrowUpDown size={13} className="text-zinc-400 dark:text-zinc-500" />
-            <span className="hidden sm:inline">{currentSortLabel}</span>
+            <ArrowUpDown size={13} className="text-zinc-400" />
+            <span>{currentSortLabel}</span>
             <ChevronDown size={12} className={`transition-transform duration-200 ${sortOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {sortOpen && (
-            <div className="absolute top-full right-0 mt-2 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-2xl shadow-xl py-2 z-50 w-52 animate-in fade-in zoom-in-95 duration-150">
+            <div className="absolute top-full right-0 mt-2 bg-white border border-zinc-100 rounded-2xl shadow-xl py-2 z-50 w-52 animate-in fade-in zoom-in-95 duration-150">
               {sortOptions.map(opt => (
                 <button
                   key={opt.value}
@@ -182,12 +181,12 @@ export const MultiFilterPanel = ({
                   onClick={() => { onSortChange(opt.value); setSortOpen(false); }}
                   className={`w-full text-left px-5 py-2.5 text-[12px] font-bold transition-colors flex items-center justify-between
                     ${opt.value === sortValue
-                      ? 'text-zinc-900 dark:text-zinc-100 bg-zinc-50 dark:bg-zinc-800'
-                      : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+                      ? 'text-zinc-900 bg-zinc-50'
+                      : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50'
                     }`}
                 >
                   {opt.label}
-                  {opt.value === sortValue && <div className="w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-white" />}
+                  {opt.value === sortValue && <div className="w-1.5 h-1.5 rounded-full bg-zinc-900" />}
                 </button>
               ))}
             </div>
@@ -197,25 +196,21 @@ export const MultiFilterPanel = ({
 
       {/* ══ Expandable filter panel ══ */}
       {open && (
-        <div className="rounded-[28px] border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-[0_12px_48px_rgb(0,0,0,0.07)] dark:shadow-[0_12px_48px_rgb(0,0,0,0.3)] p-6 space-y-6 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="rounded-[28px] border border-zinc-100 bg-white shadow-[0_12px_48px_rgb(0,0,0,0.07)] p-6 space-y-6 animate-in fade-in slide-in-from-top-2 duration-200">
 
           {/* Cities */}
           {cities.length > 0 && (
             <FilterSection label={t('galleries.cityFilter')}>
               <div className="flex flex-wrap gap-2">
                 {cities.map(c => (
-                  <Chip
-                    key={c} label={c}
-                    active={selectedCities.includes(c)}
-                    onClick={() => onCitiesChange(toggle(selectedCities, c))}
-                  />
+                  <Chip key={c} label={c} active={selectedCities.includes(c)} onClick={() => onCitiesChange(toggle(selectedCities, c))} />
                 ))}
               </div>
             </FilterSection>
           )}
 
-          {/* Status + Rating in one row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6 border-t border-zinc-50 dark:border-zinc-800">
+          {/* Status + Rating */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6 border-t border-zinc-50">
             <FilterSection label={t('galleries.statusFilter')}>
               <div className="flex flex-wrap gap-2">
                 {(['active', 'inactive'] as const).map(s => (
@@ -244,14 +239,12 @@ export const MultiFilterPanel = ({
                     >
                       <Star
                         size={26}
-                        className={`transition-colors duration-100 ${
-                          active ? 'text-amber-400 fill-amber-400' : 'text-zinc-200 dark:text-zinc-700 fill-zinc-100 dark:fill-zinc-800'
-                        }`}
+                        className={`transition-colors duration-100 ${active ? 'text-amber-400 fill-amber-400' : 'text-zinc-200 fill-zinc-100'}`}
                       />
                     </button>
                   );
                 })}
-                <span className="ml-2 text-[11px] font-bold text-zinc-400 dark:text-zinc-500">
+                <span className="ml-2 text-[11px] font-bold text-zinc-400">
                   {minRating > 0 ? `${minRating}+` : t('galleries.anyRating')}
                 </span>
               </div>
@@ -260,16 +253,12 @@ export const MultiFilterPanel = ({
 
           {/* Years */}
           {years.length > 0 && (
-            <div className="pt-6 border-t border-zinc-50 dark:border-zinc-800">
+            <div className="pt-6 border-t border-zinc-50">
               <FilterSection label={t('galleries.yearFilter')}>
                 <div className="flex flex-wrap gap-2 max-h-[80px] overflow-y-auto pr-1
-                  [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-200 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700 [&::-webkit-scrollbar-thumb]:rounded-full">
+                  [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-200 [&::-webkit-scrollbar-thumb]:rounded-full">
                   {years.map(y => (
-                    <Chip
-                      key={y} label={y}
-                      active={selectedYears.includes(y)}
-                      onClick={() => onYearsChange(toggle(selectedYears, y))}
-                    />
+                    <Chip key={y} label={y} active={selectedYears.includes(y)} onClick={() => onYearsChange(toggle(selectedYears, y))} />
                   ))}
                 </div>
               </FilterSection>
