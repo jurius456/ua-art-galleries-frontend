@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, type MutableRefObject } from 'react';
-import { MapPin, ArrowRight, ZoomOut } from 'lucide-react';
+import { MapPin, ArrowRight, ZoomOut, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
   MapContainer,
@@ -240,6 +240,29 @@ const HomeMapView = () => {
                       <div className="p-5 space-y-3" style={{ minWidth: 240 }}>
                         <div>
                           <h4 className="font-black text-base leading-tight" style={{ color: 'rgb(var(--color-text))' }}>{name}</h4>
+                          {(() => {
+                            const avgRating = g.average_rating ?? g.rating_avg ?? g.avg_rating ?? g.rating;
+                            if (avgRating === undefined || avgRating === null || Number(avgRating) <= 0) return null;
+                            return (
+                              <div className="flex items-center gap-1 mt-1.5">
+                                <div className="flex items-center gap-0.5">
+                                  {[1, 2, 3, 4, 5].map((star) => {
+                                    const filled = star <= Math.round(Number(avgRating));
+                                    return (
+                                      <Star
+                                        key={star}
+                                        size={10}
+                                        className={filled ? "text-amber-400 fill-amber-400" : "text-zinc-200"}
+                                      />
+                                    );
+                                  })}
+                                </div>
+                                <span className="text-[9px] font-bold text-zinc-500">
+                                  {Number(avgRating).toFixed(1)}
+                                </span>
+                              </div>
+                            );
+                          })()}
                           <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase mt-1.5" style={{ color: 'rgb(var(--color-zinc-400))' }}>
                             <MapPin size={10} /> {city}
                           </p>

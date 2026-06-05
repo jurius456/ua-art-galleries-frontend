@@ -29,6 +29,12 @@ export type Gallery = {
   longitude?: number;
   created_at: string;
   updated_at: string;
+  average_rating?: number;
+  rating_avg?: number;
+  avg_rating?: number;
+  rating?: number;
+  reviews_count?: number;
+  review_count?: number;
 };
 
 export type Exhibition = {
@@ -64,4 +70,30 @@ export async function fetchGalleries(): Promise<Gallery[]> {
 // GET /api/galleries/:slug/
 export function fetchGalleryBySlug(slug: string) {
   return http<GalleryDetail>(`/api/galleries/${slug}/`);
+}
+
+export type Review = {
+  id: number;
+  user: number;
+  username: string;
+  rating: number;
+  text: string;
+  created_at: string;
+};
+
+// GET /api/galleries/:slug/reviews/
+export function fetchGalleryReviews(slug: string): Promise<Review[]> {
+  return http<Review[]>(`/api/galleries/${slug}/reviews/`);
+}
+
+// POST /api/galleries/:slug/reviews/
+export function createGalleryReview(
+  slug: string,
+  payload: { rating: number; text: string }
+): Promise<Review> {
+  return http<Review>(`/api/galleries/${slug}/reviews/`, {
+    method: "POST",
+    auth: true,
+    body: payload,
+  });
 }
