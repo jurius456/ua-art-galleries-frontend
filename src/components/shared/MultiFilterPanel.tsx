@@ -4,8 +4,10 @@ import { useTranslation } from 'react-i18next';
 
 interface Option { value: string; label: string; }
 
+interface CityOption { value: string; label: string; } // value = city_en (stable), label = translated
+
 interface MultiFilterPanelProps {
-  cities: string[];
+  cities: CityOption[];
   years: string[];
   selectedCities: string[];
   selectedYears: string[];
@@ -126,9 +128,12 @@ export const MultiFilterPanel = ({
           [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {hasActive ? (
             <>
-              {selectedCities.map(c => (
-                <ActiveChip key={`c-${c}`} label={c} onRemove={() => onCitiesChange(toggle(selectedCities, c))} />
-              ))}
+              {selectedCities.map(c => {
+                const label = cities.find(o => o.value === c)?.label ?? c;
+                return (
+                  <ActiveChip key={`c-${c}`} label={label} onRemove={() => onCitiesChange(toggle(selectedCities, c))} />
+                );
+              })}
               {selectedStatuses.map(s => (
                 <ActiveChip
                   key={`s-${s}`}
@@ -203,7 +208,7 @@ export const MultiFilterPanel = ({
             <FilterSection label={t('galleries.cityFilter')}>
               <div className="flex flex-wrap gap-2">
                 {cities.map(c => (
-                  <Chip key={c} label={c} active={selectedCities.includes(c)} onClick={() => onCitiesChange(toggle(selectedCities, c))} />
+                  <Chip key={c.value} label={c.label} active={selectedCities.includes(c.value)} onClick={() => onCitiesChange(toggle(selectedCities, c.value))} />
                 ))}
               </div>
             </FilterSection>

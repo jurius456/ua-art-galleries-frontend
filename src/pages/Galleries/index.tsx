@@ -27,11 +27,15 @@ const GalleriesPage = () => {
   const [page, setPage] = useState(1);
 
   /* ---------- CITIES & YEARS ---------- */
+  // Use city_en as stable key, label is translated for display
   const cities = useMemo(() => {
-    const unique = Array.from(
-      new Set(galleries.map((g) => getGalleryCity(g, i18n.language)).filter(Boolean))
-    );
-    return unique;
+    const seen = new Map<string, string>(); // city_en -> translated label
+    galleries.forEach(g => {
+      if (g.city_en && !seen.has(g.city_en)) {
+        seen.set(g.city_en, getGalleryCity(g, i18n.language));
+      }
+    });
+    return Array.from(seen.entries()).map(([value, label]) => ({ value, label }));
   }, [galleries, i18n.language]);
 
   const years = useMemo(() => {
@@ -81,7 +85,7 @@ const GalleriesPage = () => {
         name.toLowerCase().includes(q) ||
         cityName.toLowerCase().includes(q);
 
-      const matchCity = selectedCities.length === 0 || selectedCities.includes(cityName);
+      const matchCity = selectedCities.length === 0 || selectedCities.includes(g.city_en ?? '');
       const matchStatus =
         selectedStatuses.length === 0 ||
         selectedStatuses.some(s => s === "active" ? g.status : !g.status);
