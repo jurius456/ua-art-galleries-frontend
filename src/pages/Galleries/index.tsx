@@ -1,13 +1,16 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, Heart, ChevronLeft, ChevronRight, BadgeCheck, Ban, Star } from "lucide-react";
+import { useQueries } from "@tanstack/react-query";
 import { useGalleriesQuery } from "../../hooks/useGalleriesQuery";
 import { useFavorites } from "../../context/FavoritesContext";
 import type { Gallery } from "../../api/galleries";
+import { fetchGalleryReviews } from "../../api/galleries";
 import { useTranslation } from 'react-i18next';
 import { getGalleryName, getGalleryCity, getGalleryAddress } from "../../utils/gallery";
 import { CustomSelect } from "../../components/shared/CustomSelect";
 import { useGalleryRating } from "../../hooks/useGalleryRating";
+import { MultiFilterPanel } from "../../components/shared/MultiFilterPanel";
 
 const PER_PAGE = 18;
 
@@ -17,9 +20,10 @@ const GalleriesPage = () => {
   const { isFavorite, toggleFavorite } = useFavorites();
 
   const [search, setSearch] = useState("");
-  const [city, setCity] = useState("all");
-  const [status, setStatus] = useState("all");
-  const [year, setYear] = useState("all");
+  const [selectedCities, setSelectedCities] = useState<string[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [selectedYears, setSelectedYears] = useState<string[]>([]);
+  const [minRating, setMinRating] = useState(0);
   const [sort, setSort] = useState("alphabetical");
   const [page, setPage] = useState(1);
 
@@ -38,6 +42,35 @@ const GalleriesPage = () => {
     return unique as string[];
   }, [galleries]);
 
+  /* ---------- RATINGS (prefetch when needed for filter/sort) ---------- */
+  const needsRatings = minRating > 0 || sort === "rating";
+
+  const ratingResults = useQueries({
+    queries: galleries.map(g => ({
+      queryKey: ["gallery-rating", g.slug],
+      queryFn: async () => {
+        const reviews = await fetchGalleryReviews(g.slug);
+        if (!reviews || reviews.length === 0) return { avgRating: 0, reviewsCount: 0 };
+        const total = reviews.reduce((sum, r) => sum + r.rating, 0);
+        return { avgRating: total / reviews.length, reviewsCount: reviews.length };
+      },
+      staleTime: 1000 * 60 * 5,
+      enabled: needsRatings,
+    })),
+  });
+
+  const ratingsMap = useMemo(() => {
+    const map = new Map<string, number>();
+    if (!needsRatings) return map;
+    ratingResults.forEach((result, i) => {
+      if (result.data && galleries[i]) {
+        map.set(galleries[i].slug, result.data.avgRating);
+      }
+    });
+    return map;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ratingResults.map(r => r.dataUpdatedAt).join(','), galleries, needsRatings]);
+
   /* ---------- FILTERING & SORTING ---------- */
   const sortedAndFiltered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -51,16 +84,23 @@ const GalleriesPage = () => {
         name.toLowerCase().includes(q) ||
         cityName.toLowerCase().includes(q);
 
-      const matchCity = city === "all" || cityName === city;
-      const matchStatus = status === "all" || (status === "active" ? g.status : !g.status);
-      const matchYear = year === "all" || g.founding_year === year;
+      const matchCity = selectedCities.length === 0 || selectedCities.includes(cityName);
+      const matchStatus =
+        selectedStatuses.length === 0 ||
+        selectedStatuses.some(s => s === "active" ? g.status : !g.status);
+      const matchYear =
+        selectedYears.length === 0 || selectedYears.includes(g.founding_year ?? "");
+      const matchRating =
+        minRating === 0 || (ratingsMap.get(g.slug) ?? 0) >= minRating;
 
-      return matchSearch && matchCity && matchStatus && matchYear;
+      return matchSearch && matchCity && matchStatus && matchYear && matchRating;
     });
 
     return filtered.sort((a, b) => {
       if (sort === "alphabetical") {
         return getGalleryName(a, i18n.language).localeCompare(getGalleryName(b, i18n.language));
+      } else if (sort === "rating") {
+        return (ratingsMap.get(b.slug) ?? 0) - (ratingsMap.get(a.slug) ?? 0);
       } else if (sort === "newest") {
         return Number(b.founding_year || 0) - Number(a.founding_year || 0);
       } else if (sort === "oldest") {
@@ -68,7 +108,16 @@ const GalleriesPage = () => {
       }
       return 0;
     });
-  }, [galleries, search, city, status, year, sort, i18n.language]);
+  }, [galleries, search, selectedCities, selectedStatuses, selectedYears, minRating, sort, i18n.language, ratingsMap]);
+
+  const resetFilters = () => {
+    setSearch("");
+    setSelectedCities([]);
+    setSelectedStatuses([]);
+    setSelectedYears([]);
+    setMinRating(0);
+    setPage(1);
+  };
 
   /* ---------- PAGINATION ---------- */
   const totalPages = Math.ceil(sortedAndFiltered.length / PER_PAGE);
@@ -89,68 +138,58 @@ const GalleriesPage = () => {
   return (
     <div className="min-h-screen pb-32">
       {/* ---------- HEADER ---------- */}
-      <div className="pt-32 pb-20">
-        <div className="max-w-6xl mx-auto px-6 space-y-12">
+      <div className="pt-32 pb-16">
+        <div className="max-w-6xl mx-auto px-6 space-y-10">
           <h1 className="text-5xl font-black uppercase tracking-tight">
             {t('galleries.title')} <span className="text-zinc-400">{t('galleries.subtitle')}</span>
           </h1>
 
-          {/* SEARCH & FILTERS */}
-          <div className="flex flex-col gap-4">
-            {/* SEARCH */}
-            <div className="relative">
-              <Search
-                size={18}
-                className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
-              />
-              <input
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-                placeholder={t('galleries.search')}
-                className="w-full h-[56px] rounded-2xl border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-500 pl-[52px] pr-6 text-[15px] outline-none focus:border-zinc-900 dark:focus:border-zinc-400 bg-white text-zinc-900"
+          {/* SEARCH */}
+          <div className="relative">
+            <Search
+              size={18}
+              className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+            />
+            <input
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              placeholder={t('galleries.search')}
+              className="w-full h-[56px] rounded-2xl border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-500 pl-[52px] pr-6 text-[15px] outline-none focus:border-zinc-900 dark:focus:border-zinc-400 bg-white text-zinc-900 transition-colors"
+            />
+          </div>
+
+          {/* FILTER BAR: MultiFilter + Sort */}
+          <div className="flex items-start gap-3">
+            {/* Multi-filter panel takes remaining space */}
+            <div className="flex-1 min-w-0">
+              <MultiFilterPanel
+                cities={cities}
+                years={years}
+                selectedCities={selectedCities}
+                selectedYears={selectedYears}
+                selectedStatuses={selectedStatuses}
+                minRating={minRating}
+                onCitiesChange={(v) => { setSelectedCities(v); setPage(1); }}
+                onYearsChange={(v) => { setSelectedYears(v); setPage(1); }}
+                onStatusesChange={(v) => { setSelectedStatuses(v); setPage(1); }}
+                onMinRatingChange={(v) => { setMinRating(v); setPage(1); }}
+                onReset={resetFilters}
               />
             </div>
 
-            {/* FILTERS GRID */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <CustomSelect
-                value={city}
-                onChange={(val) => { setCity(val); setPage(1); }}
-                options={[
-                  { value: "all", label: t('galleries.allCities') },
-                  ...cities.map(c => ({ value: c, label: c }))
-                ]}
-              />
-
-              <CustomSelect
-                value={status}
-                onChange={(val) => { setStatus(val); setPage(1); }}
-                options={[
-                  { value: "all", label: t('events.allStatuses') },
-                  { value: "active", label: t('gallery.active') },
-                  { value: "inactive", label: t('gallery.inactive') }
-                ]}
-              />
-
-              <CustomSelect
-                value={year}
-                onChange={(val) => { setYear(val); setPage(1); }}
-                options={[
-                  { value: "all", label: t('galleries.allYears') },
-                  ...years.map(y => ({ value: y, label: y }))
-                ]}
-              />
-
+            {/* Sort — fixed width, same height as filter button */}
+            <div className="shrink-0 w-[210px]">
               <CustomSelect
                 value={sort}
                 onChange={(val) => { setSort(val); setPage(1); }}
                 options={[
                   { value: "alphabetical", label: t('galleries.sortAlpha') },
+                  { value: "rating", label: t('galleries.sortByRating') },
                   { value: "newest", label: t('galleries.sortNewest') },
-                  { value: "oldest", label: t('galleries.sortOldest') }
+                  { value: "oldest", label: t('galleries.sortOldest') },
                 ]}
               />
             </div>
@@ -168,15 +207,15 @@ const GalleriesPage = () => {
           <div className="w-24 h-24 bg-zinc-50 rounded-full flex items-center justify-center mb-6">
             <Search size={32} className="text-zinc-300" />
           </div>
-          <h3 className="text-2xl font-black uppercase text-zinc-900 mb-2">{t('galleries.emptyTitle', 'Нічого не знайдено')}</h3>
+          <h3 className="text-2xl font-black uppercase text-zinc-900 mb-2">{t('galleries.emptyTitle')}</h3>
           <p className="text-zinc-500 font-medium mb-8 leading-relaxed">
-            {t('galleries.emptyDesc', 'За вашими критеріями не знайдено жодної галереї. Спробуйте змінити фільтри пошуку.')}
+            {t('galleries.emptyDesc')}
           </p>
-          <button 
-            onClick={() => { setSearch(""); setCity("all"); setStatus("all"); setYear("all"); setPage(1); }}
+          <button
+            onClick={resetFilters}
             className="px-6 py-3 bg-zinc-900 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors"
           >
-            {t('galleries.clearFilters', 'Скинути фільтри')}
+            {t('galleries.clearFilters')}
           </button>
         </div>
       ) : (
@@ -218,11 +257,10 @@ const GalleriesPage = () => {
             {Array.from({ length: totalPages }).map((_, i) => {
               const pageNum = i + 1;
               const isCurrent = page === pageNum;
-              
-              // Smart pagination for mobile: only show current, first, last, and neighbors
+
               const isNear = Math.abs(page - pageNum) <= 1;
               const isFirstOrLast = pageNum === 1 || pageNum === totalPages;
-              
+
               if (!isNear && !isFirstOrLast && totalPages > 7) {
                 if (pageNum === 2 && page > 4) return <span key="dots-1" className="px-1 text-zinc-400">...</span>;
                 if (pageNum === totalPages - 1 && page < totalPages - 3) return <span key="dots-2" className="px-1 text-zinc-400">...</span>;
