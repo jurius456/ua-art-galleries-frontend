@@ -95,7 +95,7 @@ export const MultiFilterPanel = ({
     <div className="space-y-3 w-full">
 
       {/* ══ Unified trigger bar ══ */}
-      <div className={`flex items-center w-full h-[56px] rounded-2xl border bg-white transition-all duration-200 overflow-hidden
+      <div className={`flex items-center w-full h-[56px] rounded-2xl border bg-white transition-all duration-200
         ${open
           ? 'border-zinc-900 shadow-md'
           : 'border-zinc-200 hover:border-zinc-300'
