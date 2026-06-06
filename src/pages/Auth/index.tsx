@@ -3,6 +3,7 @@ import { Mail, Lock, User, AlertTriangle, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "react-i18next";
+import { GoogleLogin } from "@react-oauth/google";
 import RegistrationSuccessModal from "../../components/Auth/RegistrationSuccessModal";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
@@ -131,13 +132,12 @@ const AuthPage = () => {
         return;
       }
 
-      // 🔥 ЄДИНЕ МІСЦЕ ЛОГІНУ
-      await login(data.key);
-
-      if (!isLogin) {
-        setShowSuccessModal(true);
-      } else {
+      // 🔥 ЄДИНЕ МІСЦЕ ЛОГІНУ (Для логіну ми маємо токен, для реєстрації тепер ні)
+      if (isLogin) {
+        await login(data.key);
         navigate("/");
+      } else {
+        setShowSuccessModal(true);
       }
     } catch (err) {
       console.error(err);
@@ -145,6 +145,33 @@ const AuthPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    setLoading(true);
+    setApiError(null);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/google/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ google_id_token: credentialResponse.credential }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setApiError(data.detail || "Помилка Google авторизації.");
+        return;
+      }
+      await login(data.access || data.key);
+      navigate("/");
+    } catch (err) {
+      setApiError("Сервер недоступний.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setApiError("Помилка підключення до Google.");
   };
 
   /* ---------------- UI ---------------- */
@@ -246,6 +273,23 @@ const AuthPage = () => {
             )}
           </button>
         </form>
+
+        <div className="relative flex py-2 items-center">
+            <div className="flex-grow border-t border-zinc-200"></div>
+            <span className="flex-shrink-0 mx-4 text-zinc-400 text-xs font-bold uppercase tracking-widest">Або</span>
+            <div className="flex-grow border-t border-zinc-200"></div>
+        </div>
+
+        <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="outline"
+              size="large"
+              width="100%"
+              text={isLogin ? "signin_with" : "signup_with"}
+            />
+        </div>
       </div>
     </div>
   );

@@ -20,6 +20,7 @@ const AboutPage = React.lazy(() => import("./pages/About"));
 const EventsPage = React.lazy(() => import("./pages/Events"));
 const EventDetail = React.lazy(() => import("./pages/Events/EventDetailPage"));
 const AuthPage = React.lazy(() => import("./pages/Auth"));
+const VerifyEmailPage = React.lazy(() => import("./pages/Auth/VerifyEmail"));
 const ProfilePage = React.lazy(() => import("./pages/Profile"));
 
 // 4. Налаштування та Архів (Lazy Loading)
@@ -80,6 +81,7 @@ const AppContent = () => {
               <Route path="/faq" element={<FAQPage />} />
               <Route path="/support" element={<SupportPage />} />
               <Route path="/login" element={<AuthPage />} />
+              <Route path="/verify-email" element={<VerifyEmailPage />} />
 
               {/* Захищені маршрути */}
               <Route element={<ProtectedRoute />}>

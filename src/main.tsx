@@ -12,13 +12,17 @@ import { FavoritesProvider } from "./context/FavoritesContext";
 
 import { ThemeProvider } from "./context/ThemeContext";
 
+import { GoogleOAuthProvider } from "@react-oauth/google";
+
 const queryClient = new QueryClient();
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "123456789-placeholder.apps.googleusercontent.com";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ThemeProvider>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
           <FavoritesProvider>
             <BrowserRouter>
               <App />
@@ -27,5 +31,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );
