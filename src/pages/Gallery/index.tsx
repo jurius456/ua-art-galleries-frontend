@@ -241,12 +241,21 @@ const GalleryPage = () => {
                     {t('gallery.exhibitions')}
                   </h3>
                   {gallery.exhibitions && gallery.exhibitions.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-6">
+                    <div className="grid grid-cols-1 gap-6 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
                       {gallery.exhibitions.map((exhibition) => (
                         <div key={exhibition.id} className="p-8 bg-zinc-50 rounded-[32px] border border-zinc-100 hover:border-zinc-300 transition-colors">
+                          {exhibition.image_url && (
+                            <div className="mb-6 rounded-2xl overflow-hidden aspect-video">
+                              <img src={exhibition.image_url} alt={exhibition.title} className="w-full h-full object-cover" />
+                            </div>
+                          )}
                           <h4 className="text-xl font-black text-zinc-900 mb-2 uppercase">{exhibition.title}</h4>
                           <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
-                            <span>{new Date(exhibition.start_date).toLocaleDateString()} — {exhibition.end_date ? new Date(exhibition.end_date).toLocaleDateString() : '...'}</span>
+                            <span>
+                              {exhibition.start_date ? new Date(exhibition.start_date).toLocaleDateString() : 'Дати уточнюються'} 
+                              {' — '} 
+                              {exhibition.end_date ? new Date(exhibition.end_date).toLocaleDateString() : '...'}
+                            </span>
                           </div>
                           {exhibition.artists && (
                             <p className="text-sm font-bold text-zinc-600 mb-4 uppercase">{exhibition.artists}</p>

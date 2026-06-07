@@ -43,6 +43,7 @@ export type Exhibition = {
   description: string;
   start_date: string;
   end_date: string | null;
+  image_url?: string;
   source_url: string;
   is_active: boolean;
   artists: string;
