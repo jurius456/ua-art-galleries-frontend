@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
+import { useAuth } from "../../hooks/useAuth";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 
 const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [message, setMessage] = useState("");
 
@@ -28,9 +30,12 @@ const VerifyEmail = () => {
           body: JSON.stringify({ uid, token }),
         });
         const data = await res.json();
-        if (res.ok) {
+        if (res.ok && data.key) {
+          await login(data.key);
           setStatus("success");
-          setMessage("Електронна пошта успішно підтверджена! Тепер ви можете увійти.");
+          setMessage("Електронна пошта успішно підтверджена! Ви увійшли в систему.");
+          // Automatically redirect to homepage after 2 seconds
+          setTimeout(() => navigate("/"), 2000);
         } else {
           setStatus("error");
           setMessage(data.detail || "Помилка підтвердження пошти.");
@@ -59,10 +64,10 @@ const VerifyEmail = () => {
             <h2 className="text-xl font-bold mb-2">Успіх!</h2>
             <p className="text-zinc-600 mb-6">{message}</p>
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/")}
               className="w-full py-4 rounded-2xl text-white bg-zinc-900 hover:bg-zinc-800 transition-all font-black uppercase tracking-widest text-[10px]"
             >
-              Увійти
+              На головну
             </button>
           </div>
         )}
