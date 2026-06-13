@@ -68,29 +68,19 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const toggleFavorite = async (gallery: Favorite) => {
-    console.log('toggleFavorite called with:', gallery);
-    console.log('Current user:', user);
-
     if (!user) {
-      // Якщо користувач не авторизований, показуємо вікно входу
-      console.warn("User must be logged in to save favorites");
       setLoginPromptVisible(true);
       return;
     }
 
     try {
-      console.log('Calling API to toggle favorite for slug:', gallery.slug);
       const result = await toggleFavoriteAPI(gallery.slug);
-      console.log('API response:', result);
 
-      // Оновити локальний стан
       if (result.is_favorite) {
-        console.log('Adding to favorites');
         setFavorites(prev => [...prev, gallery]);
         setFavoriteSlugs(prev => [...prev, gallery.slug]);
-        setLastAddedFavorite(gallery); // Встановлюємо останню додану галерею
+        setLastAddedFavorite(gallery);
       } else {
-        console.log('Removing from favorites');
         setFavorites(prev => prev.filter(f => f.slug !== gallery.slug));
         setFavoriteSlugs(prev => prev.filter(s => s !== gallery.slug));
       }

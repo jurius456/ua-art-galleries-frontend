@@ -1,8 +1,11 @@
 import { Lock, ShieldCheck, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { changePassword } from "../../api/auth";
+import { useTranslation } from "react-i18next";
 
 const ChangePasswordPage = () => {
+  const { t } = useTranslation();
+
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -22,7 +25,6 @@ const ChangePasswordPage = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Очищаємо помилки при введенні
     setErrors((prev) => ({ ...prev, [name]: "", general: "" }));
     setSuccess(false);
   };
@@ -36,23 +38,23 @@ const ChangePasswordPage = () => {
     };
 
     if (!formData.currentPassword) {
-      newErrors.currentPassword = "Введіть поточний пароль";
+      newErrors.currentPassword = t('settings.enterCurrentPassword');
     }
 
     if (!formData.newPassword) {
-      newErrors.newPassword = "Введіть новий пароль";
+      newErrors.newPassword = t('settings.enterNewPassword');
     } else if (formData.newPassword.length < 8) {
-      newErrors.newPassword = "Мінімум 8 символів";
+      newErrors.newPassword = t('settings.passwordMinLength');
     }
 
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Підтвердіть пароль";
+      newErrors.confirmPassword = t('settings.repeatPassword');
     } else if (formData.newPassword !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Паролі не співпадають";
+      newErrors.confirmPassword = t('settings.passwordsDoNotMatch');
     }
 
     if (formData.currentPassword === formData.newPassword && formData.currentPassword) {
-      newErrors.newPassword = "Новий пароль має відрізнятися від поточного";
+      newErrors.newPassword = t('settings.passwordMustDiffer');
     }
 
     setErrors(newErrors);
@@ -61,7 +63,6 @@ const ChangePasswordPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!validateForm()) return;
 
     setIsLoading(true);
@@ -73,27 +74,11 @@ const ChangePasswordPage = () => {
         new_password: formData.newPassword,
         new_password_confirm: formData.confirmPassword,
       });
-
-      // Успіх!
       setSuccess(true);
-      setFormData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
+      setFormData({ currentPassword: "", newPassword: "", confirmPassword: "" });
     } catch (error: any) {
-      // Обробка помилок від сервера
-      const errorMessage = error?.message || "Помилка при зміні пароля";
-
-      if (errorMessage.includes("поточний пароль") || errorMessage.includes("невірний")) {
-        setErrors((prev) => ({ ...prev, currentPassword: errorMessage }));
-      } else if (errorMessage.includes("не співпадають")) {
-        setErrors((prev) => ({ ...prev, confirmPassword: errorMessage }));
-      } else if (errorMessage.includes("мінімум") || errorMessage.includes("символів")) {
-        setErrors((prev) => ({ ...prev, newPassword: errorMessage }));
-      } else {
-        setErrors((prev) => ({ ...prev, general: errorMessage }));
-      }
+      const errorMessage = error?.message || t('settings.passwordChangeError');
+      setErrors((prev) => ({ ...prev, general: errorMessage }));
     } finally {
       setIsLoading(false);
     }
@@ -101,22 +86,19 @@ const ChangePasswordPage = () => {
 
   return (
     <div className="max-w-md animate-in fade-in duration-700">
-
-      {/* Скляна картка у стилі Dropdown */}
       <div className="bg-white/90 backdrop-blur-2xl border border-gray-100 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-8 space-y-8">
 
-        {/* Заголовок */}
         <section className="space-y-1">
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-500">Безпека</p>
-          <h2 className="text-xl font-bold text-black">Зміна пароля</h2>
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-500">
+            {t('settings.security')}
+          </p>
+          <h2 className="text-xl font-bold text-black">{t('settings.changePassword')}</h2>
         </section>
 
-        {/* Форма */}
         <form className="space-y-6" onSubmit={handleSubmit}>
-
           <div className="space-y-5">
             <PasswordInput
-              label="Поточний пароль"
+              label={t('settings.currentPassword')}
               placeholder="••••••••"
               name="currentPassword"
               value={formData.currentPassword}
@@ -126,16 +108,16 @@ const ChangePasswordPage = () => {
 
             <div className="pt-2 space-y-5 border-t border-gray-100">
               <PasswordInput
-                label="Новий пароль"
-                placeholder="Введіть новий пароль"
+                label={t('settings.newPassword')}
+                placeholder={t('settings.enterNewPassword')}
                 name="newPassword"
                 value={formData.newPassword}
                 onChange={handleChange}
                 error={errors.newPassword}
               />
               <PasswordInput
-                label="Підтвердження"
-                placeholder="Повторіть пароль"
+                label={t('settings.confirmNewPassword')}
+                placeholder={t('settings.repeatPassword')}
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
@@ -144,7 +126,6 @@ const ChangePasswordPage = () => {
             </div>
           </div>
 
-          {/* Загальна помилка */}
           {errors.general && (
             <div className="px-4 py-3 bg-red-50/40 rounded-2xl border border-red-100/50">
               <p className="text-[11px] text-red-800 font-semibold leading-tight">
@@ -153,34 +134,31 @@ const ChangePasswordPage = () => {
             </div>
           )}
 
-          {/* Повідомлення про успіх */}
           {success && (
             <div className="flex items-center gap-3 px-4 py-3 bg-green-50/40 rounded-2xl border border-green-100/50">
               <CheckCircle2 className="text-green-600" size={16} />
               <p className="text-[11px] text-green-800 font-semibold leading-tight">
-                Пароль успішно змінено!
+                {t('settings.passwordChangedSuccess')}
               </p>
             </div>
           )}
 
-          {/* Кнопка */}
           <button
             type="submit"
             disabled={isLoading}
             className="group w-full py-4 bg-black text-white rounded-2xl flex items-center justify-center gap-3 hover:bg-neutral-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span className="text-[11px] font-black uppercase tracking-[0.2em] ml-2">
-              {isLoading ? "Оновлення..." : "Оновити дані"}
+              {isLoading ? t('settings.updating') : t('settings.update')}
             </span>
             {!isLoading && <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />}
           </button>
         </form>
 
-        {/* Порада */}
         <div className="flex items-center gap-3 px-4 py-3 bg-blue-50/40 rounded-2xl border border-blue-100/50">
           <ShieldCheck className="text-blue-600" size={16} />
           <p className="text-[11px] text-blue-800 font-semibold leading-tight">
-            Пароль має бути надійним та унікальним.
+            {t('settings.passwordHint')}
           </p>
         </div>
       </div>
@@ -188,14 +166,8 @@ const ChangePasswordPage = () => {
   );
 };
 
-/* Контрастний інпут */
 const PasswordInput = ({
-  label,
-  placeholder,
-  name,
-  value,
-  onChange,
-  error
+  label, placeholder, name, value, onChange, error
 }: {
   label: string;
   placeholder: string;

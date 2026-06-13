@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Trash2, BookmarkX, Database } from "lucide-react";
 import { useFavorites } from "../../context/FavoritesContext";
+import { useTranslation } from "react-i18next";
 
 const SavedGalleriesPage = () => {
   const { favorites, toggleFavorite } = useFavorites();
+  const { t } = useTranslation();
 
   return (
     <div className="max-w-2xl animate-in fade-in duration-700">
@@ -14,11 +16,11 @@ const SavedGalleriesPage = () => {
             <div className="flex items-center gap-2 text-zinc-400">
               <Database size={12} />
               <p className="text-[10px] font-black uppercase tracking-[0.25em]">
-                Цифровий Реєстр
+                {t('saved.registry')}
               </p>
             </div>
             <h2 className="text-2xl font-black text-zinc-900 uppercase tracking-tighter">
-              Мій Архів
+              {t('saved.myArchive')}
             </h2>
           </div>
           <div className="text-right">
@@ -54,6 +56,7 @@ const SavedGalleriesPage = () => {
                   <button
                     onClick={() => toggleFavorite(g)}
                     className="p-3 text-zinc-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                    aria-label="Remove from favorites"
                   >
                     <Trash2 size={18} />
                   </button>
@@ -61,6 +64,7 @@ const SavedGalleriesPage = () => {
                   <Link
                     to={`/galleries/${g.slug}`}
                     className="p-3 bg-white text-zinc-400 border border-zinc-100 rounded-xl hover:text-zinc-900 hover:border-zinc-900 transition-all shadow-sm"
+                    aria-label="Go to gallery"
                   >
                     <ArrowRight size={18} strokeWidth={2.5} />
                   </Link>
@@ -77,7 +81,7 @@ const SavedGalleriesPage = () => {
               to="/galleries"
               className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-600 px-6 py-3 bg-blue-50 rounded-full hover:bg-blue-600 hover:text-white transition-all"
             >
-              До каталогу <ArrowRight size={12} />
+              {t('saved.toCatalog')} <ArrowRight size={12} />
             </Link>
           </div>
         )}

@@ -211,7 +211,7 @@ const Header = () => {
                   className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-100 text-zinc-600 hover:text-zinc-900 transition-colors text-[11px] font-black uppercase tracking-wider"
                 >
                   {theme === 'dark' ? <Sun size={14} strokeWidth={2.5} /> : <Moon size={14} strokeWidth={2.5} />}
-                  {theme === 'dark' ? 'Light' : 'Dark'}
+                  {theme === 'dark' ? t('settings.light', 'Світла') : t('settings.dark', 'Темна')}
                 </button>
                 <LanguageSwitcher />
               </div>

@@ -134,8 +134,8 @@
     "contacts": "Контакти",
     "website": "Веб-сайт",
     "backToGalleries": "Архів галерей",
-    "notFound": "404_DATA_NOT_FOUND",
-    "loading": "Loading_Gallery_Data...",
+    "notFound": "Галерею не знайдено",
+    "loading": "Завантаження...",
     "return": "Повернутись",
     "status": "Статус",
     "active": "Діюча",
@@ -224,7 +224,16 @@
     "invalidEmail": "Невірний формат пошти.",
     "enterPassword": "Введіть пароль.",
     "passwordMismatch": "Паролі не співпадають.",
+    "passwordMinLength": "Мінімум 8 символів.",
+    "passwordUppercase": "Потрібна хоча б одна велика літера.",
+    "passwordNumber": "Потрібна хоча б одна цифра.",
+    "passwordSpecial": "Потрібен хоча б один спецсимвол (!@#$ тощо).",
+    "passwordHint": "Мін. 8 символів, велика літера, цифра, спецсимвол",
+    "or": "або",
+    "googleSignIn": "Увійти через Google",
+    "googleSignUp": "Зареєструватись через Google",
     "authError": "Помилка авторизації.",
+    "googleError": "Помилка підключення до Google.",
     "serverUnavailable": "Сервер недоступний."
   },
   "about": {
@@ -242,7 +251,7 @@
     "quote": "",
     "ourMission": "Наша місія",
     "missionText": "Створити відкритий цифровий простір, що об’єднує українські артгалереї в Україні та світі, забезпечуючи їхню видимість, доступність для дослідження і популяризацію українського мистецтва у глобальному культурному контексті.",
-    "contact": "Contact",
+    "contact": "Контакти",
     "teamMembers": {
       "dmytro": {
         "name": "Дмитро Качан",
@@ -302,6 +311,8 @@
     "system": "Система",
     "language": "Мова інтерфейсу",
     "theme": "Тема оформлення",
+    "light": "Світла",
+    "dark": "Темна",
     "systemTheme": "Системна",
     "notifications": "Сповіщення про події",
     "notificationsDesc": "Отримувати пуш-повідомлення про нові виставки",
@@ -309,7 +320,41 @@
     "changePassword": "Змінити пароль",
     "currentPassword": "Поточний пароль",
     "newPassword": "Новий пароль",
-    "confirmNewPassword": "Підтвердіть новий пароль"
+    "confirmNewPassword": "Підтвердження",
+    "enterCurrentPassword": "Введіть поточний пароль",
+    "enterNewPassword": "Введіть новий пароль",
+    "repeatPassword": "Повторіть пароль",
+    "passwordMustDiffer": "Новий пароль має відрізнятися від поточного",
+    "passwordsDoNotMatch": "Паролі не співпадають",
+    "passwordMinLength": "Мінімум 8 символів",
+    "passwordChangeError": "Помилка при зміні пароля",
+    "passwordChangedSuccess": "Пароль успішно змінено!",
+    "security": "Безпека",
+    "passwordHint": "Пароль має бути надійним та унікальним.",
+    "updating": "Оновлення...",
+    "update": "Оновити дані"
+  },
+  "profile": {
+    "title": "Особистий профіль",
+    "username": "Ім'я користувача (Нікнейм)",
+    "email": "Електронна пошта",
+    "logout": "Вийти з системи"
+  },
+  "saved": {
+    "registry": "Цифровий Реєстр",
+    "myArchive": "Мій Архів",
+    "toCatalog": "До каталогу"
+  },
+  "verify": {
+    "loading": "Підтвердження пошти...",
+    "success": "Успіх!",
+    "successMessage": "Електронна пошта успішно підтверджена! Ви увійшли в систему.",
+    "error": "Помилка",
+    "invalidLink": "Недійсне посилання для підтвердження.",
+    "confirmError": "Помилка підтвердження пошти.",
+    "serverError": "Помилка з'єднання з сервером.",
+    "toHome": "На головну",
+    "back": "Повернутися"
   },
   "favorites": {
     "addedTitle": "Додано в збережені",

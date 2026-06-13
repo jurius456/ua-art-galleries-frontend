@@ -1,10 +1,13 @@
+import React from "react";
 import { LogOut, Mail, AtSign } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { useTranslation } from "react-i18next";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
 
   if (!user) return null;
 
@@ -13,13 +16,15 @@ const ProfilePage = () => {
   return (
     <div className="max-w-3xl animate-in fade-in slide-in-from-right-4 duration-700">
       <div className="bg-white/90 backdrop-blur-2xl border border-gray-100 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.04)] p-10 space-y-10">
-        
+
         <section className="flex flex-col md:flex-row items-center gap-8 pb-8 border-b border-gray-50 text-center md:text-left">
           <div className="w-20 h-20 bg-zinc-900 text-white rounded-[24px] flex items-center justify-center text-4xl font-black shadow-xl uppercase">
             {initial}
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Особистий профіль</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">
+              {t('profile.title')}
+            </p>
             <h2 className="text-3xl font-black text-zinc-900 tracking-tighter leading-none">
               @{user.username}
             </h2>
@@ -31,8 +36,8 @@ const ProfilePage = () => {
         </section>
 
         <section className="grid md:grid-cols-2 gap-x-12 gap-y-10">
-          <InfoField label="Ім'я користувача (Нікнейм)" value={`@${user.username}`} icon={<AtSign size={14} />} />
-          <InfoField label="Електронна пошта" value={user.email} icon={<Mail size={14} />} />
+          <InfoField label={t('profile.username')} value={`@${user.username}`} icon={<AtSign size={14} />} />
+          <InfoField label={t('profile.email')} value={user.email} icon={<Mail size={14} />} />
         </section>
 
         <div className="pt-8 border-t border-gray-50 flex justify-between items-center">
@@ -41,7 +46,7 @@ const ProfilePage = () => {
             onClick={() => { logout(); navigate("/login"); }}
             className="flex items-center gap-2 text-zinc-400 hover:text-red-500 font-black text-[10px] uppercase tracking-widest transition-all"
           >
-            <LogOut size={16} /> Вийти з системи
+            <LogOut size={16} /> {t('profile.logout')}
           </button>
         </div>
       </div>
@@ -49,14 +54,12 @@ const ProfilePage = () => {
   );
 };
 
-const InfoField = ({ label, value, icon, isStatus = false }: any) => (
+const InfoField = ({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) => (
   <div className="space-y-3 group">
     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-blue-600 transition-colors">
       {icon} {label}
     </div>
-    <p className={`text-base font-bold border-b border-zinc-50 pb-2 transition-all group-hover:border-zinc-200 ${
-      isStatus && value === "Активний" ? "text-blue-600" : "text-zinc-800"
-    }`}>
+    <p className="text-base font-bold border-b border-zinc-50 pb-2 transition-all group-hover:border-zinc-200 text-zinc-800">
       {value || "—"}
     </p>
   </div>

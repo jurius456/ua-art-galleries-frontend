@@ -23,7 +23,7 @@ interface ExhibitionWithGallery extends Exhibition {
   galleryImage?: string | null;
 }
 
-// isExhibitionActive — impoorted from src/utils/exhibition.ts
+// isExhibitionActive — imported from src/utils/exhibition.ts
 
 const EventsPage = () => {
   const { t, i18n } = useTranslation();

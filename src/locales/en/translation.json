@@ -224,7 +224,16 @@
     "invalidEmail": "Invalid email format.",
     "enterPassword": "Enter password.",
     "passwordMismatch": "Passwords do not match.",
+    "passwordMinLength": "Minimum 8 characters.",
+    "passwordUppercase": "Must contain at least one uppercase letter.",
+    "passwordNumber": "Must contain at least one number.",
+    "passwordSpecial": "Must contain at least one special character (!@#$ etc).",
+    "passwordHint": "Min. 8 chars, uppercase, number, special character",
+    "or": "or",
+    "googleSignIn": "Continue with Google",
+    "googleSignUp": "Sign up with Google",
     "authError": "Authentication error.",
+    "googleError": "Google connection error.",
     "serverUnavailable": "Server unavailable."
   },
   "about": {
@@ -302,6 +311,8 @@
     "system": "System",
     "language": "Interface Language",
     "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
     "systemTheme": "System",
     "notifications": "Event Notifications",
     "notificationsDesc": "Receive push notifications about new exhibitions",
@@ -309,7 +320,41 @@
     "changePassword": "Change Password",
     "currentPassword": "Current Password",
     "newPassword": "New Password",
-    "confirmNewPassword": "Confirm New Password"
+    "confirmNewPassword": "Confirm Password",
+    "enterCurrentPassword": "Enter current password",
+    "enterNewPassword": "Enter new password",
+    "repeatPassword": "Repeat password",
+    "passwordMustDiffer": "New password must differ from current",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "passwordMinLength": "Minimum 8 characters",
+    "passwordChangeError": "Error changing password",
+    "passwordChangedSuccess": "Password changed successfully!",
+    "security": "Security",
+    "passwordHint": "Password must be strong and unique.",
+    "updating": "Updating...",
+    "update": "Update"
+  },
+  "profile": {
+    "title": "Personal Profile",
+    "username": "Username (Nickname)",
+    "email": "Email Address",
+    "logout": "Log Out"
+  },
+  "saved": {
+    "registry": "Digital Registry",
+    "myArchive": "My Archive",
+    "toCatalog": "To Catalog"
+  },
+  "verify": {
+    "loading": "Verifying email...",
+    "success": "Success!",
+    "successMessage": "Your email has been verified! You are now logged in.",
+    "error": "Error",
+    "invalidLink": "Invalid verification link.",
+    "confirmError": "Email verification failed.",
+    "serverError": "Server connection error.",
+    "toHome": "Go to Home",
+    "back": "Go Back"
   },
   "favorites": {
     "addedTitle": "Added to Favorites",
