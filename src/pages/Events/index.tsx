@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Search, Calendar, LayoutGrid,
@@ -51,15 +51,31 @@ const EventsPage = () => {
   const [selectedStatus, setSelectedStatus] = useState(""); // "" | "active" | "archive"
   const [page, setPage] = useState(1);
 
-  // Fetch detail for each gallery to get exhibitions — parallel, progressive
+  const BATCH_SIZE = 8;
+
+  // First pass: track how many queries are currently enabled/resolved
+  // We start with the first batch enabled, then unlock more as they complete
+  const [unlockedBatches, setUnlockedBatches] = useState(1);
+
+  // Fetch detail for each gallery to get exhibitions — batched (BATCH_SIZE at a time)
   const galleryDetailResults = useQueries({
-    queries: galleries.map(g => ({
+    queries: galleries.map((g, idx) => ({
       queryKey: ["gallery-detail-events", g.slug],
       queryFn: () => fetchGalleryBySlug(g.slug),
-      staleTime: 1000 * 60 * 10, // 10 min cache
-      enabled: galleries.length > 0,
+      staleTime: 1000 * 60 * 10,
+      enabled: galleries.length > 0 && Math.floor(idx / BATCH_SIZE) < unlockedBatches,
     })),
   });
+
+  // Unlock next batch when current batch finishes (via useEffect to avoid render-loop)
+  const resolvedCount = galleryDetailResults.filter(r => r.isSuccess || r.isError).length;
+  useEffect(() => {
+    const needed = Math.ceil(Math.max(resolvedCount, 1) / BATCH_SIZE) + 1;
+    const maxBatches = Math.ceil(galleries.length / BATCH_SIZE);
+    if (needed > unlockedBatches && needed <= maxBatches) {
+      setUnlockedBatches(needed);
+    }
+  }, [resolvedCount, unlockedBatches, galleries.length]);
 
   const loadedCount = galleryDetailResults.filter(r => r.isSuccess).length;
   const totalCount = galleries.length;
