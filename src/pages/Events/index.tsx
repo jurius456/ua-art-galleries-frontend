@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, memo } from "react";
 import { Link } from "react-router-dom";
 import {
   Search, Calendar, LayoutGrid,
@@ -10,9 +10,11 @@ import { useQueries } from "@tanstack/react-query";
 import { fetchGalleryBySlug } from "../../api/galleries";
 import type { Exhibition } from "../../api/galleries";
 import { getGalleryName, getGalleryCity } from "../../utils/gallery";
+import { isExhibitionActive } from "../../utils/exhibition";
 import { CustomSelect } from "../../components/shared/CustomSelect";
 
 const PER_PAGE = 18;
+const BATCH_SIZE = 8;
 
 interface ExhibitionWithGallery extends Exhibition {
   gallerySlug: string;
@@ -21,25 +23,7 @@ interface ExhibitionWithGallery extends Exhibition {
   galleryImage?: string | null;
 }
 
-// Strict date-based check: active only if end_date is today or in the future
-const isExhibitionActive = (ex: Exhibition): boolean => {
-  const now = new Date();
-  // Set time to start of today for fair comparison
-  now.setHours(0, 0, 0, 0);
-
-  // If is_active is explicitly false — always archive
-  if (typeof ex.is_active === 'boolean' && !ex.is_active) return false;
-
-  // If end_date exists — use it as the ground truth
-  if (ex.end_date) {
-    const end = new Date(ex.end_date);
-    end.setHours(23, 59, 59, 999); // treat end_date as end of day
-    return end >= now;
-  }
-
-  // No end_date: if is_active is explicitly true, trust it; otherwise show as active
-  return true;
-};
+// isExhibitionActive — impoorted from src/utils/exhibition.ts
 
 const EventsPage = () => {
   const { t, i18n } = useTranslation();
@@ -51,10 +35,6 @@ const EventsPage = () => {
   const [selectedStatus, setSelectedStatus] = useState(""); // "" | "active" | "archive"
   const [page, setPage] = useState(1);
 
-  const BATCH_SIZE = 8;
-
-  // First pass: track how many queries are currently enabled/resolved
-  // We start with the first batch enabled, then unlock more as they complete
   const [unlockedBatches, setUnlockedBatches] = useState(1);
 
   // Fetch detail for each gallery to get exhibitions — batched (BATCH_SIZE at a time)
@@ -354,7 +334,7 @@ const EventsPage = () => {
   );
 };
 
-const ExhibitionCard = ({ exhibition }: { exhibition: ExhibitionWithGallery }) => {
+const ExhibitionCard = memo(({ exhibition }: { exhibition: ExhibitionWithGallery }) => {
   const { t, i18n } = useTranslation();
   const active = isExhibitionActive(exhibition);
 
@@ -451,6 +431,6 @@ const ExhibitionCard = ({ exhibition }: { exhibition: ExhibitionWithGallery }) =
       </div>
     </Link>
   );
-};
+});
 
 export default EventsPage;

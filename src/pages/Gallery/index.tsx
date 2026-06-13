@@ -19,6 +19,7 @@ import {
   getGalleryArtists,
 } from "../../utils/gallery";
 import GalleryMap from "../../components/gallery/GalleryMap";
+import { isExhibitionActive } from "../../utils/exhibition";
 
 const getSocialLinkDetails = (url: string, t: (key: string) => string) => {
   if (!url) return { icon: Globe, name: t('gallery.socialNetwork') };
@@ -108,33 +109,16 @@ const GalleryPage = () => {
 
   // Split exhibitions into active and archive
   // IMPORTANT: Must be before early returns (Rules of Hooks)
-  const today = useMemo(() => new Date(), []);
+  // today is computed fresh each render cycle to handle long-open tabs correctly
   const activeExhibitions = useMemo(() => {
     if (!gallery?.exhibitions) return [];
-    return gallery.exhibitions.filter(ex => {
-      // Use is_active field if present; also validate by end_date
-      if (typeof ex.is_active === 'boolean') {
-        if (!ex.is_active) return false;
-        // Even if is_active is true, treat as archive if end_date is clearly past
-        if (ex.end_date) return new Date(ex.end_date) >= today;
-        return true;
-      }
-      if (ex.end_date) return new Date(ex.end_date) >= today;
-      return true;
-    });
-  }, [gallery?.exhibitions, today]);
+    return gallery.exhibitions.filter(ex => isExhibitionActive(ex));
+  }, [gallery?.exhibitions]);
+
   const archiveExhibitions = useMemo(() => {
     if (!gallery?.exhibitions) return [];
-    return gallery.exhibitions.filter(ex => {
-      if (typeof ex.is_active === 'boolean') {
-        if (!ex.is_active) return true;
-        if (ex.end_date) return new Date(ex.end_date) < today;
-        return false;
-      }
-      if (ex.end_date) return new Date(ex.end_date) < today;
-      return false;
-    });
-  }, [gallery?.exhibitions, today]);
+    return gallery.exhibitions.filter(ex => !isExhibitionActive(ex));
+  }, [gallery?.exhibitions]);
 
   // Format updated_at date
   const updatedAtFormatted = useMemo(() => {
