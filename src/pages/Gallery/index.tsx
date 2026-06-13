@@ -106,6 +106,49 @@ const GalleryPage = () => {
     }
   };
 
+  // Split exhibitions into active and archive
+  // IMPORTANT: Must be before early returns (Rules of Hooks)
+  const today = useMemo(() => new Date(), []);
+  const activeExhibitions = useMemo(() => {
+    if (!gallery?.exhibitions) return [];
+    return gallery.exhibitions.filter(ex => {
+      // Use is_active field if present; also validate by end_date
+      if (typeof ex.is_active === 'boolean') {
+        if (!ex.is_active) return false;
+        // Even if is_active is true, treat as archive if end_date is clearly past
+        if (ex.end_date) return new Date(ex.end_date) >= today;
+        return true;
+      }
+      if (ex.end_date) return new Date(ex.end_date) >= today;
+      return true;
+    });
+  }, [gallery?.exhibitions, today]);
+  const archiveExhibitions = useMemo(() => {
+    if (!gallery?.exhibitions) return [];
+    return gallery.exhibitions.filter(ex => {
+      if (typeof ex.is_active === 'boolean') {
+        if (!ex.is_active) return true;
+        if (ex.end_date) return new Date(ex.end_date) < today;
+        return false;
+      }
+      if (ex.end_date) return new Date(ex.end_date) < today;
+      return false;
+    });
+  }, [gallery?.exhibitions, today]);
+
+  // Format updated_at date
+  const updatedAtFormatted = useMemo(() => {
+    if (!gallery?.updated_at) return null;
+    try {
+      return new Date(gallery.updated_at).toLocaleDateString(
+        i18n.language === 'uk' ? 'uk-UA' : 'en-US',
+        { year: 'numeric', month: 'long', day: 'numeric' }
+      );
+    } catch {
+      return null;
+    }
+  }, [gallery?.updated_at, i18n.language]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -137,38 +180,6 @@ const GalleryPage = () => {
   const fullDesc = getGalleryFullDescription(gallery, i18n.language);
   const specialization = getGallerySpecialization(gallery, i18n.language);
   const artists = getGalleryArtists(gallery, i18n.language);
-
-  // Split exhibitions into active and archive
-  const today = useMemo(() => new Date(), []);
-  const activeExhibitions = useMemo(() => {
-    if (!gallery.exhibitions) return [];
-    return gallery.exhibitions.filter(ex => {
-      if (typeof ex.is_active === 'boolean') return ex.is_active;
-      if (ex.end_date) return new Date(ex.end_date) >= today;
-      return true;
-    });
-  }, [gallery.exhibitions, today]);
-  const archiveExhibitions = useMemo(() => {
-    if (!gallery.exhibitions) return [];
-    return gallery.exhibitions.filter(ex => {
-      if (typeof ex.is_active === 'boolean') return !ex.is_active;
-      if (ex.end_date) return new Date(ex.end_date) < today;
-      return false;
-    });
-  }, [gallery.exhibitions, today]);
-
-  // Format updated_at date
-  const updatedAtFormatted = useMemo(() => {
-    if (!gallery.updated_at) return null;
-    try {
-      return new Date(gallery.updated_at).toLocaleDateString(
-        i18n.language === 'uk' ? 'uk-UA' : 'en-US',
-        { year: 'numeric', month: 'long', day: 'numeric' }
-      );
-    } catch {
-      return null;
-    }
-  }, [gallery.updated_at, i18n.language]);
 
   return (
     <div className="min-h-screen bg-transparent pb-32 animate-in fade-in duration-700 font-sans">

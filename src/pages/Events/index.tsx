@@ -21,9 +21,23 @@ interface ExhibitionWithGallery extends Exhibition {
   galleryImage?: string | null;
 }
 
+// Strict date-based check: active only if end_date is today or in the future
 const isExhibitionActive = (ex: Exhibition): boolean => {
-  if (typeof ex.is_active === 'boolean') return ex.is_active;
-  if (ex.end_date) return new Date(ex.end_date) >= new Date();
+  const now = new Date();
+  // Set time to start of today for fair comparison
+  now.setHours(0, 0, 0, 0);
+
+  // If is_active is explicitly false — always archive
+  if (typeof ex.is_active === 'boolean' && !ex.is_active) return false;
+
+  // If end_date exists — use it as the ground truth
+  if (ex.end_date) {
+    const end = new Date(ex.end_date);
+    end.setHours(23, 59, 59, 999); // treat end_date as end of day
+    return end >= now;
+  }
+
+  // No end_date: if is_active is explicitly true, trust it; otherwise show as active
   return true;
 };
 
@@ -37,21 +51,22 @@ const EventsPage = () => {
   const [selectedStatus, setSelectedStatus] = useState(""); // "" | "active" | "archive"
   const [page, setPage] = useState(1);
 
-  // Fetch detail for each gallery to get exhibitions
+  // Fetch detail for each gallery to get exhibitions — parallel, progressive
   const galleryDetailResults = useQueries({
     queries: galleries.map(g => ({
       queryKey: ["gallery-detail-events", g.slug],
       queryFn: () => fetchGalleryBySlug(g.slug),
-      staleTime: 1000 * 60 * 5,
+      staleTime: 1000 * 60 * 10, // 10 min cache
       enabled: galleries.length > 0,
     })),
   });
 
-  const isLoading = galleriesLoading || galleryDetailResults.some(r => r.isLoading);
   const loadedCount = galleryDetailResults.filter(r => r.isSuccess).length;
   const totalCount = galleries.length;
+  // Show content progressively — don't wait for ALL galleries
+  const isInitialLoading = galleriesLoading || loadedCount === 0;
 
-  // Aggregate all exhibitions from loaded galleries
+  // Aggregate all exhibitions from already-loaded galleries
   const allExhibitions = useMemo<ExhibitionWithGallery[]>(() => {
     const result: ExhibitionWithGallery[] = [];
     galleryDetailResults.forEach((res, idx) => {
@@ -95,10 +110,11 @@ const EventsPage = () => {
         ex.galleryName.toLowerCase().includes(q);
       const matchCity = !selectedCity || ex.galleryCity === selectedCity;
       const matchGallery = !selectedGallery || ex.gallerySlug === selectedGallery;
+      const active = isExhibitionActive(ex);
       const matchStatus =
         !selectedStatus ||
-        (selectedStatus === "active" && isExhibitionActive(ex)) ||
-        (selectedStatus === "archive" && !isExhibitionActive(ex));
+        (selectedStatus === "active" && active) ||
+        (selectedStatus === "archive" && !active);
       return matchSearch && matchCity && matchGallery && matchStatus;
     });
   }, [allExhibitions, search, selectedCity, selectedGallery, selectedStatus]);
@@ -118,17 +134,20 @@ const EventsPage = () => {
 
   return (
     <div className="min-h-screen bg-transparent pb-28 animate-in fade-in duration-700">
-      {/* Header */}
-      <section className="bg-white/40 backdrop-blur-sm border-b border-zinc-200/50 py-16">
-        <div className="container mx-auto px-6 max-w-6xl space-y-10">
+      {/* Header — important: overflow-visible so dropdowns aren't clipped */}
+      <section className="bg-white/40 backdrop-blur-sm border-b border-zinc-200/50 py-16 overflow-visible relative z-10">
+        <div className="container mx-auto px-6 max-w-6xl space-y-8">
           <div className="space-y-2">
             <h1 className="text-4xl md:text-5xl font-black text-zinc-800 tracking-tighter uppercase leading-none">
               {t('events.title')} <span className="text-zinc-400">{t('events.subtitle')}</span>
             </h1>
             {!galleriesLoading && totalCount > 0 && loadedCount < totalCount && (
-              <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
-                {t('events.loading')} ({loadedCount}/{totalCount})
-              </p>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 border-2 border-zinc-300 border-t-zinc-600 rounded-full animate-spin" />
+                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                  {t('events.loading')} ({loadedCount}/{totalCount})
+                </p>
+              </div>
             )}
           </div>
 
@@ -144,33 +163,39 @@ const EventsPage = () => {
             />
           </div>
 
-          {/* Filters */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <CustomSelect
-              value={selectedCity}
-              onChange={(v) => { setSelectedCity(v); setPage(1); }}
-              options={[
-                { value: "", label: t('events.allCities') },
-                ...cities.map(c => ({ value: c, label: c })),
-              ]}
-            />
-            <CustomSelect
-              value={selectedGallery}
-              onChange={(v) => { setSelectedGallery(v); setPage(1); }}
-              options={[
-                { value: "", label: t('events.allGalleries') },
-                ...galleryOptions,
-              ]}
-            />
-            <CustomSelect
-              value={selectedStatus}
-              onChange={(v) => { setSelectedStatus(v); setPage(1); }}
-              options={[
-                { value: "", label: t('events.allStatuses') },
-                { value: "active", label: t('events.activeOnly') },
-                { value: "archive", label: t('events.archiveOnly') },
-              ]}
-            />
+          {/* Filters — each CustomSelect is relative z-[60/70/80] to stack dropdowns properly */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4" style={{ position: 'relative', zIndex: 50 }}>
+            <div style={{ position: 'relative', zIndex: 83 }}>
+              <CustomSelect
+                value={selectedCity}
+                onChange={(v) => { setSelectedCity(v); setPage(1); }}
+                options={[
+                  { value: "", label: t('events.allCities') },
+                  ...cities.map(c => ({ value: c, label: c })),
+                ]}
+              />
+            </div>
+            <div style={{ position: 'relative', zIndex: 82 }}>
+              <CustomSelect
+                value={selectedGallery}
+                onChange={(v) => { setSelectedGallery(v); setPage(1); }}
+                options={[
+                  { value: "", label: t('events.allGalleries') },
+                  ...galleryOptions,
+                ]}
+              />
+            </div>
+            <div style={{ position: 'relative', zIndex: 81 }}>
+              <CustomSelect
+                value={selectedStatus}
+                onChange={(v) => { setSelectedStatus(v); setPage(1); }}
+                options={[
+                  { value: "", label: t('events.allStatuses') },
+                  { value: "active", label: t('events.activeOnly') },
+                  { value: "archive", label: t('events.archiveOnly') },
+                ]}
+              />
+            </div>
           </div>
 
           {/* Active filters badge row */}
@@ -218,16 +243,17 @@ const EventsPage = () => {
       <section className="container mx-auto px-6 max-w-6xl mt-10">
         <div className="flex items-center gap-2 text-zinc-500 font-bold text-[10px] uppercase tracking-[0.25em] mb-10">
           <LayoutGrid size={14} />
-          {isLoading
+          {isInitialLoading
             ? t('events.loading')
-            : t('events.foundEvents', { count: filtered.length })
+            : `${t('events.foundEvents', { count: filtered.length })}${loadedCount < totalCount ? ` (${loadedCount}/${totalCount})` : ''}`
           }
         </div>
 
-        {isLoading ? (
+        {isInitialLoading ? (
+          // Skeleton grid
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="rounded-[32px] border border-zinc-100 bg-white p-0 overflow-hidden animate-pulse">
+              <div key={i} className="rounded-[32px] border border-zinc-100 bg-white overflow-hidden animate-pulse">
                 <div className="h-48 bg-zinc-100" />
                 <div className="p-6 space-y-3">
                   <div className="h-3 bg-zinc-100 rounded-full w-1/3" />
