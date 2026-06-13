@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Search, Heart, ChevronLeft, ChevronRight, BadgeCheck, Ban, Star } from "lucide-react";
 import { useQueries } from "@tanstack/react-query";
 import { useGalleriesQuery } from "../../hooks/useGalleriesQuery";
@@ -24,7 +24,18 @@ const GalleriesPage = () => {
   const [selectedYears, setSelectedYears] = useState<string[]>([]);
   const [minRating, setMinRating] = useState(0);
   const [sort, setSort] = useState("alphabetical");
-  const [page, setPage] = useState(1);
+
+  // Store page in URL to preserve it when navigating back
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = parseInt(searchParams.get('page') || '1', 10);
+  const setPage = (newPage: number | ((prev: number) => number)) => {
+    const resolved = typeof newPage === 'function' ? newPage(page) : newPage;
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      next.set('page', String(resolved));
+      return next;
+    }, { replace: false });
+  };
 
   /* ---------- CITIES & YEARS ---------- */
   // Use city_en as stable key, label is translated for display

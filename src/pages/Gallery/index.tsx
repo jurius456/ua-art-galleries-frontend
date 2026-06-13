@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, MapPin, Mail, Phone, Globe, Instagram, Facebook, Twitter, Youtube, Linkedin, Lock, Clock, Calendar, BadgeCheck, Ban, Heart, Info, Users, ExternalLink, Star, MessageSquare } from "lucide-react";
+import { ArrowLeft, MapPin, Mail, Phone, Globe, Instagram, Facebook, Twitter, Youtube, Linkedin, Lock, Clock, BadgeCheck, Ban, Heart, Info, Users, ExternalLink, Star, MessageSquare, Archive, Zap, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
 import { useFavorites } from "../../context/FavoritesContext";
@@ -138,6 +138,38 @@ const GalleryPage = () => {
   const specialization = getGallerySpecialization(gallery, i18n.language);
   const artists = getGalleryArtists(gallery, i18n.language);
 
+  // Split exhibitions into active and archive
+  const today = useMemo(() => new Date(), []);
+  const activeExhibitions = useMemo(() => {
+    if (!gallery.exhibitions) return [];
+    return gallery.exhibitions.filter(ex => {
+      if (typeof ex.is_active === 'boolean') return ex.is_active;
+      if (ex.end_date) return new Date(ex.end_date) >= today;
+      return true;
+    });
+  }, [gallery.exhibitions, today]);
+  const archiveExhibitions = useMemo(() => {
+    if (!gallery.exhibitions) return [];
+    return gallery.exhibitions.filter(ex => {
+      if (typeof ex.is_active === 'boolean') return !ex.is_active;
+      if (ex.end_date) return new Date(ex.end_date) < today;
+      return false;
+    });
+  }, [gallery.exhibitions, today]);
+
+  // Format updated_at date
+  const updatedAtFormatted = useMemo(() => {
+    if (!gallery.updated_at) return null;
+    try {
+      return new Date(gallery.updated_at).toLocaleDateString(
+        i18n.language === 'uk' ? 'uk-UA' : 'en-US',
+        { year: 'numeric', month: 'long', day: 'numeric' }
+      );
+    } catch {
+      return null;
+    }
+  }, [gallery.updated_at, i18n.language]);
+
   return (
     <div className="min-h-screen bg-transparent pb-32 animate-in fade-in duration-700 font-sans">
       <div className="container mx-auto px-6 max-w-6xl pt-12">
@@ -237,24 +269,35 @@ const GalleryPage = () => {
               <div className={`space-y-16 ${!isAuth ? 'blur-md select-none opacity-40' : ''}`}>
                 <section>
                   <h3 className="text-2xl font-black uppercase mb-8 flex items-center gap-3">
-                    <Calendar size={24} className="text-zinc-400" />
-                    {t('gallery.exhibitions')}
+                    <Zap size={24} className="text-green-500" />
+                    {t('gallery.activeExhibitions')}
+                    {activeExhibitions.length > 0 && (
+                      <span className="ml-auto text-xs font-bold bg-green-50 text-green-700 px-3 py-1 rounded-full border border-green-100">
+                        {activeExhibitions.length}
+                      </span>
+                    )}
                   </h3>
-                  {gallery.exhibitions && gallery.exhibitions.length > 0 ? (
+                  {activeExhibitions.length > 0 ? (
                     <div className="grid grid-cols-1 gap-6 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                      {gallery.exhibitions.map((exhibition) => (
-                        <div key={exhibition.id} className="p-8 bg-zinc-50 rounded-[32px] border border-zinc-100 hover:border-zinc-300 transition-colors">
+                      {activeExhibitions.map((exhibition) => (
+                        <div key={exhibition.id} className="p-8 bg-zinc-50 rounded-[32px] border border-green-100 hover:border-green-200 transition-colors relative overflow-hidden">
+                          <div className="absolute top-4 right-4">
+                            <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border border-green-200">
+                              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                              {t('events.statusActive')}
+                            </span>
+                          </div>
                           {exhibition.image_url && (
                             <div className="mb-6 rounded-2xl overflow-hidden aspect-video">
                               <img src={exhibition.image_url} alt={exhibition.title} className="w-full h-full object-cover" />
                             </div>
                           )}
-                          <h4 className="text-xl font-black text-zinc-900 mb-2 uppercase">{exhibition.title}</h4>
+                          <h4 className="text-xl font-black text-zinc-900 mb-2 uppercase pr-20">{exhibition.title}</h4>
                           <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
                             <span>
-                              {exhibition.start_date ? new Date(exhibition.start_date).toLocaleDateString() : 'Дати уточнюються'} 
+                              {exhibition.start_date ? new Date(exhibition.start_date).toLocaleDateString(i18n.language === 'uk' ? 'uk-UA' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : t('gallery.dateTBD', 'Дати уточнюються')} 
                               {' — '} 
-                              {exhibition.end_date ? new Date(exhibition.end_date).toLocaleDateString() : '...'}
+                              {exhibition.end_date ? new Date(exhibition.end_date).toLocaleDateString(i18n.language === 'uk' ? 'uk-UA' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : '...'}
                             </span>
                           </div>
                           {exhibition.artists && (
@@ -274,11 +317,58 @@ const GalleryPage = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="p-12 bg-zinc-50 rounded-[32px] text-center border border-dashed border-zinc-200">
-                      <p className="text-zinc-400 font-medium">{t('gallery.noExhibitions')}</p>
+                    <div className="p-10 bg-zinc-50 rounded-[32px] text-center border border-dashed border-zinc-200">
+                      <p className="text-zinc-400 font-medium">{t('gallery.noActiveExhibitions')}</p>
                     </div>
                   )}
                 </section>
+
+                {archiveExhibitions.length > 0 && (
+                  <section className="mt-12">
+                    <h3 className="text-2xl font-black uppercase mb-8 flex items-center gap-3 text-zinc-400">
+                      <Archive size={24} className="text-zinc-400" />
+                      {t('gallery.archiveExhibitions')}
+                      <span className="ml-auto text-xs font-bold bg-zinc-50 text-zinc-500 px-3 py-1 rounded-full border border-zinc-200">
+                        {archiveExhibitions.length}
+                      </span>
+                    </h3>
+                    <div className="grid grid-cols-1 gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar opacity-75">
+                      {archiveExhibitions.map((exhibition) => (
+                        <div key={exhibition.id} className="p-6 bg-zinc-50/50 rounded-[28px] border border-zinc-100 hover:border-zinc-200 transition-colors">
+                          <div className="flex items-start justify-between gap-4 mb-3">
+                            <h4 className="text-base font-black text-zinc-600 uppercase">{exhibition.title}</h4>
+                            <span className="shrink-0 inline-flex items-center gap-1 bg-zinc-100 text-zinc-500 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full">
+                              <Archive size={9} />
+                              {t('events.statusArchive')}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">
+                            <span>
+                              {exhibition.start_date ? new Date(exhibition.start_date).toLocaleDateString(i18n.language === 'uk' ? 'uk-UA' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'} 
+                              {' — '} 
+                              {exhibition.end_date ? new Date(exhibition.end_date).toLocaleDateString(i18n.language === 'uk' ? 'uk-UA' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
+                            </span>
+                          </div>
+                          {exhibition.artists && (
+                            <p className="text-xs font-bold text-zinc-500 mb-2 uppercase">{exhibition.artists}</p>
+                          )}
+                          <p className="text-sm text-zinc-500 font-medium leading-relaxed mb-4 line-clamp-2">{exhibition.description}</p>
+                          {exhibition.source_url && (
+                            <a 
+                              href={exhibition.source_url} 
+                              target="_blank" 
+                              rel="noreferrer" 
+                              className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-blue-600 transition-colors border-b border-zinc-300 hover:border-blue-600 pb-0.5"
+                            >
+                              <ExternalLink size={10} />
+                              {t('gallery.sourceLink') || 'Джерело'}
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
 
                 <section>
                   <h3 className="text-2xl font-black uppercase mb-8 flex items-center gap-3">
@@ -562,6 +652,15 @@ const GalleryPage = () => {
                   {isFavorite(gallery.slug) ? t('gallery.saved') : t('gallery.save')}
                 </button>
               </div>
+
+              {updatedAtFormatted && (
+                <div className="flex items-center gap-2 justify-center py-2">
+                  <RefreshCw size={11} className="text-zinc-300" />
+                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                    {t('gallery.lastUpdated')}: {updatedAtFormatted}
+                  </span>
+                </div>
+              )}
 
               <div className="space-y-6 pt-6 border-t border-zinc-50">
                 <div className="space-y-1">

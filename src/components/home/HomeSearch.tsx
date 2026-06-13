@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Search, MapPin, Calendar, Star } from "lucide-react";
+import { Search, MapPin, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useGlobalSearch } from "../../hooks/useGlobalSearch";
 import { getGalleryName, getGalleryCity } from "../../utils/gallery";
@@ -48,7 +48,7 @@ const HomeSearch = () => {
     return () => clearTimeout(timeout);
   }, [currentText, isDeleting, placeholderIndex, placeholders]);
 
-  const { galleries, events, hasResults } = useGlobalSearch(searchQuery);
+  const { galleries, hasResults } = useGlobalSearch(searchQuery);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -134,32 +134,8 @@ const HomeSearch = () => {
                     </div>
                   )}
 
-                  {events.length > 0 && (
-                    <div>
-                      <div className="px-6 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 border-t border-zinc-100 mt-2 pt-4">
-                        {t('nav.events')}
-                      </div>
-                      {events.map((e) => (
-                        <Link
-                          key={e.id}
-                          to={`/events/${e.id}`}
-                          onClick={() => {
-                            setSearchOpen(false);
-                            setSearchQuery("");
-                          }}
-                          className="flex items-center gap-4 px-6 py-4 hover:bg-zinc-50 transition-colors"
-                        >
-                          <div className="w-12 h-12 bg-orange-500 text-white rounded-2xl flex items-center justify-center shrink-0">
-                            <Calendar size={20} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-base font-bold text-zinc-900 truncate">{e.title}</p>
-                            <p className="text-xs text-zinc-500 mt-1 truncate">{e.galleryName}</p>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
+
+
                 </div>
               )}
             </div>

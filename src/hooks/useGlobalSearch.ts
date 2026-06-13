@@ -1,12 +1,11 @@
 import { useMemo } from "react";
 import { useGalleriesQuery } from "./useGalleriesQuery";
-import { MOCK_EVENTS, type ArtEvent } from "../pages/Events/index";
 import type { Gallery } from "../api/galleries";
 import { useTranslation } from 'react-i18next';
 
 export interface SearchResults {
     galleries: Gallery[];
-    events: ArtEvent[];
+    events: never[];
     isLoading: boolean;
     hasResults: boolean;
 }
@@ -19,12 +18,10 @@ export function useGlobalSearch(query: string): SearchResults {
         const q = query.trim().toLowerCase();
         const galleriesArray = Array.isArray(galleries) ? galleries : [];
 
-        // Не шукаємо, якщо менше 2 символів
         if (q.length < 2) {
-            return { galleries: galleriesArray, events: MOCK_EVENTS };
+            return { galleries: galleriesArray, events: [] as never[] };
         }
 
-        // Фільтруємо галереї по різних полях
         const filteredGalleries = galleriesArray.filter(
             (g: Gallery) => {
                 const nameUa = g.name_ua?.toLowerCase() || '';
@@ -38,17 +35,9 @@ export function useGlobalSearch(query: string): SearchResults {
             }
         );
 
-        // Фільтруємо події
-        const filteredEvents = MOCK_EVENTS.filter(
-            (e) =>
-                e.title.toLowerCase().includes(q) ||
-                e.galleryName.toLowerCase().includes(q) ||
-                e.city.toLowerCase().includes(q)
-        );
-
         return {
             galleries: filteredGalleries,
-            events: filteredEvents,
+            events: [] as never[],
         };
     }, [query, galleries, i18n.language]);
 
