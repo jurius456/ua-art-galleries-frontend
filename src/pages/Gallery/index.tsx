@@ -168,13 +168,13 @@ const GalleryPage = () => {
   return (
     <div className="min-h-screen bg-transparent pb-32 animate-in fade-in duration-700 font-sans">
       <div className="container mx-auto px-6 max-w-6xl pt-12">
-        <Link
-          to="/galleries"
-          className="group inline-flex items-center gap-3 text-zinc-400 hover:text-zinc-800 text-[10px] font-black uppercase tracking-widest mb-12"
+        <button
+          onClick={() => navigate(-1)}
+          className="group inline-flex items-center gap-3 text-zinc-400 hover:text-zinc-800 text-[10px] font-black uppercase tracking-widest mb-12 transition-colors"
         >
           <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
           {t('gallery.backToGalleries')}
-        </Link>
+        </button>
 
         {gallery.cover_image && (
           <div className="rounded-[40px] overflow-hidden shadow-sm aspect-[21/9] mb-12">

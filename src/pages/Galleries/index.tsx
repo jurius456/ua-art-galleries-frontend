@@ -38,12 +38,13 @@ const GalleriesPage = () => {
   };
 
   /* ---------- CITIES & YEARS ---------- */
-  // Use city_en as stable key, label is translated for display
+  // Key: city_en (stable), label: correctly translated per current language
   const cities = useMemo(() => {
-    const seen = new Map<string, string>(); // city_en -> translated label
+    const seen = new Map<string, string>(); // stableKey -> translated label
     galleries.forEach(g => {
-      if (g.city_en && !seen.has(g.city_en)) {
-        seen.set(g.city_en, getGalleryCity(g, i18n.language));
+      const stableKey = g.city_en || g.city_ua || '';
+      if (stableKey && !seen.has(stableKey)) {
+        seen.set(stableKey, getGalleryCity(g, i18n.language));
       }
     });
     return Array.from(seen.entries()).map(([value, label]) => ({ value, label }));
@@ -96,7 +97,7 @@ const GalleriesPage = () => {
         name.toLowerCase().includes(q) ||
         cityName.toLowerCase().includes(q);
 
-      const matchCity = selectedCities.length === 0 || selectedCities.includes(g.city_en ?? '');
+      const matchCity = selectedCities.length === 0 || selectedCities.includes(g.city_en || g.city_ua || '');
       const matchStatus =
         selectedStatuses.length === 0 ||
         selectedStatuses.some(s => s === "active" ? g.status : !g.status);

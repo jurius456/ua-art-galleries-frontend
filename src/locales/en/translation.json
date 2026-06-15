@@ -46,7 +46,10 @@
       "slide3": {
         "title": "On the World Map",
         "subtitle": "Find galleries in your city"
-      }
+      },
+      "topGallery": "Top Gallery",
+      "newGallery": "New Gallery",
+      "viewGallery": "View Gallery"
     },
     "about": {
       "context": "Context",
