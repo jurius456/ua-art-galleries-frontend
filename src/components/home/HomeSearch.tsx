@@ -63,7 +63,8 @@ const HomeSearch = () => {
   const showSearchResults = searchQuery.length >= 2 && searchOpen;
 
   return (
-    <div className="container mx-auto px-4 md:px-6 relative z-40 -mt-10 mb-20" ref={searchRef}>
+    <div className="container mx-auto px-4 md:px-6 relative z-40 py-14 md:py-20" ref={searchRef}>
+      {/* Search input */}
       <div className="max-w-3xl mx-auto shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300 rounded-[32px] animate-fade-in-up delay-300 border border-zinc-200/60 bg-white">
         <div className="relative group">
           <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none text-zinc-400 group-focus-within:text-zinc-900 transition-colors">
@@ -133,17 +134,44 @@ const HomeSearch = () => {
                       })}
                     </div>
                   )}
-
-
-
                 </div>
               )}
             </div>
           )}
         </div>
       </div>
+
+      {/* Quick-filter chips */}
+      <div className="max-w-3xl mx-auto mt-5 flex flex-wrap items-center gap-2 animate-fade-in-up px-1">
+        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mr-1 shrink-0">
+          {t('galleries.cityFilter')}:
+        </span>
+        {[
+          { label: i18n.language === 'uk' ? 'Київ' : 'Kyiv', query: 'Kyiv' },
+          { label: i18n.language === 'uk' ? 'Львів' : 'Lviv', query: 'Lviv' },
+          { label: i18n.language === 'uk' ? 'Харків' : 'Kharkiv', query: 'Kharkiv' },
+          { label: i18n.language === 'uk' ? 'Одеса' : 'Odesa', query: 'Odesa' },
+          { label: i18n.language === 'uk' ? 'Дніпро' : 'Dnipro', query: 'Dnipro' },
+        ].map(({ label, query }) => (
+          <Link
+            key={query}
+            to={`/galleries?city=${query}`}
+            className="px-3.5 py-1.5 rounded-full text-[11px] font-bold border border-zinc-200 bg-white text-zinc-500 hover:border-zinc-900 hover:text-zinc-900 hover:bg-zinc-50 transition-all duration-150 whitespace-nowrap"
+          >
+            {label}
+          </Link>
+        ))}
+        <div className="w-px h-4 bg-zinc-200 mx-1 shrink-0" />
+        <Link
+          to="/galleries"
+          className="px-3.5 py-1.5 rounded-full text-[11px] font-bold border border-zinc-200 bg-white text-zinc-500 hover:border-zinc-900 hover:text-zinc-900 hover:bg-zinc-50 transition-all duration-150 whitespace-nowrap flex items-center gap-1.5"
+        >
+          {t('home.featured.viewAll')} →
+        </Link>
+      </div>
     </div>
   );
+
 };
 
 export default HomeSearch;
