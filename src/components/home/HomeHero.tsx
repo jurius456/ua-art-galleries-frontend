@@ -2,12 +2,11 @@ import { ArrowRight, ArrowLeft, MapPin, Star, TrendingUp, Sparkles } from 'lucid
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useQueries } from '@tanstack/react-query';
 import heroImage1 from '../../assets/hero/slide1.png';
 import heroImage2 from '../../assets/hero/slide2.png';
 import heroImage3 from '../../assets/hero/slide3.png';
 import { useGalleriesQuery } from '../../hooks/useGalleriesQuery';
-import { fetchGalleryReviews } from '../../api/galleries';
+import { useGalleryRating } from '../../hooks/useGalleryRating';
 import { getGalleryName, getGalleryCity } from '../../utils/gallery';
 import type { Gallery } from '../../api/galleries';
 
@@ -29,7 +28,6 @@ type GallerySlide = {
   badge: 'top' | 'new';
   image: string;
   gradient: string;
-  avgRating: number;
 };
 
 type Slide = StaticSlide | GallerySlide;
@@ -55,62 +53,21 @@ const HomeHero = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const { data: galleries = [] } = useGalleriesQuery();
 
-  // Take first 15 active galleries to check ratings
-  const candidates = useMemo(() =>
-    galleries.filter(g => g.status).slice(0, 15),
-    [galleries]
-  );
-
-  // Fetch real ratings for each candidate
-  const ratingResults = useQueries({
-    queries: candidates.map(g => ({
-      queryKey: ['gallery-rating-hero', g.slug],
-      queryFn: async () => {
-        const reviews = await fetchGalleryReviews(g.slug);
-        if (!reviews || reviews.length === 0) return { slug: g.slug, avg: 0 };
-        const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
-        return { slug: g.slug, avg };
-      },
-      staleTime: 1000 * 60 * 10,
-      enabled: candidates.length > 0,
-    })),
-  });
-
   const SLIDES = useMemo((): Slide[] => {
-    if (galleries.length === 0) return STATIC_FALLBACK;
+    const active = galleries.filter(g => g.status);
+    if (active.length === 0) return STATIC_FALLBACK;
 
-    // Build rating map from fetched data
-    const ratingMap = new Map<string, number>();
-    ratingResults.forEach(r => {
-      if (r.data) ratingMap.set(r.data.slug, r.data.avg);
-    });
+    const g1 = active[0];
+    const g2 = active[1];
 
-    // Sort by real rating desc; if no rating yet, fall to end
-    const sorted = [...candidates]
-      .map(g => ({ g, avg: ratingMap.get(g.slug) ?? 0 }))
-      .sort((a, b) => b.avg - a.avg);
-
-    const top1 = sorted[0]?.g;
-    const top2 = sorted[1]?.g;
-    const top1Rating = sorted[0]?.avg ?? 0;
-    const top2Rating = sorted[1]?.avg ?? 0;
-
-    const slide1: Slide = top1
-      ? { id: top1.id, type: 'gallery', gallery: top1, badge: 'top', image: heroImage1, gradient: SLIDE_GRADIENTS[0], avgRating: top1Rating }
-      : { id: 'static-1', type: 'static', titleKey: 'home.hero.slide1.title', subtitleKey: 'home.hero.slide1.subtitle', image: heroImage1, gradient: SLIDE_GRADIENTS[0] };
-
-    const slide2: Slide = top2
-      ? { id: top2.id, type: 'gallery', gallery: top2, badge: 'top', image: heroImage2, gradient: SLIDE_GRADIENTS[1], avgRating: top2Rating }
+    const slide1: Slide = { id: g1.id, type: 'gallery', gallery: g1, badge: 'top', image: heroImage1, gradient: SLIDE_GRADIENTS[0] };
+    const slide2: Slide = g2
+      ? { id: g2.id, type: 'gallery', gallery: g2, badge: 'new', image: heroImage2, gradient: SLIDE_GRADIENTS[1] }
       : { id: 'static-2', type: 'static', titleKey: 'home.hero.slide2.title', subtitleKey: 'home.hero.slide2.subtitle', image: heroImage2, gradient: SLIDE_GRADIENTS[1] };
-
-    const slide3: Slide = {
-      id: 'static-3', type: 'static',
-      titleKey: 'home.hero.slide3.title', subtitleKey: 'home.hero.slide3.subtitle',
-      image: heroImage3, gradient: SLIDE_GRADIENTS[2],
-    };
+    const slide3: Slide = { id: 'static-3', type: 'static', titleKey: 'home.hero.slide3.title', subtitleKey: 'home.hero.slide3.subtitle', image: heroImage3, gradient: SLIDE_GRADIENTS[2] };
 
     return [slide1, slide2, slide3];
-  }, [galleries, candidates, ratingResults]);
+  }, [galleries]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -216,7 +173,9 @@ const GallerySlideContent = ({ slide, slideIndex }: { slide: GallerySlide; slide
   const { t, i18n } = useTranslation();
   const name = getGalleryName(slide.gallery, i18n.language);
   const city = getGalleryCity(slide.gallery, i18n.language);
-  const avgRating = slide.avgRating;
+  const { data: ratingData } = useGalleryRating(slide.gallery.slug);
+  const avgRating = ratingData?.avgRating ?? 0;
+
 
   return (
     <div key={`g-${slideIndex}`} className="animate-fade-in-up space-y-5 max-w-2xl">
