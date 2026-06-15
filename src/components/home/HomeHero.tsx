@@ -31,14 +31,12 @@ type GallerySlide = {
 
 type Slide = StaticSlide | GallerySlide;
 
-/* ---------- Constants ----------
- * Gradients must be clearly visible against the dark theme background (#070709).
- * Using inline style={{}} so they are immune to Tailwind dark-mode variable remapping.
- */
+/* ---------- Constants ---------- */
+
 const SLIDE_GRADIENTS = [
-  'linear-gradient(135deg, #1e1e22 0%, #2d2d34 55%, #222228 100%)',   // dark charcoal
-  'linear-gradient(135deg, #201e1a 0%, #302c26 55%, #252118 100%)',   // warm dark
-  'linear-gradient(135deg, #1a1e24 0%, #262e38 55%, #1e2530 100%)',   // cool dark slate
+  'linear-gradient(160deg, #1e1e22 0%, #2d2d34 60%, #1a1a1f 100%)',
+  'linear-gradient(160deg, #201e1a 0%, #302c26 60%, #1e1a14 100%)',
+  'linear-gradient(160deg, #1a1e24 0%, #262e38 60%, #161c24 100%)',
 ];
 
 const STATIC_FALLBACK: Slide[] = [
@@ -99,177 +97,208 @@ const HomeHero = () => {
     <section className="w-full px-4 md:px-6 pt-4 md:pt-6">
       <div
         className="relative h-[480px] md:h-[580px] rounded-[32px] md:rounded-[40px] overflow-hidden group"
-        style={{
-          boxShadow: '0 0 0 1px rgba(255,255,255,0.07), 0 24px 80px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.3)',
-        }}
+        style={{ boxShadow: '0 0 0 1px rgba(255,255,255,0.07), 0 24px 80px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.3)' }}
       >
-        {/* Slides */}
+        {/* ── Slides background ── */}
         {SLIDES.map((slide, index) => (
           <div
             key={slide.id}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlideIndex ? 'opacity-100' : 'opacity-0'}`}
           >
-            {/* Gradient base — inline style avoids dark-mode CSS variable remapping */}
             <div className="absolute inset-0" style={{ background: slide.gradient }} />
-
-            {/* Static image as subtle texture */}
             <img
               src={slide.image}
               alt=""
-              className={`absolute inset-0 w-full h-full object-cover opacity-[0.28] transform transition-transform duration-[20000ms] ease-linear mix-blend-luminosity ${index === currentSlideIndex ? 'scale-110' : 'scale-100'}`}
+              className={`absolute inset-0 w-full h-full object-cover opacity-[0.14] mix-blend-luminosity transform transition-transform duration-[20000ms] ease-linear ${index === currentSlideIndex ? 'scale-110' : 'scale-100'}`}
             />
-
-            {/* Vignette overlays */}
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 60%, rgba(0,0,0,0.2) 100%)' }} />
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.35) 0%, transparent 60%)' }} />
+            {/* Bottom gradient for text readability */}
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%)' }} />
           </div>
         ))}
 
-        {/* Content */}
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-6 md:px-20">
+        {/* ── Big slide number (decorative) ── */}
+        <div
+          className="absolute right-0 top-1/2 -translate-y-1/2 select-none pointer-events-none z-10 leading-none"
+          style={{
+            fontSize: 'clamp(200px, 28vw, 400px)',
+            fontWeight: 900,
+            color: 'rgba(255,255,255,0.04)',
+            lineHeight: 1,
+            letterSpacing: '-0.05em',
+            transform: 'translateY(-50%) translateX(5%)',
+          }}
+        >
+          0{currentSlideIndex + 1}
+        </div>
+
+        {/* ── Thin vertical accent line ── */}
+        <div
+          className="absolute left-10 md:left-16 top-12 bottom-12 w-px z-20"
+          style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.25) 30%, rgba(255,255,255,0.25) 70%, transparent 100%)' }}
+        />
+
+        {/* ── Slide counter top-right ── */}
+        <div
+          className="absolute top-10 right-10 md:top-12 md:right-14 z-30 flex items-center gap-3"
+          style={{ color: 'rgba(255,255,255,0.35)', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase' }}
+        >
+          <span style={{ color: '#fff', opacity: 0.9 }}>0{currentSlideIndex + 1}</span>
+          <span style={{ width: '32px', height: '1px', background: 'rgba(255,255,255,0.3)', display: 'inline-block' }} />
+          <span>0{SLIDES.length}</span>
+        </div>
+
+        {/* ── UA Galleries badge top-left ── */}
+        <div
+          className="absolute top-10 left-16 md:top-12 md:left-24 z-30"
+          style={{
+            fontSize: '9px', fontWeight: 900, letterSpacing: '0.35em',
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)',
+          }}
+        >
+          UA GALLERIES
+        </div>
+
+        {/* ── Main content — bottom left editorial layout ── */}
+        <div className="absolute inset-0 z-20 flex flex-col justify-end pl-14 md:pl-24 pr-6 md:pr-16 pb-10 md:pb-14">
           {currentSlide.type === 'gallery'
-            ? <GallerySlideContent slide={currentSlide} />
-            : <StaticSlideContent slide={currentSlide} t={t} />
+            ? <GallerySlideContent slide={currentSlide} slideIndex={currentSlideIndex} />
+            : <StaticSlideContent slide={currentSlide} t={t} slideIndex={currentSlideIndex} />
           }
         </div>
 
-        {/* Navigation Arrows */}
-        <div className="absolute inset-x-4 md:inset-x-12 top-1/2 -translate-y-1/2 flex justify-between z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <NavButton icon={<ArrowLeft size={20} />} onClick={() => setCurrentSlideIndex(v => v === 0 ? SLIDES.length - 1 : v - 1)} />
-          <NavButton icon={<ArrowRight size={20} />} onClick={() => setCurrentSlideIndex(v => v === SLIDES.length - 1 ? 0 : v + 1)} />
-        </div>
-
-        {/* Dots */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-30">
+        {/* ── Bottom navigation dots (right-aligned) ── */}
+        <div className="absolute bottom-10 md:bottom-12 right-10 md:right-14 flex items-center gap-2 z-30">
           {SLIDES.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrentSlideIndex(i)}
               style={{
+                width: i === currentSlideIndex ? '28px' : '6px',
                 height: '6px',
                 borderRadius: '999px',
-                width: i === currentSlideIndex ? '40px' : '8px',
-                background: i === currentSlideIndex ? '#ffffff' : 'rgba(255,255,255,0.35)',
-                transition: 'all 0.5s',
+                background: i === currentSlideIndex ? '#ffffff' : 'rgba(255,255,255,0.3)',
                 border: 'none',
                 cursor: 'pointer',
+                transition: 'all 0.4s cubic-bezier(0.16,1,0.3,1)',
+                padding: 0,
               }}
             />
           ))}
+        </div>
+
+        {/* ── Arrow navigation ── */}
+        <div className="absolute bottom-10 md:bottom-12 right-24 md:right-32 flex items-center gap-2 z-30">
+          <NavButton icon={<ArrowLeft size={14} />} onClick={() => setCurrentSlideIndex(v => v === 0 ? SLIDES.length - 1 : v - 1)} />
+          <NavButton icon={<ArrowRight size={14} />} onClick={() => setCurrentSlideIndex(v => v === SLIDES.length - 1 ? 0 : v + 1)} />
         </div>
       </div>
     </section>
   );
 };
 
-/* ---------- Gallery Slide Content ---------- */
+/* ---------- Gallery Slide Content — Editorial ---------- */
 
-const GallerySlideContent = ({ slide }: { slide: GallerySlide }) => {
+const GallerySlideContent = ({ slide, slideIndex }: { slide: GallerySlide; slideIndex: number }) => {
   const { t, i18n } = useTranslation();
   const name = getGalleryName(slide.gallery, i18n.language);
   const city = getGalleryCity(slide.gallery, i18n.language);
   const avgRating =
-    slide.gallery.avg_rating ??
-    slide.gallery.rating_avg ??
-    slide.gallery.average_rating ??
-    slide.gallery.rating ??
-    0;
+    slide.gallery.avg_rating ?? slide.gallery.rating_avg ??
+    slide.gallery.average_rating ?? slide.gallery.rating ?? 0;
 
   return (
-    <div className="animate-fade-in-up flex flex-col items-center gap-6 max-w-2xl">
-      {/* Badge — all inline styles to stay immune to dark mode */}
-      <div style={{
-        display: 'inline-flex', alignItems: 'center', gap: '6px',
-        padding: '6px 16px',
-        background: 'rgba(255,255,255,0.12)',
-        backdropFilter: 'blur(16px)',
-        border: '1px solid rgba(255,255,255,0.15)',
-        borderRadius: '999px',
-        fontSize: '10px', fontWeight: 900,
-        textTransform: 'uppercase', letterSpacing: '0.28em',
-        color: '#ffffff',
-      }}>
+    <div key={`g-${slideIndex}`} className="animate-fade-in-up space-y-5 max-w-2xl">
+      {/* Badge */}
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '9px', fontWeight: 900, letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)' }}>
         {slide.badge === 'top'
-          ? <><TrendingUp size={11} color="#fbbf24" /> {t('home.hero.topGallery')}</>
-          : <><Sparkles size={11} color="#93c5fd" /> {t('home.hero.newGallery')}</>
+          ? <><TrendingUp size={10} color="#fbbf24" /> <span style={{ color: '#fbbf24' }}>{t('home.hero.topGallery')}</span></>
+          : <><Sparkles size={10} color="#93c5fd" /> <span style={{ color: '#93c5fd' }}>{t('home.hero.newGallery')}</span></>
         }
       </div>
 
       {/* Gallery name */}
-      <h1 style={{ color: '#ffffff', fontSize: 'clamp(2rem, 5vw, 3.75rem)', fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 1, textTransform: 'uppercase', textShadow: '0 4px 24px rgba(0,0,0,0.4)', margin: 0 }}>
+      <h1 style={{
+        color: '#ffffff',
+        fontSize: 'clamp(2.2rem, 5vw, 4rem)',
+        fontWeight: 900,
+        letterSpacing: '-0.03em',
+        lineHeight: 0.95,
+        textTransform: 'uppercase',
+        margin: 0,
+        textShadow: '0 4px 32px rgba(0,0,0,0.5)',
+      }}>
         {name}
       </h1>
 
-      {/* Meta */}
-      <div className="flex items-center gap-4 flex-wrap justify-center">
-        <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'rgba(255,255,255,0.65)', fontSize: '14px', fontWeight: 600 }}>
-          <MapPin size={14} color="rgba(255,255,255,0.45)" />
-          {city}, {t('common.country')}
-        </span>
-        {avgRating > 0 && (
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#fcd34d', fontSize: '14px', fontWeight: 700 }}>
-            <Star size={13} fill="#fcd34d" color="#fcd34d" />
-            {avgRating.toFixed(1)}
+      {/* Thin divider + meta */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <div style={{ width: '32px', height: '1px', background: 'rgba(255,255,255,0.3)' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            <MapPin size={11} color="rgba(255,255,255,0.4)" />
+            {city}
           </span>
-        )}
+          {avgRating > 0 && (
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 700, color: '#fcd34d' }}>
+              <Star size={11} fill="#fcd34d" color="#fcd34d" />
+              {avgRating.toFixed(1)}
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* CTA — immune to dark mode via inline style */}
+      {/* CTA */}
       <Link
         to={`/galleries/${slide.gallery.slug}`}
         style={{
-          display: 'inline-flex', alignItems: 'center', gap: '8px',
-          marginTop: '8px',
-          padding: '14px 28px',
-          background: '#ffffff',
-          color: '#111111',
+          display: 'inline-flex', alignItems: 'center', gap: '10px',
+          padding: '12px 24px',
+          background: 'rgba(255,255,255,1)',
+          color: '#111',
           borderRadius: '999px',
           fontWeight: 700,
-          fontSize: '13px',
+          fontSize: '11px',
           textTransform: 'uppercase',
-          letterSpacing: '0.1em',
+          letterSpacing: '0.12em',
           textDecoration: 'none',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
           transition: 'all 0.25s',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
         }}
-        onMouseEnter={e => {
-          (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.9)';
-          (e.currentTarget as HTMLElement).style.gap = '12px';
-        }}
-        onMouseLeave={e => {
-          (e.currentTarget as HTMLElement).style.background = '#ffffff';
-          (e.currentTarget as HTMLElement).style.gap = '8px';
-        }}
+        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateX(4px)'; (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.88)'; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateX(0)'; (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,1)'; }}
       >
         {t('home.hero.viewGallery')}
-        <ArrowRight size={16} color="#111111" />
+        <ArrowRight size={14} color="#111" />
       </Link>
     </div>
   );
 };
 
-/* ---------- Static Slide Content ---------- */
+/* ---------- Static Slide Content — Editorial ---------- */
 
-const StaticSlideContent = ({ slide, t }: { slide: StaticSlide; t: (key: string) => string }) => (
-  <div className="animate-fade-in-up" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-    <div style={{
-      padding: '6px 16px',
-      background: 'rgba(255,255,255,0.10)',
-      backdropFilter: 'blur(16px)',
-      border: '1px solid rgba(255,255,255,0.10)',
-      borderRadius: '999px',
-      fontSize: '10px', fontWeight: 900,
-      textTransform: 'uppercase', letterSpacing: '0.3em',
-      color: '#ffffff',
-    }}>
-      UA Galleries
+const StaticSlideContent = ({ slide, t, slideIndex }: { slide: StaticSlide; t: (key: string) => string; slideIndex: number }) => (
+  <div key={`s-${slideIndex}`} className="animate-fade-in-up space-y-5 max-w-2xl">
+    <div style={{ fontSize: '9px', fontWeight: 900, letterSpacing: '0.35em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>
+      Discover
     </div>
-    <h1 style={{ color: '#ffffff', fontSize: 'clamp(2.5rem, 7vw, 4.5rem)', fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1.05, maxWidth: '56rem', textShadow: '0 4px 32px rgba(0,0,0,0.5)', margin: 0 }}>
+    <h1 style={{
+      color: '#ffffff',
+      fontSize: 'clamp(2.2rem, 5vw, 4rem)',
+      fontWeight: 900,
+      letterSpacing: '-0.03em',
+      lineHeight: 0.95,
+      textTransform: 'uppercase',
+      margin: 0,
+      textShadow: '0 4px 32px rgba(0,0,0,0.5)',
+    }}>
       {t(slide.titleKey)}
     </h1>
-    <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 'clamp(1rem, 2vw, 1.25rem)', fontWeight: 500, maxWidth: '32rem', lineHeight: 1.6, textShadow: '0 2px 12px rgba(0,0,0,0.4)', margin: 0 }}>
-      {t(slide.subtitleKey)}
-    </p>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+      <div style={{ width: '32px', height: '1px', background: 'rgba(255,255,255,0.3)' }} />
+      <p style={{ fontSize: '13px', fontWeight: 500, color: 'rgba(255,255,255,0.55)', margin: 0, letterSpacing: '0.02em' }}>
+        {t(slide.subtitleKey)}
+      </p>
+    </div>
   </div>
 );
 
@@ -279,26 +308,17 @@ const NavButton = ({ icon, onClick }: { icon: React.ReactNode; onClick: () => vo
   <button
     onClick={onClick}
     style={{
-      width: '48px', height: '48px',
+      width: '36px', height: '36px',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'rgba(0,0,0,0.25)',
-      backdropFilter: 'blur(12px)',
+      background: 'rgba(255,255,255,0.08)',
       border: '1px solid rgba(255,255,255,0.12)',
       borderRadius: '50%',
-      color: '#ffffff',
+      color: '#fff',
       cursor: 'pointer',
-      transition: 'all 0.3s',
+      transition: 'all 0.25s',
     }}
-    onMouseEnter={e => {
-      (e.currentTarget as HTMLElement).style.background = '#ffffff';
-      (e.currentTarget as HTMLElement).style.color = '#000000';
-      (e.currentTarget as HTMLElement).style.transform = 'scale(1.1)';
-    }}
-    onMouseLeave={e => {
-      (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.25)';
-      (e.currentTarget as HTMLElement).style.color = '#ffffff';
-      (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
-    }}
+    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.18)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.3)'; }}
+    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.12)'; }}
   >
     {icon}
   </button>
