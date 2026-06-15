@@ -94,9 +94,9 @@ const HomeHero = () => {
   const currentSlide = SLIDES[currentSlideIndex];
 
   return (
-    <section className="w-full px-4 md:px-6 pt-4 md:pt-6">
+    <section className="w-full pt-4 md:pt-6">
       <div
-        className="relative h-[480px] md:h-[580px] rounded-[32px] md:rounded-[40px] overflow-hidden group"
+        className="relative h-[480px] md:h-[580px] overflow-hidden group"
         style={{ boxShadow: '0 0 0 1px rgba(255,255,255,0.07), 0 24px 80px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.3)' }}
       >
         {/* ── Slides background ── */}
@@ -116,20 +116,7 @@ const HomeHero = () => {
           </div>
         ))}
 
-        {/* ── Big slide number (decorative) ── */}
-        <div
-          className="absolute right-0 top-1/2 -translate-y-1/2 select-none pointer-events-none z-10 leading-none"
-          style={{
-            fontSize: 'clamp(200px, 28vw, 400px)',
-            fontWeight: 900,
-            color: 'rgba(255,255,255,0.04)',
-            lineHeight: 1,
-            letterSpacing: '-0.05em',
-            transform: 'translateY(-50%) translateX(5%)',
-          }}
-        >
-          0{currentSlideIndex + 1}
-        </div>
+
 
         {/* ── Thin vertical accent line ── */}
         <div
@@ -137,15 +124,7 @@ const HomeHero = () => {
           style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.25) 30%, rgba(255,255,255,0.25) 70%, transparent 100%)' }}
         />
 
-        {/* ── Slide counter top-right ── */}
-        <div
-          className="absolute top-10 right-10 md:top-12 md:right-14 z-30 flex items-center gap-3"
-          style={{ color: 'rgba(255,255,255,0.35)', fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase' }}
-        >
-          <span style={{ color: '#fff', opacity: 0.9 }}>0{currentSlideIndex + 1}</span>
-          <span style={{ width: '32px', height: '1px', background: 'rgba(255,255,255,0.3)', display: 'inline-block' }} />
-          <span>0{SLIDES.length}</span>
-        </div>
+
 
         {/* ── UA Galleries badge top-left ── */}
         <div
