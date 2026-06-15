@@ -94,12 +94,13 @@ const HomeHero = () => {
   const currentSlide = SLIDES[currentSlideIndex];
 
   return (
-    <section className="w-full px-4 md:px-6 pt-3 md:pt-4">
+    <section
+      className="w-full px-4 md:px-6 flex items-center justify-center"
+      style={{ minHeight: 'calc(100svh - 76px)' }}
+    >
       <div
-        className="relative rounded-[32px] md:rounded-[40px] overflow-hidden group"
+        className="relative w-full h-[460px] md:h-[540px] rounded-[32px] md:rounded-[40px] overflow-hidden group"
         style={{
-          height: 'calc(100svh - 76px - 24px)',
-          minHeight: '460px',
           boxShadow: '0 0 0 1px rgba(255,255,255,0.07), 0 24px 80px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.3)',
         }}
       >
