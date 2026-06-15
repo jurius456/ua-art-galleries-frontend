@@ -9,8 +9,62 @@ export function getGalleryName(gallery: Gallery, language: string): string {
     return language === 'en' ? (gallery.name_en || gallery.name_ua || 'Unnamed Gallery') : (gallery.name_ua || gallery.name_en || 'Unnamed Gallery');
 }
 
+
+// Frontend fallback translations for cities where city_ua is null in the DB
+const CITY_UA_MAP: Record<string, string> = {
+  // Спеціальні категорії
+  'Other': 'Інше',
+  'Online': 'Онлайн',
+  'Abroad': 'За кордоном',
+  // Основні міста
+  'Kyiv': 'Київ',
+  'Kiev': 'Київ',
+  'Kharkiv': 'Харків',
+  'Kharkov': 'Харків',
+  'Lviv': 'Львів',
+  'Lvov': 'Львів',
+  'Odesa': 'Одеса',
+  'Odessa': 'Одеса',
+  'Dnipro': 'Дніпро',
+  'Dnipropetrovsk': 'Дніпро',
+  'Zaporizhzhia': 'Запоріжжя',
+  'Zaporizhia': 'Запоріжжя',
+  'Vinnytsia': 'Вінниця',
+  'Vinnitsa': 'Вінниця',
+  'Poltava': 'Полтава',
+  'Chernivtsi': 'Чернівці',
+  'Uzhhorod': 'Ужгород',
+  'Uzhgorod': 'Ужгород',
+  'Ivano-Frankivsk': 'Івано-Франківськ',
+  'Ternopil': 'Тернопіль',
+  'Lutsk': 'Луцьк',
+  'Rivne': 'Рівне',
+  'Sumy': 'Суми',
+  'Mykolaiv': 'Миколаїв',
+  'Nikolaev': 'Миколаїв',
+  'Kherson': 'Херсон',
+  'Cherkasy': 'Черкаси',
+  'Chernihiv': 'Чернігів',
+  'Khmelnytskyi': 'Хмельницький',
+  'Kremenchuk': 'Кременчук',
+  'Bila Tserkva': 'Біла Церква',
+  'Mariupol': 'Маріуполь',
+  'Kramatorsk': 'Краматорськ',
+  'Brovary': 'Бровари',
+  'Zhytomyr': 'Житомир',
+  'Kropyvnytskyi': 'Кропивницький',
+  'Zhovkva': 'Жовква',
+  'Drohobych': 'Дрогобич',
+};
+
 export function getGalleryCity(gallery: Gallery, language: string): string {
-    return language === 'en' ? (gallery.city_en || gallery.city_ua || 'Unknown City') : (gallery.city_ua || gallery.city_en || 'Unknown City');
+    if (language === 'en') {
+        return gallery.city_en || gallery.city_ua || 'Unknown City';
+    }
+    // For Ukrainian: prefer city_ua, then try the translation map, then fallback to city_en
+    if (gallery.city_ua) return gallery.city_ua;
+    if (gallery.city_en && CITY_UA_MAP[gallery.city_en]) return CITY_UA_MAP[gallery.city_en];
+    return gallery.city_en || 'Unknown City';
 }
 
 export function getGalleryAddress(gallery: Gallery, language: string): string {

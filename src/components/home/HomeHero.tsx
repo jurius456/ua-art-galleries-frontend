@@ -31,12 +31,14 @@ type GallerySlide = {
 
 type Slide = StaticSlide | GallerySlide;
 
-/* ---------- Constants ---------- */
-
+/* ---------- Constants ----------
+ * Neutral dark gradients matching the site's zinc/black monochrome theme.
+ * Uses inline style={{}} so they are immune to Tailwind dark-mode variable remapping.
+ */
 const SLIDE_GRADIENTS = [
-  'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)',
-  'linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%)',
-  'linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 50%, #2d1b69 100%)',
+  'linear-gradient(135deg, #0a0a0a 0%, #18181b 55%, #0f0f10 100%)',   // deep charcoal
+  'linear-gradient(135deg, #111111 0%, #1c1a18 55%, #131210 100%)',   // warm dark
+  'linear-gradient(135deg, #0c0c0e 0%, #19191c 55%, #111114 100%)',   // cool dark
 ];
 
 const STATIC_FALLBACK: Slide[] = [
@@ -75,7 +77,11 @@ const HomeHero = () => {
       ? { id: newest.id, type: 'gallery', gallery: newest, badge: 'new', image: heroImage2, gradient: SLIDE_GRADIENTS[1] }
       : { id: 'static-2', type: 'static', titleKey: 'home.hero.slide2.title', subtitleKey: 'home.hero.slide2.subtitle', image: heroImage2, gradient: SLIDE_GRADIENTS[1] };
 
-    const slide3: Slide = { id: 'static-3', type: 'static', titleKey: 'home.hero.slide3.title', subtitleKey: 'home.hero.slide3.subtitle', image: heroImage3, gradient: SLIDE_GRADIENTS[2] };
+    const slide3: Slide = {
+      id: 'static-3', type: 'static',
+      titleKey: 'home.hero.slide3.title', subtitleKey: 'home.hero.slide3.subtitle',
+      image: heroImage3, gradient: SLIDE_GRADIENTS[2],
+    };
 
     return [slide1, slide2, slide3];
   }, [galleries]);
@@ -93,7 +99,7 @@ const HomeHero = () => {
     <section className="container mx-auto px-4 md:px-6 pt-6 md:pt-10">
       <div
         className="relative h-[400px] md:h-[520px] rounded-[32px] md:rounded-[48px] overflow-hidden group"
-        style={{ boxShadow: '0 20px 72px rgba(0,0,0,0.28), 0 6px 20px rgba(0,0,0,0.15)' }}
+        style={{ boxShadow: '0 20px 72px rgba(0,0,0,0.32), 0 6px 20px rgba(0,0,0,0.18)' }}
       >
         {/* Slides */}
         {SLIDES.map((slide, index) => (
@@ -101,14 +107,19 @@ const HomeHero = () => {
             key={slide.id}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlideIndex ? 'opacity-100' : 'opacity-0'}`}
           >
+            {/* Gradient base — inline style avoids dark-mode CSS variable remapping */}
             <div className="absolute inset-0" style={{ background: slide.gradient }} />
+
+            {/* Static image as subtle texture */}
             <img
               src={slide.image}
               alt=""
-              className={`absolute inset-0 w-full h-full object-cover opacity-20 transform transition-transform duration-[20000ms] ease-linear ${index === currentSlideIndex ? 'scale-110' : 'scale-100'}`}
+              className={`absolute inset-0 w-full h-full object-cover opacity-[0.18] transform transition-transform duration-[20000ms] ease-linear mix-blend-luminosity ${index === currentSlideIndex ? 'scale-110' : 'scale-100'}`}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent" />
+
+            {/* Vignette overlays */}
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 60%, rgba(0,0,0,0.2) 100%)' }} />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.35) 0%, transparent 60%)' }} />
           </div>
         ))}
 
@@ -132,7 +143,15 @@ const HomeHero = () => {
             <button
               key={i}
               onClick={() => setCurrentSlideIndex(i)}
-              className={`h-1.5 rounded-full transition-all duration-500 ${i === currentSlideIndex ? 'w-10 bg-white' : 'w-2 bg-white/40 hover:bg-white/70'}`}
+              style={{
+                height: '6px',
+                borderRadius: '999px',
+                width: i === currentSlideIndex ? '40px' : '8px',
+                background: i === currentSlideIndex ? '#ffffff' : 'rgba(255,255,255,0.35)',
+                transition: 'all 0.5s',
+                border: 'none',
+                cursor: 'pointer',
+              }}
             />
           ))}
         </div>
@@ -156,36 +175,72 @@ const GallerySlideContent = ({ slide }: { slide: GallerySlide }) => {
 
   return (
     <div className="animate-fade-in-up flex flex-col items-center gap-6 max-w-2xl">
-      <div className="flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-xl border border-white/15 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-white shadow-lg">
+      {/* Badge — all inline styles to stay immune to dark mode */}
+      <div style={{
+        display: 'inline-flex', alignItems: 'center', gap: '6px',
+        padding: '6px 16px',
+        background: 'rgba(255,255,255,0.12)',
+        backdropFilter: 'blur(16px)',
+        border: '1px solid rgba(255,255,255,0.15)',
+        borderRadius: '999px',
+        fontSize: '10px', fontWeight: 900,
+        textTransform: 'uppercase', letterSpacing: '0.28em',
+        color: '#ffffff',
+      }}>
         {slide.badge === 'top'
-          ? <><TrendingUp size={11} className="text-amber-400" /> {t('home.hero.topGallery')}</>
-          : <><Sparkles size={11} className="text-blue-300" /> {t('home.hero.newGallery')}</>
+          ? <><TrendingUp size={11} color="#fbbf24" /> {t('home.hero.topGallery')}</>
+          : <><Sparkles size={11} color="#93c5fd" /> {t('home.hero.newGallery')}</>
         }
       </div>
 
-      <h1 className="animate-fade-in-up text-4xl md:text-6xl font-black text-white tracking-tighter leading-[1.0] drop-shadow-xl uppercase">
+      {/* Gallery name */}
+      <h1 style={{ color: '#ffffff', fontSize: 'clamp(2rem, 5vw, 3.75rem)', fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 1, textTransform: 'uppercase', textShadow: '0 4px 24px rgba(0,0,0,0.4)', margin: 0 }}>
         {name}
       </h1>
 
-      <div className="animate-fade-in-up flex items-center gap-4 flex-wrap justify-center">
-        <span className="flex items-center gap-1.5 text-white/70 text-sm font-semibold">
-          <MapPin size={14} className="text-white/50" />
+      {/* Meta */}
+      <div className="flex items-center gap-4 flex-wrap justify-center">
+        <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'rgba(255,255,255,0.65)', fontSize: '14px', fontWeight: 600 }}>
+          <MapPin size={14} color="rgba(255,255,255,0.45)" />
           {city}, {t('common.country')}
         </span>
         {avgRating > 0 && (
-          <span className="flex items-center gap-1 text-amber-300 text-sm font-bold">
-            <Star size={13} className="fill-amber-300" />
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#fcd34d', fontSize: '14px', fontWeight: 700 }}>
+            <Star size={13} fill="#fcd34d" color="#fcd34d" />
             {avgRating.toFixed(1)}
           </span>
         )}
       </div>
 
+      {/* CTA — immune to dark mode via inline style */}
       <Link
         to={`/galleries/${slide.gallery.slug}`}
-        className="animate-fade-in-up group flex items-center gap-2 mt-2 px-7 py-3.5 bg-white text-zinc-900 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-white/90 hover:gap-3 transition-all duration-300 shadow-2xl"
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: '8px',
+          marginTop: '8px',
+          padding: '14px 28px',
+          background: '#ffffff',
+          color: '#111111',
+          borderRadius: '999px',
+          fontWeight: 700,
+          fontSize: '13px',
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+          textDecoration: 'none',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+          transition: 'all 0.25s',
+        }}
+        onMouseEnter={e => {
+          (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.9)';
+          (e.currentTarget as HTMLElement).style.gap = '12px';
+        }}
+        onMouseLeave={e => {
+          (e.currentTarget as HTMLElement).style.background = '#ffffff';
+          (e.currentTarget as HTMLElement).style.gap = '8px';
+        }}
       >
         {t('home.hero.viewGallery')}
-        <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+        <ArrowRight size={16} color="#111111" />
       </Link>
     </div>
   );
@@ -194,14 +249,23 @@ const GallerySlideContent = ({ slide }: { slide: GallerySlide }) => {
 /* ---------- Static Slide Content ---------- */
 
 const StaticSlideContent = ({ slide, t }: { slide: StaticSlide; t: (key: string) => string }) => (
-  <div className="animate-fade-in-up space-y-6 md:space-y-8">
-    <div className="px-4 py-1.5 bg-white/10 backdrop-blur-xl border border-white/10 rounded-full text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-white shadow-lg inline-block">
+  <div className="animate-fade-in-up" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+    <div style={{
+      padding: '6px 16px',
+      background: 'rgba(255,255,255,0.10)',
+      backdropFilter: 'blur(16px)',
+      border: '1px solid rgba(255,255,255,0.10)',
+      borderRadius: '999px',
+      fontSize: '10px', fontWeight: 900,
+      textTransform: 'uppercase', letterSpacing: '0.3em',
+      color: '#ffffff',
+    }}>
       UA Galleries
     </div>
-    <h1 className="text-4xl md:text-7xl font-black text-white tracking-tighter leading-[1.1] max-w-4xl drop-shadow-xl">
+    <h1 style={{ color: '#ffffff', fontSize: 'clamp(2.5rem, 7vw, 4.5rem)', fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1.05, maxWidth: '56rem', textShadow: '0 4px 32px rgba(0,0,0,0.5)', margin: 0 }}>
       {t(slide.titleKey)}
     </h1>
-    <p className="text-base md:text-xl text-white/80 font-medium max-w-lg leading-relaxed drop-shadow-md">
+    <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 'clamp(1rem, 2vw, 1.25rem)', fontWeight: 500, maxWidth: '32rem', lineHeight: 1.6, textShadow: '0 2px 12px rgba(0,0,0,0.4)', margin: 0 }}>
       {t(slide.subtitleKey)}
     </p>
   </div>
@@ -212,7 +276,27 @@ const StaticSlideContent = ({ slide, t }: { slide: StaticSlide; t: (key: string)
 const NavButton = ({ icon, onClick }: { icon: React.ReactNode; onClick: () => void }) => (
   <button
     onClick={onClick}
-    className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center bg-black/20 backdrop-blur-md border border-white/10 rounded-full text-white hover:bg-white hover:text-black hover:scale-110 transition-all duration-300 shadow-xl"
+    style={{
+      width: '48px', height: '48px',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: 'rgba(0,0,0,0.25)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid rgba(255,255,255,0.12)',
+      borderRadius: '50%',
+      color: '#ffffff',
+      cursor: 'pointer',
+      transition: 'all 0.3s',
+    }}
+    onMouseEnter={e => {
+      (e.currentTarget as HTMLElement).style.background = '#ffffff';
+      (e.currentTarget as HTMLElement).style.color = '#000000';
+      (e.currentTarget as HTMLElement).style.transform = 'scale(1.1)';
+    }}
+    onMouseLeave={e => {
+      (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.25)';
+      (e.currentTarget as HTMLElement).style.color = '#ffffff';
+      (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
+    }}
   >
     {icon}
   </button>
