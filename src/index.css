@@ -49,6 +49,14 @@
   }
 
   /* Transition for smooth language and theme swaps on body text */
+  html {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  html::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
   body {
     /* Light theme: bright white centre → noticeably grey edges */
     background: radial-gradient(ellipse at 50% 30%, #ffffff 0%, #ebebef 40%, #d8d8e0 100%);
