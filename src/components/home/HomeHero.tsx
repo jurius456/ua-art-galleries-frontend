@@ -55,24 +55,23 @@ const HomeHero = () => {
   const SLIDES = useMemo((): Slide[] => {
     if (galleries.length === 0) return STATIC_FALLBACK;
 
-    const topRated: Gallery | undefined = [...galleries]
-      .filter(g => g.status)
-      .sort((a, b) => {
-        const rA = a.avg_rating ?? a.rating_avg ?? a.average_rating ?? a.rating ?? 0;
-        const rB = b.avg_rating ?? b.rating_avg ?? b.average_rating ?? b.rating ?? 0;
-        return rB - rA;
-      })[0];
+    const getRating = (g: Gallery) =>
+      g.avg_rating ?? g.rating_avg ?? g.average_rating ?? g.rating ?? 0;
 
-    const newest: Gallery | undefined = [...galleries]
-      .filter(g => g.status && g.slug !== topRated?.slug)
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
+    // Only galleries with a real rating
+    const withRating = [...galleries]
+      .filter(g => g.status && getRating(g) > 0)
+      .sort((a, b) => getRating(b) - getRating(a));
+
+    const topRated: Gallery | undefined = withRating[0];
+    const secondRated: Gallery | undefined = withRating[1]; // second best rated
 
     const slide1: Slide = topRated
       ? { id: topRated.id, type: 'gallery', gallery: topRated, badge: 'top', image: heroImage1, gradient: SLIDE_GRADIENTS[0] }
       : { id: 'static-1', type: 'static', titleKey: 'home.hero.slide1.title', subtitleKey: 'home.hero.slide1.subtitle', image: heroImage1, gradient: SLIDE_GRADIENTS[0] };
 
-    const slide2: Slide = newest
-      ? { id: newest.id, type: 'gallery', gallery: newest, badge: 'new', image: heroImage2, gradient: SLIDE_GRADIENTS[1] }
+    const slide2: Slide = secondRated
+      ? { id: secondRated.id, type: 'gallery', gallery: secondRated, badge: 'top', image: heroImage2, gradient: SLIDE_GRADIENTS[1] }
       : { id: 'static-2', type: 'static', titleKey: 'home.hero.slide2.title', subtitleKey: 'home.hero.slide2.subtitle', image: heroImage2, gradient: SLIDE_GRADIENTS[1] };
 
     const slide3: Slide = {
@@ -225,9 +224,22 @@ const GallerySlideContent = ({ slide, slideIndex }: { slide: GallerySlide; slide
             {city}
           </span>
           {avgRating > 0 && (
-            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 700, color: '#fcd34d' }}>
-              <Star size={11} fill="#fcd34d" color="#fcd34d" />
-              {avgRating.toFixed(1)}
+            <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+              {[1, 2, 3, 4, 5].map(i => {
+                const filled = i <= Math.round(avgRating);
+                return (
+                  <Star
+                    key={i}
+                    size={13}
+                    fill={filled ? '#fcd34d' : 'none'}
+                    color={filled ? '#fcd34d' : 'rgba(255,255,255,0.25)'}
+                    strokeWidth={1.5}
+                  />
+                );
+              })}
+              <span style={{ marginLeft: '5px', fontSize: '11px', fontWeight: 700, color: '#fcd34d' }}>
+                {avgRating.toFixed(1)}
+              </span>
             </span>
           )}
         </div>
