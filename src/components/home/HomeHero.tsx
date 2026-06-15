@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowLeft, MapPin, Star, TrendingUp } from 'lucide-react';
+import { ArrowRight, ArrowLeft, MapPin, Star, TrendingUp, Sparkles } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
