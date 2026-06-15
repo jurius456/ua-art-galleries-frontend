@@ -98,3 +98,11 @@ export function createGalleryReview(
     body: payload,
   });
 }
+
+// DELETE /api/reviews/:id/
+export function deleteGalleryReview(id: number): Promise<void> {
+  return http<void>(`/api/reviews/${id}/`, {
+    method: "DELETE",
+    auth: true,
+  });
+}

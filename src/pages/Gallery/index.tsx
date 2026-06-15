@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, MapPin, Mail, Phone, Globe, Instagram, Facebook, Twitter, Youtube, Linkedin, Lock, Clock, BadgeCheck, Ban, Heart, Info, Users, ExternalLink, Star, MessageSquare, Archive, Zap, RefreshCw } from "lucide-react";
+import { ArrowLeft, MapPin, Mail, Phone, Globe, Instagram, Facebook, Twitter, Youtube, Linkedin, Lock, Clock, BadgeCheck, Ban, Heart, Info, Users, ExternalLink, Star, MessageSquare, Archive, Zap, RefreshCw, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
 import { useFavorites } from "../../context/FavoritesContext";
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import type { Document } from '@contentful/rich-text-types';
 
-import { fetchGalleryBySlug, fetchGalleryReviews, createGalleryReview } from "../../api/galleries";
+import { fetchGalleryBySlug, fetchGalleryReviews, createGalleryReview, deleteGalleryReview } from "../../api/galleries";
 import type { GalleryDetail, Review } from "../../api/galleries";
 import {
   getGalleryName,
@@ -104,6 +104,17 @@ const GalleryPage = () => {
       setSubmitError(message || t("gallery.reviewError"));
     } finally {
       setSubmittingReview(false);
+    }
+  };
+
+  const handleDeleteReview = async (reviewId: number) => {
+    if (!window.confirm(t('gallery.confirmDeleteReview', 'Ви впевнені, що хочете видалити цей відгук?'))) return;
+    try {
+      await deleteGalleryReview(reviewId);
+      setReviews((prev) => prev.filter(r => r.id !== reviewId));
+    } catch (err) {
+      console.error("Error deleting review:", err);
+      alert(t('gallery.deleteError', 'Не вдалося видалити відгук.'));
     }
   };
 
@@ -563,8 +574,17 @@ const GalleryPage = () => {
                     {reviews.map((review) => (
                       <div
                         key={review.id}
-                        className="p-6 bg-white border border-zinc-100 rounded-[28px] shadow-sm space-y-4 hover:border-zinc-200 transition-all duration-300 animate-in fade-in slide-in-from-bottom-2"
+                        className="p-6 bg-white border border-zinc-100 rounded-[28px] shadow-sm space-y-4 hover:border-zinc-200 transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 relative group"
                       >
+                        {isAuth && review.username === user?.username && (
+                          <button
+                            onClick={() => handleDeleteReview(review.id)}
+                            className="absolute top-4 right-4 p-2 text-zinc-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                            title={t('gallery.deleteReview', 'Видалити відгук')}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
                         <div className="flex items-center justify-between gap-4">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center font-bold text-zinc-700 text-sm border border-zinc-200/50 uppercase select-none">
