@@ -95,9 +95,10 @@ const HomeHero = () => {
 
   return (
     <section
-      className="w-full px-4 md:px-6 flex items-center justify-center"
+      className="w-full flex items-center justify-center px-4 md:px-6"
       style={{ minHeight: 'calc(100svh - 76px)' }}
     >
+      <div className="container mx-auto">
       <div
         className="relative w-full h-[460px] md:h-[540px] rounded-[32px] md:rounded-[40px] overflow-hidden group"
         style={{
@@ -175,6 +176,7 @@ const HomeHero = () => {
           <NavButton icon={<ArrowLeft size={14} />} onClick={() => setCurrentSlideIndex(v => v === 0 ? SLIDES.length - 1 : v - 1)} />
           <NavButton icon={<ArrowRight size={14} />} onClick={() => setCurrentSlideIndex(v => v === SLIDES.length - 1 ? 0 : v + 1)} />
         </div>
+      </div>
       </div>
     </section>
   );
