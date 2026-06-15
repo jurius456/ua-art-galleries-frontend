@@ -85,10 +85,9 @@ const HomeHero = () => {
       if (r.data) ratingMap.set(r.data.slug, r.data.avg);
     });
 
-    // Sort candidates by real rating, pick top 2
+    // Sort by real rating desc; if no rating yet, fall to end
     const sorted = [...candidates]
       .map(g => ({ g, avg: ratingMap.get(g.slug) ?? 0 }))
-      .filter(x => x.avg > 0)
       .sort((a, b) => b.avg - a.avg);
 
     const top1 = sorted[0]?.g;
