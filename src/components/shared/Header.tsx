@@ -42,8 +42,9 @@ const Header = () => {
         <div className="flex-1 flex justify-start">
           <Link
             to="/"
-            className="text-xl font-bold text-neutral-900 hover:text-neutral-600 transition tracking-tight"
+            className="flex items-center gap-2.5 text-xl font-bold text-neutral-900 hover:text-neutral-600 transition tracking-tight"
           >
+            <img src="/logo.png" alt="UA Galleries Logo" className="w-7 h-7 rounded-md object-contain" />
             UA Galleries Database
           </Link>
         </div>
