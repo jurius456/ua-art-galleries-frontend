@@ -2,11 +2,13 @@ import { ArrowRight, ArrowLeft, MapPin, Star, TrendingUp, Sparkles } from 'lucid
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { useQueries } from '@tanstack/react-query';
 import heroImage1 from '../../assets/hero/slide1.png';
 import heroImage2 from '../../assets/hero/slide2.png';
 import heroImage3 from '../../assets/hero/slide3.png';
 import { useGalleriesQuery } from '../../hooks/useGalleriesQuery';
 import { useGalleryRating } from '../../hooks/useGalleryRating';
+import { fetchGalleryReviews } from '../../api/galleries';
 import { getGalleryName, getGalleryCity } from '../../utils/gallery';
 import type { Gallery } from '../../api/galleries';
 
@@ -46,6 +48,8 @@ const STATIC_FALLBACK: Slide[] = [
   { id: 'static-3', type: 'static', titleKey: 'home.hero.slide3.title', subtitleKey: 'home.hero.slide3.subtitle', image: heroImage3, gradient: SLIDE_GRADIENTS[2] },
 ];
 
+const CANDIDATE_LIMIT = 15;
+
 /* ---------- Component ---------- */
 
 const HomeHero = () => {
@@ -53,21 +57,52 @@ const HomeHero = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const { data: galleries = [] } = useGalleriesQuery();
 
-  const SLIDES = useMemo((): Slide[] => {
-    const active = galleries.filter(g => g.status);
-    if (active.length === 0) return STATIC_FALLBACK;
+  const candidates = useMemo(
+    () => galleries.filter(g => g.status).slice(0, CANDIDATE_LIMIT),
+    [galleries]
+  );
 
-    const g1 = active[0];
-    const g2 = active[1];
+  // Fetch ratings for all candidates in parallel
+  const ratingQueries = useQueries({
+    queries: candidates.map(g => ({
+      queryKey: ['gallery-rating-hero', g.slug],
+      queryFn: async () => {
+        const reviews = await fetchGalleryReviews(g.slug);
+        if (!reviews || reviews.length === 0) return { slug: g.slug, avg: 0 };
+        return { slug: g.slug, avg: reviews.reduce((s, r) => s + r.rating, 0) / reviews.length };
+      },
+      staleTime: 1000 * 60 * 10,
+    })),
+  });
+
+  // Stable rating map — only updates when actual values change
+  const ratingMapKey = ratingQueries.map(r => `${r.data?.slug}:${r.data?.avg ?? ''}`).join('|');
+  const ratingMap = useMemo(() => {
+    const map = new Map<string, number>();
+    ratingQueries.forEach(r => { if (r.data && r.data.avg > 0) map.set(r.data.slug, r.data.avg); });
+    return map;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ratingMapKey]);
+
+  const SLIDES = useMemo((): Slide[] => {
+    if (candidates.length === 0) return STATIC_FALLBACK;
+
+    // Sort by rating desc — galleries without rating go to end
+    const sorted = [...candidates].sort((a, b) =>
+      (ratingMap.get(b.slug) ?? 0) - (ratingMap.get(a.slug) ?? 0)
+    );
+
+    const g1 = sorted[0];
+    const g2 = sorted[1];
 
     const slide1: Slide = { id: g1.id, type: 'gallery', gallery: g1, badge: 'top', image: heroImage1, gradient: SLIDE_GRADIENTS[0] };
     const slide2: Slide = g2
-      ? { id: g2.id, type: 'gallery', gallery: g2, badge: 'new', image: heroImage2, gradient: SLIDE_GRADIENTS[1] }
+      ? { id: g2.id, type: 'gallery', gallery: g2, badge: 'top', image: heroImage2, gradient: SLIDE_GRADIENTS[1] }
       : { id: 'static-2', type: 'static', titleKey: 'home.hero.slide2.title', subtitleKey: 'home.hero.slide2.subtitle', image: heroImage2, gradient: SLIDE_GRADIENTS[1] };
     const slide3: Slide = { id: 'static-3', type: 'static', titleKey: 'home.hero.slide3.title', subtitleKey: 'home.hero.slide3.subtitle', image: heroImage3, gradient: SLIDE_GRADIENTS[2] };
 
     return [slide1, slide2, slide3];
-  }, [galleries]);
+  }, [candidates, ratingMap]);
 
   useEffect(() => {
     const timer = setInterval(() => {
