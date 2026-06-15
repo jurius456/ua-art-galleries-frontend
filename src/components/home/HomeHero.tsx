@@ -32,13 +32,13 @@ type GallerySlide = {
 type Slide = StaticSlide | GallerySlide;
 
 /* ---------- Constants ----------
- * Neutral dark gradients matching the site's zinc/black monochrome theme.
- * Uses inline style={{}} so they are immune to Tailwind dark-mode variable remapping.
+ * Gradients must be clearly visible against the dark theme background (#070709).
+ * Using inline style={{}} so they are immune to Tailwind dark-mode variable remapping.
  */
 const SLIDE_GRADIENTS = [
-  'linear-gradient(135deg, #0a0a0a 0%, #18181b 55%, #0f0f10 100%)',   // deep charcoal
-  'linear-gradient(135deg, #111111 0%, #1c1a18 55%, #131210 100%)',   // warm dark
-  'linear-gradient(135deg, #0c0c0e 0%, #19191c 55%, #111114 100%)',   // cool dark
+  'linear-gradient(135deg, #1e1e22 0%, #2d2d34 55%, #222228 100%)',   // dark charcoal
+  'linear-gradient(135deg, #201e1a 0%, #302c26 55%, #252118 100%)',   // warm dark
+  'linear-gradient(135deg, #1a1e24 0%, #262e38 55%, #1e2530 100%)',   // cool dark slate
 ];
 
 const STATIC_FALLBACK: Slide[] = [
@@ -99,7 +99,9 @@ const HomeHero = () => {
     <section className="container mx-auto px-4 md:px-6 pt-6 md:pt-10">
       <div
         className="relative h-[400px] md:h-[520px] rounded-[32px] md:rounded-[48px] overflow-hidden group"
-        style={{ boxShadow: '0 20px 72px rgba(0,0,0,0.32), 0 6px 20px rgba(0,0,0,0.18)' }}
+        style={{
+          boxShadow: '0 0 0 1px rgba(255,255,255,0.07), 0 24px 80px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.3)',
+        }}
       >
         {/* Slides */}
         {SLIDES.map((slide, index) => (
@@ -114,7 +116,7 @@ const HomeHero = () => {
             <img
               src={slide.image}
               alt=""
-              className={`absolute inset-0 w-full h-full object-cover opacity-[0.18] transform transition-transform duration-[20000ms] ease-linear mix-blend-luminosity ${index === currentSlideIndex ? 'scale-110' : 'scale-100'}`}
+              className={`absolute inset-0 w-full h-full object-cover opacity-[0.28] transform transition-transform duration-[20000ms] ease-linear mix-blend-luminosity ${index === currentSlideIndex ? 'scale-110' : 'scale-100'}`}
             />
 
             {/* Vignette overlays */}
