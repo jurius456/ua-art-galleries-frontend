@@ -96,9 +96,9 @@ const HomeHero = () => {
   const currentSlide = SLIDES[currentSlideIndex];
 
   return (
-    <section className="container mx-auto px-4 md:px-6 pt-6 md:pt-10">
+    <section className="w-full pt-0">
       <div
-        className="relative h-[400px] md:h-[520px] rounded-[32px] md:rounded-[48px] overflow-hidden group"
+        className="relative h-[480px] md:h-[580px] overflow-hidden group"
         style={{
           boxShadow: '0 0 0 1px rgba(255,255,255,0.07), 0 24px 80px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.3)',
         }}
