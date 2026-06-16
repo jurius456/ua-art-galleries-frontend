@@ -63,9 +63,9 @@ const HomeSearch = () => {
   const showSearchResults = searchQuery.length >= 2 && searchOpen;
 
   return (
-    <div className="container mx-auto px-4 md:px-6 relative z-40 py-14 md:py-20" ref={searchRef}>
-      {/* Search input */}
-      <div className="max-w-3xl mx-auto shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300 rounded-[32px] animate-fade-in-up delay-300 border border-zinc-200/60 bg-white">
+    <div className="container mx-auto px-4 md:px-6 py-14 md:py-20" ref={searchRef}>
+      {/* Search input — higher z-index so dropdown overlaps chips */}
+      <div className="relative z-50 max-w-3xl mx-auto shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300 rounded-[32px] animate-fade-in-up delay-300 border border-zinc-200/60 bg-white">
         <div className="relative group">
           <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none text-zinc-400 group-focus-within:text-zinc-900 transition-colors">
             <Search size={20} strokeWidth={2.5} />
